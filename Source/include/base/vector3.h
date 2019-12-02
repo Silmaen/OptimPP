@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "type.h"
+#include "MathOperators.h"
 #include "Comparable.h"
 #include <ostream>
 
