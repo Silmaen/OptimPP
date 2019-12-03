@@ -5,7 +5,6 @@
 #include "base/MathOperators.h"
 #include "base/Exception.h"
 #include <cmath>
-#include <intrin.h>
 
 namespace optim
 {
@@ -24,6 +23,9 @@ namespace optim
 
 
 // log2
+#ifdef _MSC_VER
+#include <intrin.h>
+#endif
 [[nodiscard]] u32 log2i(const u32& x)
 {
 #ifdef _MSC_VER

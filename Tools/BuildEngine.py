@@ -38,8 +38,8 @@ def testncover():
     if not os.path.exists(cmakelist):
         print("ERROR: unable to test: please configure first")
         sys.exit(2);
-    utestmake=os.path.join(srcRoot,"Build","test","UnitTests","optimpp_unit_test")
-    utestmsvc=os.path.join(srcRoot,"Build","test","UnitTests","Debug","optimpp_unit_test.exe")
+    utestmake=os.path.join(srcRoot,"Build","Test","UnitTests","optimpp_unit_test")
+    utestmsvc=os.path.join(srcRoot,"Build","Test","UnitTests","Debug","optimpp_unit_test.exe")
     if not (os.path.exists(utestmake) or os.path.exists(utestmake+".exe") or os.path.exists(utestmsvc)):
         print("ERROR: unable to test: please compile target 'optimpp_unit_test' first")
         sys.exit(3)
