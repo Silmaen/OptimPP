@@ -20,7 +20,7 @@ if OS not in SupportedCompiler.keys():
 
 Compilers = SupportedCompiler[OS]
 
-srcRoot= os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+srcRoot= os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 buildDir=os.path.join(srcRoot,"Build")
 
 if os.getcwd() != srcRoot:

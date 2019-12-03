@@ -3,8 +3,8 @@
 
 import os,argparse,platform,sys
 
-srcRoot= os.path.dirname(os.path.dirname(__file__))
-BuildEnginePath = os.path.join(os.path.dirname(__file__),"BuildEngine")
+srcRoot= os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BuildEnginePath = os.path.join(os.path.dirname(os.path.abspath(__file__)),"BuildEngine")
 
 SupportedCompiler = {"Windows":["MSVC","gcc"],"OpenBSD":["gcc","clang"]}
 Corresponding = {"WindowsMSVC":"MSVC","Windowsgcc":"gcc/g++","OpenBSDgcc":"egcc/eg++","OpenBSDclang":"clang/clang++"}
@@ -25,7 +25,7 @@ def generate(cc:str,debug:bool):
 def build(target:str):
     cmakelist=os.path.join(srcRoot,"Build","CMakeCache.txt")
     if not os.path.exists(cmakelist):
-        print("ERROR: unable to compile: pleease configure first")
+        print("ERROR: unable to compile: please configure first")
         sys.exit(2);
     scr=os.path.join(BuildEnginePath,"compile.py")
     opt=""
@@ -64,6 +64,11 @@ Parser.add_argument("-c","--compiler",type=str,choices=Compilers,default=Compile
 Parser.add_argument("-g","--debug",action="store_true",help="If we should compile in Debug mode")
 Parser.add_argument("-t","--target",type=str,help="The compiler target")
 args = Parser.parse_args()
+
+
+print("this file = " + __file__)
+print("source root = " + srcRoot)
+
 
 if args.action =="coverage":
     gen=False
