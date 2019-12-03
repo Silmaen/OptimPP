@@ -8,12 +8,12 @@ TEST(optimbase, clamp)
     EXPECT_EQ(clamp(0, -1, 1), 0);
     EXPECT_EQ(clamp(-4, -1, 1), -1);
     EXPECT_EQ(clamp(4, -1, 1), 1);
-    EXPECT_FLOAT_EQ(clamp((float)0.0, (float)-1.0, (float)1.0), (float)0.0);
-    EXPECT_FLOAT_EQ(clamp((float)-4.0, (float)-1.0, (float)1.0), (float)-1.0);
-    EXPECT_FLOAT_EQ(clamp((float)4.0, (float)-1.0, (float)1.0), (float)1.0);
-    EXPECT_DOUBLE_EQ(clamp((double)0.0, (double)-1.0, (double)1.0), 0.0);
-    EXPECT_DOUBLE_EQ(clamp((double)-4.0, (double)-1.0, (double)1.0), -1.0);
-    EXPECT_DOUBLE_EQ(clamp((double)4.0, (double)-1.0, (double)1.0), 1.0);
+    EXPECT_FLOAT_EQ(clamp(static_cast<float>(0.0), static_cast<float>(-1.0), static_cast<float>(1.0)), static_cast<float>(0.0));
+    EXPECT_FLOAT_EQ(clamp(static_cast<float>(-4.0), static_cast<float>(-1.0), static_cast<float>(1.0)), static_cast<float>(-1.0));
+    EXPECT_FLOAT_EQ(clamp(static_cast<float>(4.0), static_cast<float>(-1.0), static_cast<float>(1.0)), static_cast<float>(1.0));
+    EXPECT_DOUBLE_EQ(clamp(0.0, -1.0, 1.0), 0.0);
+    EXPECT_DOUBLE_EQ(clamp(-4.0, -1.0, 1.0), -1.0);
+    EXPECT_DOUBLE_EQ(clamp(4.0, -1.0, 1.0), 1.0);
 }
 
 TEST(optimbase, sign)
@@ -21,12 +21,12 @@ TEST(optimbase, sign)
     EXPECT_EQ(sign(0), 0);
     EXPECT_EQ(sign(-1), -1);
     EXPECT_EQ(sign(1), 1);
-    EXPECT_FLOAT_EQ(sign((float)0.0), (float)0.0);
-    EXPECT_FLOAT_EQ(sign((float)-1.0), (float)-1.0);
-    EXPECT_FLOAT_EQ(sign((float)1.0), (float)1.0);
-    EXPECT_DOUBLE_EQ(sign((double)0.0), 0.0);
-    EXPECT_DOUBLE_EQ(sign((double)-1.0), -1.0);
-    EXPECT_DOUBLE_EQ(sign((double)1.0), 1.0);
+    EXPECT_FLOAT_EQ(sign(0.0f), 0.0f);
+    EXPECT_FLOAT_EQ(sign(-1.0f), -1.0f);
+    EXPECT_FLOAT_EQ(sign(1.0f), 1.0f);
+    EXPECT_DOUBLE_EQ(sign(0.0), 0.0);
+    EXPECT_DOUBLE_EQ(sign(-1.0), -1.0);
+    EXPECT_DOUBLE_EQ(sign(1.0), 1.0);
 }
 
 TEST(optimbase, min)
@@ -39,10 +39,10 @@ TEST(optimbase, min)
     EXPECT_EQ(min((u32)1, (u32)0), 0u);
     EXPECT_EQ(min((s32)-1, (s32)1), -1);
     EXPECT_EQ(min((s32)1, (s32)-1), -1);
-    EXPECT_FLOAT_EQ(min((float)-1.0, (float)1.0), -1.0);
-    EXPECT_FLOAT_EQ(min((float)1.0, (float)-1.0), -1.0);
-    EXPECT_DOUBLE_EQ(min((double)-1.0, (double)1.0), -1.0);
-    EXPECT_DOUBLE_EQ(min((double)1.0, (double)-1.0), -1.0);
+    EXPECT_FLOAT_EQ(min(-1.0f, 1.0f), -1.0f);
+    EXPECT_FLOAT_EQ(min(1.0f, -1.0f), -1.0f);
+    EXPECT_DOUBLE_EQ(min(-1.0, 1.0), -1.0);
+    EXPECT_DOUBLE_EQ(min(1.0, -1.0), -1.0);
 }
 
 TEST(optimbase, max)
@@ -55,10 +55,10 @@ TEST(optimbase, max)
     EXPECT_EQ(max((u32)1, (u32)0), 1u);
     EXPECT_EQ(max((s32)-1, (s32)1), 1);
     EXPECT_EQ(max((s32)1, (s32)-1), 1);
-    EXPECT_FLOAT_EQ(max((float)-1.0, (float)1.0), (float)1.0);
-    EXPECT_FLOAT_EQ(max((float)1.0, (float)-1.0), (float)1.0);
-    EXPECT_DOUBLE_EQ((double)max((double)-1.0, (double)1.0), 1.0);
-    EXPECT_DOUBLE_EQ((double)max((double)1.0, (double)-1.0), 1.0);
+    EXPECT_FLOAT_EQ(max(-1.0f, 1.0f), 1.0f);
+    EXPECT_FLOAT_EQ(max(1.0f, -1.0f), 1.0f);
+    EXPECT_DOUBLE_EQ(max(-1.0, 1.0), 1.0);
+    EXPECT_DOUBLE_EQ(max(1.0, -1.0), 1.0);
 }
 
 #include <array>

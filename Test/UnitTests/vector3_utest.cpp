@@ -51,3 +51,4 @@ TEST(Vector3,baseFunctions){
     EXPECT_THROW(V[0] = V.at(55), optim::Exception);
     EXPECT_THROW(V[0] = Vc.at(55), optim::Exception);
 }
+

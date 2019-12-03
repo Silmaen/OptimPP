@@ -7,6 +7,10 @@ file(GLOB
     ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
     )
 
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang") 
+	add_definitions(-Wno-global-constructors -Wno-old-style-cast)
+endif ()
+
 add_executable(optimpp_unit_test ${SRCS})
 
 # base includes

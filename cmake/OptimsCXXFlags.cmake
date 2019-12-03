@@ -60,7 +60,6 @@ elseif (OPP_COMPILER_CLANG)
 		-Wno-c++98-compat
 		-Wno-c++98-compat-pedantic
 		-Wno-padded
-		-Wno-undef
 	)
 
 	# Handling warnings available since Clang 8
