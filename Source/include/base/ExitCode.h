@@ -34,9 +34,9 @@ constexpr inline const char* ToString(Value iErrorCode)
             return "Arithmetic Error";
         case Value::GeneralError:
             return "General failure";
-        default:
-            return "Unknown error";
     }
+    return "Unknown error";
 }
 
 }
+

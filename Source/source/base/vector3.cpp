@@ -18,9 +18,9 @@ s8 Vector3::CompareTo(const Vector3 & other) const noexcept
 {
     Vector3 temp = (*this - other);
     if(temp.isNull()) return 0;
-    if(temp.m_data[0] == 0 && temp.m_data[1] == 0)
+    if(isfNull(temp.m_data[0]) && isfNull(temp.m_data[1]))
         return (temp.m_data[2] > 0) ? 1 : -1;
-    if(temp.m_data[0] == 0)
+    if(isfNull(temp.m_data[0]))
         return (temp.m_data[1] > 0) ? 1 : -1;
     return (temp.m_data[0] > 0) ? 1 : -1;
 }
@@ -48,7 +48,7 @@ void Vector3::set(const u8 i, double value)
 
 Vector3& Vector3::operator/=(const double& o)
 {
-    if(o == 0)
+    if(isfNull(o))
         throw Exception(ExitCode::Value::ArithmeticError);
     m_data[0] /= o; m_data[1] /= o; m_data[2] /= o; return *this;
 }

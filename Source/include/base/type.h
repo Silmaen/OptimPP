@@ -9,6 +9,7 @@ namespace optim
 {
 
 constexpr double DefaultTolerance = 1.e-7;
+constexpr float DefaultfTolerance = static_cast<float>(1.e-7);
 
 // base int types
 // SIGNED INTEGERS
@@ -55,20 +56,21 @@ typedef uint8_t  u8;   // 0 to 255
 [[nodiscard]] inline double max(const double& a, const  double& b) { return((a > b) ? a : b); }
 // Bits operations
 inline void bitSet(u8& number, const u8& bit) { number |= 1ul << bit; }
-inline void bitDefine(u8& number, const u8& bit, const bool& value) { number = (number&~(1UL << bit)) | (value << bit); }
+inline void bitDefine(u8& number, const u8& bit, const bool& value) { number = static_cast<u8>((number&~(static_cast<u8>(1U) << bit)) | (static_cast<u8>(value) << bit)); }
 inline void bitClear(u8& number, const u8& bit) { number &= ~(1ul << bit); }
 inline void bitToggle(u8& number, const u8& bit) { number ^= 1ul << bit; }
 [[nodiscard]] inline bool bitGet(const u8& number, const u8& bit) { return((number >> bit) & 1u); }
 inline void bitSet(u64& number, const u8& bit) { number |= 1ull << bit; }
-inline void bitDefine(u64& number, const u8& bit, const bool& value) { number = (number&~(1ull << bit)) | ((u64)value << bit); }
+inline void bitDefine(u64& number, const u8& bit, const bool& value) { number = (number&~(1ull << bit)) | (static_cast<u64>(value) << bit); }
 inline void bitClear(u64& number, const u8& bit) { number &= ~(1ull << bit); }
 inline void bitToggle(u64& number, const u8& bit) { number ^= 1ull << bit; }
 [[nodiscard]] inline bool bitGet(const u64& number, const u8& bit) { return((number >> bit) & 1ull); }
 
 // float Equality
-[[nodiscard]] inline bool isfNull(const float& a, const double& tolerance = DefaultTolerance) { return(abs(a) < tolerance); }
+[[nodiscard]] inline bool isfNull(const float& a, const float& tolerance = DefaultfTolerance) { return(abs(a) < tolerance); }
 [[nodiscard]] inline bool isfNull(const double& a, const double& tolerance = DefaultTolerance) { return(abs(a) < tolerance); }
-[[nodiscard]] inline bool isfEqual(const float& a, const float& b, const double& tolerance = DefaultTolerance) { return(abs(a - b) < tolerance); }
+[[nodiscard]] inline bool isfEqual(const float& a, const float& b, const float& tolerance = DefaultfTolerance) { return(abs(a - b) < tolerance); }
 [[nodiscard]] inline bool isfEqual(const double& a, const double& b, const double& tolerance = DefaultTolerance) { return(abs(a - b) < tolerance); }
 
 }
+

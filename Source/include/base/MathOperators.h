@@ -24,3 +24,4 @@ namespace optim
 [[nodiscard]] u32 log2i(const u32& x);
 
 }
+

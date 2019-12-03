@@ -24,3 +24,4 @@ struct Comparable
     [[nodiscard]] constexpr bool operator<=(const T& other) const noexcept { return(Underlying().CompareTo(other) <= 0); }
 };
 }
+

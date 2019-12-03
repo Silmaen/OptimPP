@@ -52,9 +52,9 @@ public:
     [[nodiscard]] Vector3 CrossProduct(const Vector3& o)const noexcept { return Vector3(m_data[1] * o.m_data[2] - m_data[2] * o.m_data[1], m_data[2] * o.m_data[0] - m_data[0] * o.m_data[2], m_data[0] * o.m_data[1] - m_data[1] * o.m_data[0]); }
     [[nodiscard]] double DotProduct(const Vector3& o)const noexcept { return m_data[0] * o.m_data[0] + m_data[1] * o.m_data[1] + m_data[2] * o.m_data[2]; }
     // properties
-    [[nodiscard]] bool isNull()const noexcept { return (isfNull(m_data[0]) && isfNull(m_data[1]) && isfNull(m_data[2])); };
-    [[nodiscard]] bool isPerpandicular(const Vector3& o)const noexcept { return isfNull(DotProduct(o)); };
-    [[nodiscard]] bool isColinear(const Vector3& o)const noexcept { return CrossProduct(o).isNull(); };
+    [[nodiscard]] bool isNull()const noexcept { return (isfNull(m_data[0]) && isfNull(m_data[1]) && isfNull(m_data[2])); }
+    [[nodiscard]] bool isPerpandicular(const Vector3& o)const noexcept { return isfNull(DotProduct(o)); }
+    [[nodiscard]] bool isColinear(const Vector3& o)const noexcept { return CrossProduct(o).isNull(); }
     [[nodiscard]] double LengthSQ()const noexcept { return DotProduct(*this); }
     [[nodiscard]] double Length() const { return sqrt(LengthSQ()); }
     [[nodiscard]] double DistanceSQ(const Vector3& o)const noexcept { return (*this-o).LengthSQ(); }
@@ -66,3 +66,4 @@ private:
 std::ostream& operator<<(std::ostream& os, const Vector3& v);
 
 }
+

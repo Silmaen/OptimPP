@@ -30,6 +30,7 @@ elseif (OPP_COMPILER_MSVC)
 		message(FATAL_ERROR "Error: MSVC 19.14 or above is needed")
 	endif ()
 endif ()
+
 set(CMAKE_CXX_STANDARD 17)
 
 # Set a default build type if none was specified
