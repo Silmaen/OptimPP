@@ -8,7 +8,7 @@ file(GLOB
     )
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang") 
-	add_definitions(-Wno-global-constructors -Wno-old-style-cast)
+	add_definitions(-Wno-global-constructors)
 endif ()
 
 add_executable(optimpp_unit_test ${SRCS})
