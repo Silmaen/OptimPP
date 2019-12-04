@@ -74,28 +74,13 @@ endforeach ()
 # Code Coverage (in Debug Mode only)
 # https://gronlier.fr/blog/2015/01/adding-code-coverage-to-your-c-project/
 # ---------------------------------------------------------------------------
-if (NOT OPP_COMPILER_MSVC)
+if (OPP_COMPILER_GCC)
 	if (CMAKE_BUILD_TYPE MATCHES "Debug")
 		# common setting to gcc and clang
 		set(OPP_CXX_FLAGS_COVERAGE "--coverage -g -O0 ")
 
-		if (OPP_COMPILER_GCC)
-			set(OPP_CXX_FLAGS_COVERAGE "-fprofile-arcs -ftest-coverage -fno-inline -fno-inline-small-functions -fno-default-inline")
-		endif ()
+		set(OPP_CXX_FLAGS_COVERAGE "-fprofile-arcs -ftest-coverage -fno-inline -fno-inline-small-functions -fno-default-inline")
 
-		# set Clang specif object flags
-		if (OPP_COMPILER_CLANG)
-			set(OPP_CXX_FLAGS_COVERAGE "-fprofile-arcs -ftest-coverage -fno-inline -fprofile-instr-generate -fcoverage-mapping")
-			set(CMAKE_EXE_LINKER_FLAGS "--coverage -fprofile-instr-generate")
-
-			find_program(LLVM_COV_BIN "llvm-cov" PATHS ${COMPILER_PATH})
-			if (LLVM_COV_BIN)
-				find_program(LLVM_COV_WRAPPER "llvm-cov-wrapper" PATHS ${CMAKE_MODULE_PATH})
-				if (LLVM_COV_WRAPPER)
-					set(COVERAGE_COMMAND "${LLVM_COV_WRAPPER}" CACHE FILEPATH "")
-				endif ()
-			endif ()
-		endif ()
 
 		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${OPP_CXX_FLAGS_COVERAGE}")
 	endif ()
