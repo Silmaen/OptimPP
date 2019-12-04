@@ -9,16 +9,57 @@
 namespace optim
 {
 
-[[nodiscard]] u8 sqrt(const u8& x)noexcept { return static_cast<u8>(std::sqrt(x)); }
-[[nodiscard]] u16 sqrt(const u16& x)noexcept { return static_cast<u16>(std::sqrt(x)); }
-[[nodiscard]] u32 sqrt(const u32& x)noexcept { return static_cast<u32>(std::sqrt(x)); }
-[[nodiscard]] u64 sqrt(const u64& x)noexcept { return static_cast<u64>(std::sqrt(x)); }
-[[nodiscard]] s8 sqrt(const s8& x) { if(x < 0)throw Exception(ExitCode::Value::ArithmeticError); return static_cast<s8>(std::sqrt(x)); }
-[[nodiscard]] s16 sqrt(const s16& x) { if(x < 0)throw Exception(ExitCode::Value::ArithmeticError); return static_cast<s16>(std::sqrt(x)); }
-[[nodiscard]] s32 sqrt(const s32& x) { if(x < 0)throw Exception(ExitCode::Value::ArithmeticError); return static_cast<s32>(std::sqrt(x)); }
-[[nodiscard]] s64 sqrt(const s64& x) { if(x < 0)throw Exception(ExitCode::Value::ArithmeticError); return static_cast<s64>(std::sqrt(x)); }
-[[nodiscard]] float sqrt(const float& x) { if(x < 0)throw Exception(ExitCode::Value::ArithmeticError); return std::sqrt(x); }
-[[nodiscard]] double sqrt(const double& x) { if(x < 0)throw Exception(ExitCode::Value::ArithmeticError); return std::sqrt(x); }
+[[nodiscard]] u8 sqrt(const u8& x)noexcept { 
+    return static_cast<u8>(std::sqrt(x)); 
+}
+
+[[nodiscard]] u16 sqrt(const u16& x)noexcept { 
+    return static_cast<u16>(std::sqrt(x));
+}
+
+[[nodiscard]] u32 sqrt(const u32& x)noexcept { 
+    return static_cast<u32>(std::sqrt(x));
+}
+
+[[nodiscard]] u64 sqrt(const u64& x)noexcept {
+    return static_cast<u64>(std::sqrt(x)); 
+}
+
+[[nodiscard]] s8 sqrt(const s8& x) {
+    if(x < 0)
+        throw Exception(ExitCode::Value::ArithmeticError); 
+    return static_cast<s8>(std::sqrt(x)); 
+}
+
+[[nodiscard]] s16 sqrt(const s16& x) { 
+    if(x < 0)
+        throw Exception(ExitCode::Value::ArithmeticError); 
+    return static_cast<s16>(std::sqrt(x)); 
+}
+
+[[nodiscard]] s32 sqrt(const s32& x) { 
+    if(x < 0)
+        throw Exception(ExitCode::Value::ArithmeticError); 
+    return static_cast<s32>(std::sqrt(x)); 
+}
+
+[[nodiscard]] s64 sqrt(const s64& x) { 
+    if(x < 0)
+        throw Exception(ExitCode::Value::ArithmeticError); 
+    return static_cast<s64>(std::sqrt(x)); 
+}
+
+[[nodiscard]] float sqrt(const float& x) { 
+    if(x < 0)
+        throw Exception(ExitCode::Value::ArithmeticError); 
+    return std::sqrt(x); 
+}
+
+[[nodiscard]] double sqrt(const double& x) { 
+    if(x < 0)
+        throw Exception(ExitCode::Value::ArithmeticError); 
+    return std::sqrt(x); 
+}
 
 
 

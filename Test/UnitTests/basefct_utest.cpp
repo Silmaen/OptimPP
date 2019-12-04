@@ -8,9 +8,9 @@ TEST(optimbase, clamp)
     EXPECT_EQ(clamp(0, -1, 1), 0);
     EXPECT_EQ(clamp(-4, -1, 1), -1);
     EXPECT_EQ(clamp(4, -1, 1), 1);
-    EXPECT_FLOAT_EQ(clamp(static_cast<float>(0.0), static_cast<float>(-1.0), static_cast<float>(1.0)), static_cast<float>(0.0));
-    EXPECT_FLOAT_EQ(clamp(static_cast<float>(-4.0), static_cast<float>(-1.0), static_cast<float>(1.0)), static_cast<float>(-1.0));
-    EXPECT_FLOAT_EQ(clamp(static_cast<float>(4.0), static_cast<float>(-1.0), static_cast<float>(1.0)), static_cast<float>(1.0));
+    EXPECT_FLOAT_EQ(clamp(0.0f, -1.0f, 1.0f), 0.0f);
+    EXPECT_FLOAT_EQ(clamp(-4.0f, -1.0f, 1.0f),-1.0f);
+    EXPECT_FLOAT_EQ(clamp(4.0f, -1.0f, 1.0f), 1.0f);
     EXPECT_DOUBLE_EQ(clamp(0.0, -1.0, 1.0), 0.0);
     EXPECT_DOUBLE_EQ(clamp(-4.0, -1.0, 1.0), -1.0);
     EXPECT_DOUBLE_EQ(clamp(4.0, -1.0, 1.0), 1.0);
@@ -29,16 +29,30 @@ TEST(optimbase, sign)
     EXPECT_DOUBLE_EQ(sign(1.0), 1.0);
 }
 
+TEST(optimbase, abs)
+{
+    EXPECT_EQ(optim::abs(static_cast<s32>(-1)), static_cast<s32>(1));
+    EXPECT_EQ(optim::abs(static_cast<s32>(1)), static_cast<s32>(1));
+    EXPECT_FLOAT_EQ(optim::abs(-1.0f), 1.0f);
+    EXPECT_FLOAT_EQ(optim::abs(1.0f), 1.0f);
+    EXPECT_DOUBLE_EQ(optim::abs(-1.0), 1.0);
+    EXPECT_DOUBLE_EQ(optim::abs(1.0), 1.0);
+}
+
 TEST(optimbase, min)
 {
-    EXPECT_EQ(min((u8)0, (u8)1), 0u);
-    EXPECT_EQ(min((u8)1, (u8)0), 0u);
-    EXPECT_EQ(min((u16)0, (u16)1), 0u);
-    EXPECT_EQ(min((u16)1, (u16)0), 0u);
-    EXPECT_EQ(min((u32)0, (u32)1), 0u);
-    EXPECT_EQ(min((u32)1, (u32)0), 0u);
-    EXPECT_EQ(min((s32)-1, (s32)1), -1);
-    EXPECT_EQ(min((s32)1, (s32)-1), -1);
+    EXPECT_EQ(min(static_cast<u8>(0), static_cast<u8>(1)), 0u);
+    EXPECT_EQ(min(static_cast<u8>(1), static_cast<u8>(0)), 0u);
+    EXPECT_EQ(min(static_cast<u16>(0), static_cast<u16>(1)), 0u);
+    EXPECT_EQ(min(static_cast<u16>(1), static_cast<u16>(0)), 0u);
+    EXPECT_EQ(min(static_cast<u32>(0), static_cast<u32>(1)), 0u);
+    EXPECT_EQ(min(static_cast<u32>(1), static_cast<u32>(0)), 0u);
+    EXPECT_EQ(min(static_cast<u64>(0), static_cast<u64>(1)), 0u);
+    EXPECT_EQ(min(static_cast<u64>(1), static_cast<u64>(0)), 0u);
+    EXPECT_EQ(min(static_cast<s32>(-1), static_cast<s32>(1)), -1);
+    EXPECT_EQ(min(static_cast<s32>(1), static_cast<s32>(-1)), -1);
+    EXPECT_EQ(min(static_cast<s64>(-1), static_cast<s64>(1)), -1);
+    EXPECT_EQ(min(static_cast<s64>(1), static_cast<s64>(-1)), -1);
     EXPECT_FLOAT_EQ(min(-1.0f, 1.0f), -1.0f);
     EXPECT_FLOAT_EQ(min(1.0f, -1.0f), -1.0f);
     EXPECT_DOUBLE_EQ(min(-1.0, 1.0), -1.0);
@@ -47,18 +61,43 @@ TEST(optimbase, min)
 
 TEST(optimbase, max)
 {
-    EXPECT_EQ(max((u8)0, (u8)1), 1u);
-    EXPECT_EQ(max((u8)1, (u8)0), 1u);
-    EXPECT_EQ(max((u16)0, (u16)1), 1u);
-    EXPECT_EQ(max((u16)1, (u16)0), 1u);
-    EXPECT_EQ(max((u32)0, (u32)1), 1u);
-    EXPECT_EQ(max((u32)1, (u32)0), 1u);
-    EXPECT_EQ(max((s32)-1, (s32)1), 1);
-    EXPECT_EQ(max((s32)1, (s32)-1), 1);
+    EXPECT_EQ(max(static_cast<u8>(0), static_cast<u8>(1)), 1u);
+    EXPECT_EQ(max(static_cast<u8>(1), static_cast<u8>(0)), 1u);
+    EXPECT_EQ(max(static_cast<u16>(0), static_cast<u16>(1)), 1u);
+    EXPECT_EQ(max(static_cast<u16>(1), static_cast<u16>(0)), 1u);
+    EXPECT_EQ(max(static_cast<u32>(0), static_cast<u32>(1)), 1u);
+    EXPECT_EQ(max(static_cast<u32>(1), static_cast<u32>(0)), 1u);
+    EXPECT_EQ(max(static_cast<u64>(0), static_cast<u64>(1)), 1u);
+    EXPECT_EQ(max(static_cast<u64>(1), static_cast<u64>(0)), 1u);
+    EXPECT_EQ(max(static_cast<s32>(-1), static_cast<s32>(1)), 1);
+    EXPECT_EQ(max(static_cast<s32>(1), static_cast<s32>(-1)), 1);
+    EXPECT_EQ(max(static_cast<s64>(-1), static_cast<s64>(1)), 1);
+    EXPECT_EQ(max(static_cast<s64>(1), static_cast<s64>(-1)), 1);
     EXPECT_FLOAT_EQ(max(-1.0f, 1.0f), 1.0f);
     EXPECT_FLOAT_EQ(max(1.0f, -1.0f), 1.0f);
     EXPECT_DOUBLE_EQ(max(-1.0, 1.0), 1.0);
     EXPECT_DOUBLE_EQ(max(1.0, -1.0), 1.0);
+}
+
+TEST(optimbase, isfNull)
+{
+    EXPECT_TRUE(isfNull(0.0f));
+    EXPECT_TRUE(isfNull(0.00000001f));
+    EXPECT_FALSE(isfNull(1.0f));
+    EXPECT_FALSE(isfNull(-1.0f));
+    EXPECT_TRUE(isfNull(0.0));
+    EXPECT_TRUE(isfNull(0.00000001));
+    EXPECT_FALSE(isfNull(1.0));
+    EXPECT_FALSE(isfNull(-1.0));
+
+    EXPECT_TRUE(isfEqual(1.0f,1.0f));
+    EXPECT_TRUE(isfEqual(0.1f,0.10000001f));
+    EXPECT_FALSE(isfEqual(1.0f,0.01f));
+    EXPECT_FALSE(isfEqual(-1.0f,0.01f));
+    EXPECT_TRUE(isfEqual(1.0,1.0));
+    EXPECT_TRUE(isfEqual(0.1,0.100000001));
+    EXPECT_FALSE(isfEqual(1.0,0.01));
+    EXPECT_FALSE(isfEqual(-1.0,0.01));
 }
 
 #include <array>
