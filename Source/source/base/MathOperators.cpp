@@ -74,7 +74,7 @@ namespace optim
     _BitScanReverse(&result, static_cast<u32>(x));
     return(result);
 #else
-    return(32u - static_cast<u32>(__builtin_clz(x)));
+    return(31u - static_cast<u32>(__builtin_clz(x)));
 #endif
 }
 }

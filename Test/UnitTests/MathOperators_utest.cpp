@@ -14,8 +14,8 @@ TEST(MathOperators, sqrtnoexcept)
     EXPECT_EQ(sqrt(static_cast<s16>(4)), 2);
     EXPECT_EQ(sqrt(static_cast<s32>(4)), 2);
     EXPECT_EQ(sqrt(static_cast<s64>(4)), 2);
-    EXPECT_EQ(sqrt(4.0f), 2.0f);
-    EXPECT_EQ(sqrt(4.0), 2.0);
+    EXPECT_FLOAT_EQ(optim::sqrt(4.0f), 2.0f);
+    EXPECT_DOUBLE_EQ(optim::sqrt(4.0), 2.0);
 }
 
 TEST(MathOperators, sqrtexcept)
@@ -25,12 +25,14 @@ TEST(MathOperators, sqrtexcept)
     EXPECT_THROW({ a = sqrt(static_cast<s16>(-4)) == 2; }, Exception);
     EXPECT_THROW({ a = sqrt(static_cast<s32>(-4)) == 2; }, Exception);
     EXPECT_THROW({ a = sqrt(static_cast<s64>(-4)) == 2; }, Exception);
-    EXPECT_THROW({ a = isfEqual(sqrt(-4.0f), 2); }, Exception);
-    EXPECT_THROW({ a = isfEqual(sqrt(-4.0), 2); }, Exception);
+    EXPECT_THROW({ a = isfEqual(optim::sqrt(-4.0f), 2); }, Exception);
+    EXPECT_THROW({ a = isfEqual(optim::sqrt(-4.0), 2); }, Exception);
     if (a) return;
 }
 
 TEST(MathOperators, log2i)
 {
-    EXPECT_EQ(log2i(static_cast<u32>(4)), 3u);
+    EXPECT_EQ(log2i(static_cast<u32>(4)), 2u);
+    EXPECT_EQ(log2i(static_cast<u32>(1u<<16)), 16u);
+    EXPECT_EQ(log2i(static_cast<u32>(1u<<30)), 30u);
 }
