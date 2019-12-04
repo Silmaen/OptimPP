@@ -13,14 +13,14 @@ namespace optim
 class Exception
 {
 public:
-    inline Exception(ExitCode::Value iErrCode) : m_Message(ToString(iErrCode)),m_ErrorCode(iErrCode) {}
-    inline Exception(const std::string& iMessage) : m_Message(iMessage), m_ErrorCode(ExitCode::Value::GeneralError) {}
+    inline Exception(ExitCode::Value iErrCode) :  m_ErrorCode(iErrCode), m_Message(ToString(iErrCode)) {}
+    inline Exception(const std::string& iMessage) : m_ErrorCode(ExitCode::Value::GeneralError), m_Message(iMessage) {}
 
     inline ExitCode::Value GetCode()const { return m_ErrorCode; }
     inline const std::string& what()const { return m_Message; }
 private:
-    std::string m_Message;
     ExitCode::Value m_ErrorCode;
+    std::string m_Message;
 };
 
 }
