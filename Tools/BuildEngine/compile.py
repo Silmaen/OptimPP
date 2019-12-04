@@ -15,7 +15,6 @@ cmd+=" --build ."
 if args.target not in [None,""]:
     cmd+=" --target "+args.target
 nbc= getCPUNumber()
-nbc=1
 if nbc>1:
     cmd+=" -j"+str(nbc)
 
