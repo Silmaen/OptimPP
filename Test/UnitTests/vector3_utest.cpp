@@ -88,7 +88,7 @@ TEST(Vector3, baseOperations) {
     V2[0] = 1; V2[1] = 2; V2[2] = 3;
     EXPECT_DOUBLE_EQ(V.DotProduct(V2), V2.DotProduct(V));
     EXPECT_DOUBLE_EQ(V.DotProduct(V2), 10.0);
-    EXPECT_EQ(V.CrossProduct(V2), -1.0 * V2.CrossProduct(V));
+    EXPECT_EQ(V.CrossProduct(V2), -V2.CrossProduct(V));
     EXPECT_EQ(V.CrossProduct(V2), Vector3(4,-8,4));
 }
 
@@ -106,4 +106,12 @@ TEST(Vector3, LengthDistance) {
     EXPECT_DOUBLE_EQ(V.Length(), V2.Length() / 2.0);
     EXPECT_DOUBLE_EQ(V.Distance(V2), V.Length());
     EXPECT_DOUBLE_EQ(V.DistanceSQ(V2), V.LengthSQ());
+}
+
+#include <sstream>
+TEST(Vector3,Streaming){
+    Vector3 V(1.0);
+    std::stringstream oss;
+    oss << V;
+    EXPECT_STREQ(oss.str().c_str(),"1 1 1");
 }

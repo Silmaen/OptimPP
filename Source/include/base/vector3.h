@@ -46,6 +46,7 @@ public:
     Vector3& operator/=(const double& o);
     [[nodiscard]] Vector3 operator+(const Vector3& o)const noexcept { Vector3 t(*this); t += o; return t; }
     [[nodiscard]] Vector3 operator-(const Vector3& o)const noexcept { Vector3 t(*this); t -= o; return t; }
+    [[nodiscard]] Vector3 operator-()const noexcept { return (*this * -1.0 ); }
     [[nodiscard]] Vector3 operator*(const double& o)const noexcept { Vector3 t(*this); t *= o; return t; }
     [[nodiscard]] Vector3 operator/(const double&)const;
     [[nodiscard]] friend Vector3 operator*(const double& o, const Vector3& v) noexcept { Vector3 t(v); t *= o; return t; }
