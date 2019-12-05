@@ -42,10 +42,10 @@ public:
     // out stream
     /**
      * @brief dump the value of vector into a basic stream
-     * @param[inout] os the stream where to dump
+     * @param[in,out] os the stream where to dump
      * @return reference to the input stream
      */
-    std::ostream& dump(std::ostream&)const noexcept;
+    std::ostream& dump(std::ostream& os)const noexcept;
     // comparison
     /**
      * @brief Key function of comparison
@@ -54,9 +54,9 @@ public:
      *
      * note that it will first compare the first component, if equal: the second , if equal the third
      */
-    [[nodiscard]] s8 CompareTo(const Vector3&)const noexcept;
-    // access
+    [[nodiscard]] s8 CompareTo(const Vector3& other)const noexcept;
 
+    // access
     /**
      * @brief Get the i-st vector component
      * @param[in] i the index of the component
@@ -170,7 +170,7 @@ public:
      * @param[in] o the constant to divide
      * @return the resultant vector
      */
-    [[nodiscard]] Vector3 operator/(const double&)const;
+    [[nodiscard]] Vector3 operator/(const double& o)const;
     /**
      * @brief multiply a vector to a constant
      * @param[in] o the constant to multiply
@@ -236,7 +236,7 @@ private:
 
 /**
  * @brief stream operator apply to vector
- * @param[in] os the stream where to write the data
+ * @param[in,out] os the stream where to write the data
  * @param[in] v the vector to stream
  * @return the output stream
  */
