@@ -11,9 +11,11 @@ args = Parser.parse_args()
 zipname="optim++_"+datetime.datetime.now().strftime("%y%m%d_%H%M")+".zip"
 
 zipf = zipfile.ZipFile(zipname, 'w')
-foldertozip=["bin"]
+foldertozip=["bin","doc"]
 
 for f in foldertozip:
+    if not os.path.exists(f):
+        continue
     for root, dirs, files in os.walk(f):
         for file in files:
             zipf.write(os.path.join(root, file))

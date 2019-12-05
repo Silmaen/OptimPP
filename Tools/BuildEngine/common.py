@@ -69,6 +69,7 @@ def runcommand(cmd:str):
         sys.exit(1)
     if ret !=0:
         sys.exit(ret)
+    return
 
 def getCPUNumber():
     try:
