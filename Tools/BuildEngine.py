@@ -50,6 +50,11 @@ def testncover():
         scr=os.path.join(BuildEnginePath,"runtest.py")
     return os.system("python3 "+scr)
 
+def documentation():
+    scr=os.path.join(BuildEnginePath,"documentation.py")
+    opt=""
+    return os.system("python3 "+scr+opt)
+
 def package():
     cmakelist=os.path.join(srcRoot,"Build","CMakeCache.txt")
     if not os.path.exists(cmakelist):
@@ -59,7 +64,7 @@ def package():
     return os.system("python3 "+scr)
 
 Parser = argparse.ArgumentParser()
-Parser.add_argument("action",type=str,choices=["all","generate","build","test","coverage","package"],help="what to do")
+Parser.add_argument("action",type=str,choices=["all","generate","build","test","doc","package"],help="what to do")
 Parser.add_argument("-c","--compiler",type=str,choices=Compilers,default=Compilers[0],help="The compiler to be used")
 Parser.add_argument("-g","--debug",action="store_true",help="If we should compile in Debug mode")
 Parser.add_argument("-t","--target",type=str,help="The compiler target")
@@ -96,5 +101,7 @@ if args.action in ["build","all"]:
     build(args.target)
 if args.action in ["test","all"]:
     testncover()
+if args.action in ["doc","all"]:
+    documentation()
 if args.action in ["package","all"]:
     package()
