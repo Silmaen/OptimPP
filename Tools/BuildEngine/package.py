@@ -8,7 +8,7 @@ os.chdir(buildDir)
 Parser = argparse.ArgumentParser()
 args = Parser.parse_args()
 
-zipname="optim++_"+datetime.datetime.now().strftime("%y%m%d_%H%M")+".zip"
+zipname="optim++.zip"
 
 zipf = zipfile.ZipFile(zipname, 'w')
 foldertozip=["bin","doc"]
