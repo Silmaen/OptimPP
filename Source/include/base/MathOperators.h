@@ -78,5 +78,64 @@ namespace optim
  */
 [[nodiscard]] u32 log2i(const u32& x);
 
+//-----------------------------------------------------------------------------
+// trigonometry
+//-----------------------------------------------------------------------------
+
+constexpr double Pi = 3.141592653589793; ///< constant Pi as double
+constexpr float Pif = 3.141592f;  ///< constant Pi as float
+[[maybe_unused]] constexpr double Rad2Deg = 180.0 / Pi;  ///< Conversion radian to degree as double
+[[maybe_unused]] constexpr float Rad2Degf = 180.0f / Pif;///< Conversion radian to degree as float
+constexpr double Deg2Rad = Pi / 180.0; ///< Conversion degree to radian as double
+constexpr float Deg2Radf = Pif / 180.0f; ///< Conversion degree to radian as float
+
+/**
+ * @brief the cosine of a radian angle
+ * @param[in] x the angle in radian
+ * @return the value of the cosine
+ */
+[[nodiscard]] float cos(const float& x);
+/**
+ * @overload
+ * @param[in] x the angle in radian
+ * @return the value of the cosine
+ */
+[[nodiscard]] double cos(const double& x);/**
+ * @brief the cosine of a radian angle
+ * @param[in] x the angle in degree
+ * @return the value of the cosine
+ */
+[[nodiscard]] float cosdeg(const float& x);
+/**
+ * @overload
+ * @param[in] x the angle in degree
+ * @return the value of the cosine
+ */
+[[nodiscard]] double cosdeg(const double& x);
+/**
+ * @brief the sine of a radian angle
+ * @param[in] x the angle in radian
+ * @return the value of the sine
+ */
+[[nodiscard]] float sin(const float& x);
+/**
+ * @overload
+ * @param[in] x the angle in radian
+ * @return the value of the sine
+ */
+[[nodiscard]] double sin(const double& x);
+/**
+ * @brief the sine of a radian angle
+ * @param[in] x the angle in degree
+ * @return the value of the sine
+ */
+[[nodiscard]] float sindeg(const float& x);
+/**
+ * @overload
+ * @param[in] x the angle in degree
+ * @return the value of the sine
+ */
+[[nodiscard]] double sindeg(const double& x);
+
 }
 

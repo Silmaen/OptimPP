@@ -28,8 +28,16 @@ struct Comparable
     ~Comparable<T>() = default; ///< default destructor
     Comparable<T>(const Comparable<T>&) = default; ///< default copy constructor
     Comparable<T>(Comparable<T>&&)noexcept = default; ///< default move constructor
-    Comparable<T>& operator=(const Comparable<T>&) = default; ///< default copy affectation
-    Comparable<T>& operator=(Comparable<T>&&)noexcept = default; ///< default move affectation
+    /**
+     * default copy affectation
+     * @return this object
+     */
+    Comparable<T>& operator=(const Comparable<T>&) = default; 
+    /**
+     * default move affectation
+     * @return this object
+     */
+    Comparable<T>& operator=(Comparable<T>&&)noexcept = default;
     /**
      * @brief equality operator
      * @param[in] other the other object to compare

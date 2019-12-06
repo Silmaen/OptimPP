@@ -4,6 +4,7 @@
 
 #pragma once
 #include <cinttypes>
+#include <string>
 
 /**
  * @brief namesapce of the whole project
@@ -33,6 +34,8 @@ typedef uint32_t u32;  // 0 to 4 294 967 295
 typedef uint16_t u16;  // 0 to 65 535
 /// @brief unsigned 8bit integer 
 typedef uint8_t  u8;   // 0 to 255
+/// @brief base string type
+typedef std::string string;
 
 // ------------------------------------------ BASE FCT ------------------------------------------
 // CLAMP

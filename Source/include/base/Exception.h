@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include <string>
 #include "ExitCode.h"
 
 namespace optim
@@ -22,28 +21,21 @@ public:
      *
      * the message is deduce from the ExitCode
      */
-    inline Exception(ExitCode::Value iErrCode) :  m_ErrorCode(iErrCode), m_Message(ToString(iErrCode)) {}
-    /**
-     * @brief Constructor by message
-     * @param[in] iMessage the message
-     *
-     * the ExitCode is then defaulted to 'GeneralError'
-     */
-    inline Exception(const std::string& iMessage) : m_ErrorCode(ExitCode::Value::GeneralError), m_Message(iMessage) {}
+//    inline Exception(ExitCode::Value iErrCode) : m_ErrorCode{ iErrCode }, m_Message(ToString(iErrCode)) {}
+    inline Exception(ExitCode::Value iErrCode) : m_ErrorCode{ iErrCode } {}
 
     /**
      * @brief retrieve the ExitCode
      * @return the ExitCode
      */
-    inline ExitCode::Value GetCode()const { return m_ErrorCode; }
+    inline ExitCode::Value GetCode()const noexcept { return m_ErrorCode; }
     /**
      * @brief retrieve the message
      * @return the message associated with Exception
      */
-    inline const std::string& what()const { return m_Message; }
+    inline string what()const noexcept { return ExitCode::ToString(m_ErrorCode); }
 private:
     ExitCode::Value m_ErrorCode; ///< the exit/error code 
-    std::string m_Message; ///< the associated message
 };
 
 }

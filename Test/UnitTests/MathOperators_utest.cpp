@@ -36,3 +36,18 @@ TEST(MathOperators, log2i)
     EXPECT_EQ(log2i(static_cast<u32>(1u<<16)), 16u);
     EXPECT_EQ(log2i(static_cast<u32>(1u<<30)), 30u);
 }
+
+TEST(MathOperators, sincos)
+{
+    float pi2f = 3.141592f / 2.f;
+    double pi2 = 3.141592653589793 / 2.0;
+    EXPECT_FLOAT_EQ( optim::sin(pi2f) , 1.0f);
+    EXPECT_DOUBLE_EQ( optim::sin(pi2), 1.0);
+    EXPECT_NEAR( optim::cos(pi2f), 0.0f,1e-6);
+    EXPECT_NEAR( optim::cos(pi2), 0.0,1e-15);
+    EXPECT_FLOAT_EQ(sindeg(90.0f), 1.0f);
+    EXPECT_DOUBLE_EQ(sindeg(90.0), 1.0);
+    EXPECT_NEAR(cosdeg(90.0f), 0.0f, 1e-6);
+    EXPECT_NEAR(cosdeg(90.0), 0.0, 1e-15);
+}
+
