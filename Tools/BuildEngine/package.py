@@ -8,7 +8,7 @@ os.chdir(buildDir)
 Parser = argparse.ArgumentParser()
 args = Parser.parse_args()
 
-zipname="optim++.zip"
+zipname="optimpp.zip"
 
 zipf = zipfile.ZipFile(zipname, 'w')
 foldertozip=["bin","doc"]
