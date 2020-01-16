@@ -1,3 +1,3 @@
 # Optim++ #
 
-Open source Shape Computation Program
+Open source Shape Computation Program and mathematics
