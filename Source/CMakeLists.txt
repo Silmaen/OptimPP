@@ -16,8 +16,8 @@ file(GLOB
     ${CMAKE_CURRENT_SOURCE_DIR}/include/*/*.h
     )
 
-# TODO: make this shared also for MSVC!
-if (OPP_COMPILER_MSVC)
+# TODO: make this shared also for windows!
+if (OPP_PLATFORM_WINDOWS)
 	add_library(optimpplib ${SRCS} ${LOCAL_INCLUDES})
 else ()
 	add_library(optimpplib SHARED ${SRCS} ${LOCAL_INCLUDES})
