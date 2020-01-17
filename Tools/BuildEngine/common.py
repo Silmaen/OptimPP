@@ -1,44 +1,29 @@
 # - encoding: UTF-8 -
-import platform
-import sys
-import argparse
-import subprocess
-import os
-import shutil
-import time
-import zipfile
+import platform, sys, argparse, subprocess, os, shutil, time, zipfile, copy
 
 SupportedCompiler = {"Windows":["MSVC","gcc/g++"],"OpenBSD":["egcc/eg++","clang/clang++"]}
-CompileModes = ["LOCAL","SERVER","BUILDER","COVERAGE","PROFILING"]
-
+SupportedCompilerShort = {"Windows":["MSVC","gcc"],"OpenBSD":["gcc","clang"]}
+Corresponding = {"WindowsMSVC":"MSVC","Windowsgcc":"gcc/g++","OpenBSDgcc":"egcc/eg++","OpenBSDclang":"clang/clang++"}
 OS = platform.system()
 MAX_RM_TRY=50
-
 if OS not in SupportedCompiler.keys():
     print("Unsupported OS: " + str(OS))
     sys.exit(1)
-
 Compilers = SupportedCompiler[OS]
-
+CompilersShort = SupportedCompilerShort[OS]
 srcRoot= os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+BuildEnginePath = os.path.dirname(os.path.abspath(__file__))
 buildDir=os.path.join(srcRoot,"Build")
+ActionList = ["generate","build","test","doc","package"]
+fullActionList = ["All"] + ActionList
+
+PytonExe = "python"
+if OS in ["OpenBSD"]:
+    PytonExe+="3"
 
 if os.getcwd() != srcRoot:
     #print("WARNING: not in the source's root directory",file=sys.stderr)
     os.chdir(srcRoot)
-
-from pathlib import Path
-def findMSBuild():
-    if platform.system()!="Windows":
-        return []
-    fileList=[]
-    # search in Program Files
-    for filename in Path(os.environ["ProgramFiles"]).rglob('MSBuild.exe'):
-        if "64" in str(filename):fileList.append(filename)
-    # search in Program Files x86
-    for filename in Path(os.environ["ProgramFiles(x86)"]).rglob('MSBuild.exe'):
-        if "64" in str(filename):fileList.append(filename)
-    return fileList
 
 def safeRmTree(path,checkExistance:bool=True):
     '''
@@ -62,14 +47,19 @@ def safeRmTree(path,checkExistance:bool=True):
 def runcommand(cmd:str):
     try:
         print(">>>"+cmd)
-        ret = subprocess.call(cmd,shell=True,stdout=sys.stdout,stderr=sys.stderr)
-        print("<<< "+str(ret))
+        ret = subprocess.run(cmd,shell=True,stdout=sys.stdout,stderr=sys.stderr).returncode
     except:
         print("errors!!")
-        sys.exit(1)
-    if ret !=0:
-        sys.exit(ret)
-    return
+        ret = -8
+    return ret;
+
+def runPython(pythonscript:str,params:list):
+    try: 
+        cmd = PytonExe+" "+pythonscript+" "+" ".join(params)
+    except:
+        print("bad Python command")
+        return -87
+    return runcommand(cmd)
 
 def getCPUNumber():
     try:

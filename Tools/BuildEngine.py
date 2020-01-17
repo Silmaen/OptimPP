@@ -1,30 +1,20 @@
 #!/usr/bin/env python3
 # - encoding: UTF-8 -
+from BuildEngine.common import *
 
-import os,argparse,platform,sys,copy
-
-srcRoot= os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BuildEnginePath = os.path.join(os.path.dirname(os.path.abspath(__file__)),"BuildEngine")
-
-SupportedCompiler = {"Windows":["MSVC","gcc"],"OpenBSD":["gcc","clang"]}
-Corresponding = {"WindowsMSVC":"MSVC","Windowsgcc":"gcc/g++","OpenBSDgcc":"egcc/eg++","OpenBSDclang":"clang/clang++"}
-
-ActionList = ["generate","build","test","doc","package"]
-
-fullActionList = ["All"] + ActionList
-
-OS = platform.system()
-if OS not in SupportedCompiler.keys():
-    print("Unsupported OS: " + str(OS))
-    sys.exit(1)
-Compilers = SupportedCompiler[OS]
-
-def generate(cc:str,debug:bool):
+def generate(cc:str,debug:bool,undefinedBehavior:bool, addressSanitizer:bool):
     if cc not in Corresponding:
         print("ERROR: unknown config compiler:"+cc)
         sys.exit(1)
     scr=os.path.join(BuildEnginePath,"generate.py")
-    return os.system("python3 "+scr+" -c "+Corresponding[cc]+[""," -g"][debug])
+    opt = ["-c "+Corresponding[cc]]
+    if debug:
+        opt += ["-g"]
+    if undefinedBehavior:
+        opt += ['-u']
+    if addressSanitizer:
+        opt += ['-a']
+    return runPython(scr,opt)
 
 def build(target:str):
     cmakelist=os.path.join(srcRoot,"Build","CMakeCache.txt")
@@ -32,10 +22,10 @@ def build(target:str):
         print("ERROR: unable to compile: please configure first")
         sys.exit(2);
     scr=os.path.join(BuildEnginePath,"compile.py")
-    opt=""
+    opt=[]
     if target not in [None,""]:
-        opt=" -t "+target
-    return os.system("python3 "+scr+opt)
+        opt+=["-t "+target]
+    return runPython(scr,opt)
 
 def testncover():
     cmakelist=os.path.join(srcRoot,"Build","CMakeCache.txt")
@@ -52,12 +42,11 @@ def testncover():
         scr=os.path.join(BuildEnginePath,"runtestcoverage.py")
     else:
         scr=os.path.join(BuildEnginePath,"runtest.py")
-    return os.system("python3 "+scr)
+    return runPython(scr,[])
 
 def documentation():
     scr=os.path.join(BuildEnginePath,"documentation.py")
-    opt=""
-    return os.system("python3 "+scr+opt)
+    return runPython(scr,[])
 
 def package():
     cmakelist=os.path.join(srcRoot,"Build","CMakeCache.txt")
@@ -65,27 +54,30 @@ def package():
         print("ERROR: unable to package: pleease configure first")
         sys.exit(2);
     scr=os.path.join(BuildEnginePath,"package.py")
-    return os.system("python3 "+scr)
+    return runPython(scr,[])
 
-def doAction(action,OSCompiler,Debug,Target):
+def doAction(action,OSCompiler,Debug,Target,undefinedBehavior):
     if action == "generate":
-        generate(OSCompiler,Debug)
+        return generate(OSCompiler,Debug,undefinedBehavior)
     elif action == "build":
-        build(Target)
+        return build(Target)
     elif action == "test":
-        testncover()
+        return testncover()
     elif action == "doc":
-        documentation()
+        return documentation()
     elif action == "package":
-        package()
+        return package()
     else:
         print("ERROR: Unknown Action: '"+action+"'")
+        return -98
 
 def main():
     Parser = argparse.ArgumentParser()
     Parser.add_argument("action",nargs='+',default=fullActionList[0],choices=fullActionList,help="what to do")
-    Parser.add_argument("-c","--compiler",type=str,choices=Compilers,default=Compilers[0],help="The compiler to be used")
+    Parser.add_argument("-c","--compiler",type=str,choices=CompilersShort,default=CompilersShort[0],help="The compiler to be used")
     Parser.add_argument("-g","--debug",action="store_true",help="If we should compile in Debug mode")
+    Parser.add_argument("--undefinedBehavior","-u",action="store_true",help="")
+    Parser.add_argument("--addressSanitizer","-a",action="store_true",help="")
     Parser.add_argument("-t","--target",type=str,help="The compiler target")
     args = Parser.parse_args()
     # filling up the todo list
@@ -98,7 +90,9 @@ def main():
                 todo.append(a)
     # execute the todo list
     for action in todo:
-        doAction(action,OS+args.compiler,args.debug,args.target)
+        ret = doAction(action, OS+args.compiler, args.debug, args.target, args.undefinedBehavior, args.addressSanitizer)
+        if ret != 0:
+            sys.exit(ret)
 
 if __name__ == "__main__":
     main()
