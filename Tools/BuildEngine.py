@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 # - encoding: UTF-8 -
 
-import os,argparse,platform,sys
+import os,argparse,platform,sys,copy
 
 srcRoot= os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BuildEnginePath = os.path.join(os.path.dirname(os.path.abspath(__file__)),"BuildEngine")
 
 SupportedCompiler = {"Windows":["MSVC","gcc"],"OpenBSD":["gcc","clang"]}
 Corresponding = {"WindowsMSVC":"MSVC","Windowsgcc":"gcc/g++","OpenBSDgcc":"egcc/eg++","OpenBSDclang":"clang/clang++"}
+
+ActionList = ["generate","build","test","doc","package"]
+
+fullActionList = ["All"] + ActionList
 
 OS = platform.system()
 if OS not in SupportedCompiler.keys():
@@ -63,45 +67,38 @@ def package():
     scr=os.path.join(BuildEnginePath,"package.py")
     return os.system("python3 "+scr)
 
-Parser = argparse.ArgumentParser()
-Parser.add_argument("action",type=str,choices=["all","generate","build","test","doc","package"],help="what to do")
-Parser.add_argument("-c","--compiler",type=str,choices=Compilers,default=Compilers[0],help="The compiler to be used")
-Parser.add_argument("-g","--debug",action="store_true",help="If we should compile in Debug mode")
-Parser.add_argument("-t","--target",type=str,help="The compiler target")
-args = Parser.parse_args()
-
-
-print("this file = " + __file__)
-print("source root = " + srcRoot)
-
-
-if args.action =="coverage":
-    gen=False
-    ccache=os.path.join(srcRoot,"Build","CMakeCache.txt")
-    if not os.path.exists(ccache):
-        gen=True
+def doAction(action,OSCompiler,Debug,Target):
+    if action == "generate":
+        generate(OSCompiler,Debug)
+    elif action == "build":
+        build(Target)
+    elif action == "test":
+        testncover()
+    elif action == "doc":
+        documentation()
+    elif action == "package":
+        package()
     else:
-        f=open(ccache,"r")
-        lines=f.readlines()
-        f.close()
-        for line in lines:
-            if not  line.startswith("CMAKE_CXX_COMPILER"):
-                continue
-            if "g++" not in line:
-                gen=False
-            break
-    if gen:
-        generate(OS+"gcc")
-    build("cg_unit_test")==0
-    testncover()
+        print("ERROR: Unknown Action: '"+action+"'")
 
-if args.action in ["generate","all"]:
-    generate(OS+args.compiler,args.debug)
-if args.action in ["build","all"]:
-    build(args.target)
-if args.action in ["test","all"]:
-    testncover()
-if args.action in ["doc","all"]:
-    documentation()
-if args.action in ["package","all"]:
-    package()
+def main():
+    Parser = argparse.ArgumentParser()
+    Parser.add_argument("action",nargs='+',default=fullActionList[0],choices=fullActionList,help="what to do")
+    Parser.add_argument("-c","--compiler",type=str,choices=Compilers,default=Compilers[0],help="The compiler to be used")
+    Parser.add_argument("-g","--debug",action="store_true",help="If we should compile in Debug mode")
+    Parser.add_argument("-t","--target",type=str,help="The compiler target")
+    args = Parser.parse_args()
+    # filling up the todo list
+    todo = []
+    if "all" in args.action:
+        todo = copy.deepcopy(ActionList)
+    else:
+        for a in ActionList:
+            if a in args.action:
+                todo.append(a)
+    # execute the todo list
+    for action in todo:
+        doAction(action,OS+args.compiler,args.debug,args.target)
+
+if __name__ == "__main__":
+    main()

@@ -16,7 +16,12 @@ file(GLOB
     ${CMAKE_CURRENT_SOURCE_DIR}/include/*/*.h
     )
 
-add_library(optimpplib SHARED ${SRCS} ${LOCAL_INCLUDES})
+# TODO: make this shared also for MSVC!
+if (OPP_COMPILER_MSVC)
+	add_library(optimpplib ${SRCS} ${LOCAL_INCLUDES})
+else ()
+	add_library(optimpplib SHARED ${SRCS} ${LOCAL_INCLUDES})
+endif ()
 
 target_include_directories(optimpplib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include/)
 
