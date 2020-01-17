@@ -17,5 +17,6 @@ add_executable(optimpp_unit_test ${SRCS})
 target_include_directories(optimpp_unit_test PUBLIC ${OPTIM_ROOT_DIR}/Source/include/)
 target_link_libraries(optimpp_unit_test gtest gtest_main optimpplib)
 
-add_test(optimpp_UTests ./optimpp_unit_test  --gtest_output=xml:test/UTest_Report.xml)
+add_test(optimpp_UnitTests ./optimpp_unit_test  --gtest_output=xml:test/UnitTest_Report.xml --gtest_filter=*:-:*LongTest*)
+add_test(optimpp_LongTests ./optimpp_unit_test  --gtest_output=xml:test/LongTest_Report.xml --gtest_filter=*LongTest*)
 set_tests_properties(optimpp_UTests PROPERTIES TIMEOUT 3600)

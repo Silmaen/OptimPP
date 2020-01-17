@@ -1,12 +1,19 @@
-################################################ TECHNODIGIT ##############################################
-## This file is part of the 3DReshaper technology software and is a proprietary information of TECHNODIGIT.
-## Do NOT reproduce or disclose this file without TECHNODIGIT written consent.
-###########################################################################################################
+# Defining helper variables
+if (MSVC) # MSVC
+	set(OPP_COMPILER_MSVC ON)
+elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang") # Clang
+	set(OPP_COMPILER_CLANG ON)
+elseif (CMAKE_CXX_COMPILER_ID MATCHES "GNU") # GCC
+	set(OPP_COMPILER_GCC ON)
+endif ()
 
-
-###############################################################################
-## 3DReshaper common CXX flags
-###############################################################################
+if (WIN32 OR CYGWIN)
+	set(OPP_PLATFORM_WINDOWS ON)
+elseif (APPLE)
+	set(OPP_PLATFORM_MAC ON)
+elseif (UNIX)
+	set(OPP_PLATFORM_LINUX ON)
+endif ()
 
 # Defining helper variables
 if (MSVC) # MSVC
@@ -90,3 +97,25 @@ string(REPLACE ";" " " OPP_CXX_FLAGS_COMMON "${OPP_CXX_FLAGS_COMMON}")
 
 # Enable the debug Windows macro in Debug build type
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
+
+# Allowing to enable clang-tidy if compiling with Clang
+if (OPP_COMPILER_CLANG)
+	option(ENABLE_CLANG_TIDY "Enable clang-tidy" OFF)
+
+	if (ENABLE_CLANG_TIDY)
+		set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # To produce compilation commands to be used by clang-tidy
+
+		if (OPP_PLATFORM_WINDOWS)
+			set(CLANG_TIDY_EXECUTABLE "${CMAKE_HOME_DIRECTORY}/Tools/clang/clang-tidy.exe")
+		else ()
+			set(CLANG_TIDY_EXECUTABLE "clang-tidy")
+		endif ()
+
+		set(
+			CMAKE_CXX_CLANG_TIDY
+
+			"${CLANG_TIDY_EXECUTABLE}"
+			-p "${CMAKE_BINARY_DIR}"
+		)
+	endif ()
+endif ()

@@ -22,3 +22,15 @@ if (MSVC)
 	)
 endif ()
 
+if (NOT MSVC)
+	# add this flag required for TBB on Linux with gcc > c+11
+	add_compile_definitions(__GXX_EXPERIMENTAL_CXX0X__)
+	add_compile_options(-Wno-deprecated-declarations)
+
+	link_directories(${TBB_ROOT_DIR}/lib/intel64/gcc4.7)
+else ()
+	
+endif ()
+
+# add this flag to set the test files
+add_compile_definitions(ROOT_TEST_FILE_PATH="${OPTIM_ROOT_DIR}")

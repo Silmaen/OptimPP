@@ -16,7 +16,8 @@ file(GLOB
     ${CMAKE_CURRENT_SOURCE_DIR}/include/*/*.h
     )
 
-add_library(optimpplib ${SRCS} ${LOCAL_INCLUDES})
+add_library(optimpplib SHARED ${SRCS} ${LOCAL_INCLUDES})
+
 target_include_directories(optimpplib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include/)
 
 set_target_properties(optimpplib
