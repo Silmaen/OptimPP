@@ -108,7 +108,7 @@ set(CMAKE_INSTALL_PREFIX ${PROJECT_BUILD_DIR}/Install)
 foreach (cfg "DEBUG" "RELEASE" "MINSIZEREL" "RELWITHDEBINFO")
 	set (CMAKE_CXX_FLAGS_${cfg} "${CMAKE_CXX_FLAGS_${cfg}} ${OPP_CXX_FLAGS_COMMON}")
 endforeach ()
- Sanitizers
+# Sanitizers
 option(ENABLE_ADDRESS_SANITIZER "Enable AddressSanitizer (only in debug under linux)" OFF)
 option(ENABLE_UNDEFINED_BEHAVIOR_SANITIZER "Enable UndefinedBehavior (only in debug under linux)" OFF)
 

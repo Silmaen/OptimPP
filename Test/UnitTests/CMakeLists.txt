@@ -19,4 +19,5 @@ target_link_libraries(optimpp_unit_test gtest gtest_main optimpplib)
 
 add_test(optimpp_UnitTests ./optimpp_unit_test  --gtest_output=xml:test/UnitTest_Report.xml --gtest_filter=*:-:*LongTest*)
 add_test(optimpp_LongTests ./optimpp_unit_test  --gtest_output=xml:test/LongTest_Report.xml --gtest_filter=*LongTest*)
-set_tests_properties(optimpp_UTests PROPERTIES TIMEOUT 3600)
+set_tests_properties(optimpp_UnitTests PROPERTIES TIMEOUT 3600)
+set_tests_properties(optimpp_LongTests PROPERTIES TIMEOUT 10800)
