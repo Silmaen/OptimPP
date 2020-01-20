@@ -24,14 +24,20 @@ if args.staticAnalysis:
 
 ret = runcommand(cmd)
 
-os.chdir(srcRoot)
-
 if args.staticAnalysis:
 #    if ret == 0:
 #        os.makedirs(os.path.join(staticanalysisdir,"noerror"))
 #        fp = open(os.path.join(staticanalysisdir,"noerror","index.html"),"w")
 #        fp.write("No bug found!! yes!")
 #        fp.close()
+    zipf = zipfile.ZipFile("StaticAnalysis.zip", 'w')
+    os.chdir("static-analysis")
+    os.chdir(os.listdir(".")[-1])
+    for f in os.listdir("."):
+        zipf.write(f)
+    zipf.close()
     ret = 0
+
+os.chdir(srcRoot)
 print(" *** return code = "+str(ret) )
 sys.exit(ret)

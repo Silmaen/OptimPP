@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # - encoding: UTF-8 -
 from common import *
-import zipfile
-import datetime
 os.chdir(buildDir)
 
 Parser = argparse.ArgumentParser()
