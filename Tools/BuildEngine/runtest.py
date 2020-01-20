@@ -21,7 +21,7 @@ for s in subcmd:
 
 gcnodir = os.path.join(buildDir,"Test","UnitTests","CMakeFiles","optimpp_unit_test.dir")
 doCoverage=False
-if os.path.exists(gcnodir) and if OS != "Windows"::
+if os.path.exists(gcnodir) and OS != "Windows":
     list = os.listdir(gcnodir)
     for f in list:
         if f.endswith(".gcno"):
