@@ -15,7 +15,7 @@ cmd=cmdT+" -V -D Experimental"
 os.chdir(buildDir)
 for s in subcmd:
     ret = runcommand(cmd+s)
-    if ret != o:
+    if ret != 0:
         print(" *** /!\\ return code = "+str(ret) )
         sys.exit(ret)
 
