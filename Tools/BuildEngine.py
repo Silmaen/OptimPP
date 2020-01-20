@@ -58,9 +58,9 @@ def package():
     scr=os.path.join(BuildEnginePath,"package.py")
     return runPython(scr,[])
 
-def doAction(action,OSCompiler,Debug,Target,undefinedBehavior, staticAnalysis):
+def doAction(action,OSCompiler,Debug,Target, staticAnalysis):
     if action == "generate":
-        return generate(OSCompiler,Debug,undefinedBehavior, staticAnalysis)
+        return generate(OSCompiler,Debug, staticAnalysis)
     elif action == "build":
         return build(Target, staticAnalysis)
     elif action == "test":
