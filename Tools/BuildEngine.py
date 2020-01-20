@@ -2,7 +2,7 @@
 # - encoding: UTF-8 -
 from BuildEngine.common import *
 
-def generate(cc:str,debug:bool,undefinedBehavior:bool, staticAnalysis:bool):
+def generate(cc:str,debug:bool,staticAnalysis:bool):
     if cc not in Corresponding:
         print("ERROR: unknown config compiler:"+cc)
         sys.exit(1)
@@ -13,8 +13,6 @@ def generate(cc:str,debug:bool,undefinedBehavior:bool, staticAnalysis:bool):
         opt = ["-c "+Corresponding[cc]]
         if debug:
             opt += ["-g"]
-        if undefinedBehavior:
-            opt += ['-u']
     return runPython(scr,opt)
 
 def build(target:str, staticAnalysis:bool):
@@ -81,7 +79,6 @@ def main():
     Parser.add_argument("-c","--compiler",type=str,choices=CompilersShort,default=CompilersShort[0],help="The compiler to be used")
     Parser.add_argument("-g","--debug",action="store_true",help="If we should compile in Debug mode")
     Parser.add_argument("-s","--staticAnalysis",action="store_true",help="If we should do the static analysis")
-    Parser.add_argument("--undefinedBehavior","-u",action="store_true",help="")
     Parser.add_argument("-t","--target",type=str,help="The compiler target")
     args = Parser.parse_args()
     # filling up the todo list
@@ -98,7 +95,7 @@ def main():
                 todo.append(a)
     # execute the todo list
     for action in todo:
-        ret = doAction(action, OS+args.compiler, args.debug, args.target, args.undefinedBehavior, args.staticAnalysis)
+        ret = doAction(action, OS+args.compiler, args.debug, args.target, args.staticAnalysis)
         if ret != 0:
             sys.exit(ret)
     # Final message
