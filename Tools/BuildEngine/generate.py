@@ -25,25 +25,30 @@ if OS == "Windows":
 else:
     cmd="cmake"
 cmd+=" -S "+srcRoot+" -B "+buildDir
-if args.compiler != "MSVC":
-    c,cxx= args.compiler.split("/")
-    if OS == "Windows":
-        if shutil.which("sh") is not None:
-            cmd+=' -G "MSYS Makefiles"'
-        else:
-            cmd+=' -G "MinGW Makefiles"'
-    cmd+=" -DCMAKE_C_COMPILER="+c+" -DCMAKE_CXX_COMPILER="+cxx
+if args.staticAnalysis and OS == "OpenBSD":
+    cmd = "scan-build " +ScanbuildParam + " " + cmd
 else:
-    cmd+=" -DCMAKE_GENERATOR_PLATFORM=x64"
-cmd+=btype
-
-if args.undefinedBehavior:
-    cmd=cmd+" -DENABLE_UNDEFINED_BEHAVIOR_SANITIZER=ON"
-if args.addressSanitizer:
-    cmd=cmd+" -DENABLE_ADDRESS_SANITIZER=ON"
-
-if args.staticAnalysis:
-    cmd = "scan-build --use-cc=clang --use-c++=clang++ -o static-analysis " + cmd
+    if args.compiler != "MSVC":
+        c,cxx= args.compiler.split("/")
+        if OS == "Windows":
+            if shutil.which("sh") is not None:
+                cmd+=' -G "MSYS Makefiles"'
+            else:
+                cmd+=' -G "MinGW Makefiles"'
+        cmd+=" -DCMAKE_C_COMPILER="+c+" -DCMAKE_CXX_COMPILER="+cxx
+        if "clang" in c:
+            if args.undefinedBehavior:
+                cmd=cmd+" -DENABLE_UNDEFINED_BEHAVIOR_SANITIZER=ON"
+            elif args.addressSanitizer:
+                cmd=cmd+" -DENABLE_ADDRESS_SANITIZER=ON"
+    else:
+        cmd+=" -DCMAKE_GENERATOR_PLATFORM=x64"
+    cmd+=btype
 
 # execute CMake command
-runcommand(cmd)
+ret = runcommand(cmd)
+
+if args.staticAnalysis:
+    ret = 0
+print(" *** return code = "+str(ret) )
+sys.exit(ret)

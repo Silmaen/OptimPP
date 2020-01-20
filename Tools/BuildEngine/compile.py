@@ -20,9 +20,18 @@ if nbc>1:
     cmd+=" -j"+str(nbc)
 
 if args.staticAnalysis:
-    cmd = "scan-build --use-cc=clang --use-c++=clang++ -o static-analysis " + cmd
+    cmd = "scan-build " + ScanbuildParam + " make -j" + str(nbc)
 
-runcommand(cmd)
+ret = runcommand(cmd)
 
 os.chdir(srcRoot)
 
+if args.staticAnalysis:
+#    if ret == 0:
+#        os.makedirs(os.path.join(staticanalysisdir,"noerror"))
+#        fp = open(os.path.join(staticanalysisdir,"noerror","index.html"),"w")
+#        fp.write("No bug found!! yes!")
+#        fp.close()
+    ret = 0
+print(" *** return code = "+str(ret) )
+sys.exit(ret)

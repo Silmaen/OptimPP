@@ -7,15 +7,16 @@ def generate(cc:str,debug:bool,undefinedBehavior:bool, addressSanitizer:bool, st
         print("ERROR: unknown config compiler:"+cc)
         sys.exit(1)
     scr=os.path.join(BuildEnginePath,"generate.py")
-    opt = ["-c "+Corresponding[cc]]
-    if debug:
-        opt += ["-g"]
-    if undefinedBehavior:
-        opt += ['-u']
-    if addressSanitizer:
-        opt += ['-a']
     if staticAnalysis:
-        opt += ['-s']
+        opt = ['-s']
+    else:
+        opt = ["-c "+Corresponding[cc]]
+        if debug:
+            opt += ["-g"]
+        if undefinedBehavior:
+            opt += ['-u']
+        if addressSanitizer:
+            opt += ['-a']
     return runPython(scr,opt)
 
 def build(target:str, staticAnalysis:bool):
@@ -25,10 +26,11 @@ def build(target:str, staticAnalysis:bool):
         sys.exit(2);
     scr=os.path.join(BuildEnginePath,"compile.py")
     opt=[]
-    if target not in [None,""]:
-        opt+=["-t "+target]
     if staticAnalysis:
         opt += ['-s']
+    else:
+        if target not in [None,""]:
+            opt+=["-t "+target]
     return runPython(scr,opt)
 
 def testncover():
@@ -86,8 +88,12 @@ def main():
     Parser.add_argument("-t","--target",type=str,help="The compiler target")
     args = Parser.parse_args()
     # filling up the todo list
+    
     todo = []
-    if "All" in args.action:
+    if args.staticAnalysis:
+        todo.append("generate")
+        todo.append("build")
+    elif "All" in args.action:
         todo = copy.deepcopy(ActionList)
     else:
         for a in ActionList:
@@ -98,6 +104,8 @@ def main():
         ret = doAction(action, OS+args.compiler, args.debug, args.target, args.undefinedBehavior, args.addressSanitizer, args.staticAnalysis)
         if ret != 0:
             sys.exit(ret)
+    # Final message
+    print("Everything ends up quite well!")
 
 if __name__ == "__main__":
     main()

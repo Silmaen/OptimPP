@@ -5,8 +5,7 @@ project(optimpp)
 file(
 	GLOB
 	SRCS
-	
-	${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp
+
 	${CMAKE_CURRENT_SOURCE_DIR}/source/*/*.cpp
 )
 

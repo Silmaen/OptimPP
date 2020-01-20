@@ -14,7 +14,10 @@ cmd=cmdT+" -V -D Experimental"
 #run
 os.chdir(buildDir)
 for s in subcmd:
-    runcommand(cmd+s)
+    ret = runcommand(cmd+s)
+    if ret != o:
+        print(" *** /!\\ return code = "+str(ret) )
+        sys.exit(ret)
 
 gcnodir = os.path.join(buildDir,"Test","UnitTests","CMakeFiles","optimpp_unit_test.dir")
 doCoverage=False
@@ -36,7 +39,7 @@ if (doCoverage):
     else:
         cmdGcov="gcov"
 
-    runcommand('gcovr -r  ../.. -o index.html --html-details -bup -e "(.+/)?Test(.+/)?" --gcov-executable '+cmdGcov+' --exclude-unreachable-branches ../Test/UnitTests/CMakeFiles/optimpp_unit_test.dir ../Source/CMakeFiles/optimpplib.dir')
+    ret = runcommand('gcovr -r  ../.. -o index.html --html-details -bup -e "(.+/)?Test(.+/)?" --gcov-executable '+cmdGcov+' --exclude-unreachable-branches ../Test/UnitTests/CMakeFiles/optimpp_unit_test.dir ../Source/CMakeFiles/optimpplib.dir')
     with zipfile.ZipFile('coverage.zip', 'w') as myzip:
         for file in os.listdir("."):
             if not file.endswith(".html"):
@@ -45,3 +48,7 @@ if (doCoverage):
     shutil.move('coverage.zip','../coverage.zip')
 
     os.chdir(srcRoot)
+    
+
+print(" *** return code = "+str(ret) )
+sys.exit(ret)

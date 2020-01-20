@@ -5,7 +5,7 @@
 #include <iostream>
 
 int main(int argc,char** argv){
-	std::cout << argc << argv[0] << std::endl; // only to set 'used' the parameters
+    std::cout << argc << argv[0] << std::endl; // only to set 'used' the parameters
     return 0;
 }
 
