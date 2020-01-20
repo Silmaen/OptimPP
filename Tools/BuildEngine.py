@@ -2,7 +2,7 @@
 # - encoding: UTF-8 -
 from BuildEngine.common import *
 
-def generate(cc:str,debug:bool,undefinedBehavior:bool, addressSanitizer:bool, staticAnalysis:bool):
+def generate(cc:str,debug:bool,undefinedBehavior:bool, staticAnalysis:bool):
     if cc not in Corresponding:
         print("ERROR: unknown config compiler:"+cc)
         sys.exit(1)
@@ -15,8 +15,6 @@ def generate(cc:str,debug:bool,undefinedBehavior:bool, addressSanitizer:bool, st
             opt += ["-g"]
         if undefinedBehavior:
             opt += ['-u']
-        if addressSanitizer:
-            opt += ['-a']
     return runPython(scr,opt)
 
 def build(target:str, staticAnalysis:bool):
@@ -62,9 +60,9 @@ def package():
     scr=os.path.join(BuildEnginePath,"package.py")
     return runPython(scr,[])
 
-def doAction(action,OSCompiler,Debug,Target,undefinedBehavior, addressSanitizer, staticAnalysis):
+def doAction(action,OSCompiler,Debug,Target,undefinedBehavior, staticAnalysis):
     if action == "generate":
-        return generate(OSCompiler,Debug,undefinedBehavior, addressSanitizer, staticAnalysis)
+        return generate(OSCompiler,Debug,undefinedBehavior, staticAnalysis)
     elif action == "build":
         return build(Target, staticAnalysis)
     elif action == "test":
@@ -84,7 +82,6 @@ def main():
     Parser.add_argument("-g","--debug",action="store_true",help="If we should compile in Debug mode")
     Parser.add_argument("-s","--staticAnalysis",action="store_true",help="If we should do the static analysis")
     Parser.add_argument("--undefinedBehavior","-u",action="store_true",help="")
-    Parser.add_argument("--addressSanitizer","-a",action="store_true",help="")
     Parser.add_argument("-t","--target",type=str,help="The compiler target")
     args = Parser.parse_args()
     # filling up the todo list
@@ -101,7 +98,7 @@ def main():
                 todo.append(a)
     # execute the todo list
     for action in todo:
-        ret = doAction(action, OS+args.compiler, args.debug, args.target, args.undefinedBehavior, args.addressSanitizer, args.staticAnalysis)
+        ret = doAction(action, OS+args.compiler, args.debug, args.target, args.undefinedBehavior, args.staticAnalysis)
         if ret != 0:
             sys.exit(ret)
     # Final message

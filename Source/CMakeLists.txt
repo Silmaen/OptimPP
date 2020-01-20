@@ -19,7 +19,7 @@ file(GLOB
 if (OPP_PLATFORM_WINDOWS)
 	add_library(optimpplib ${SRCS} ${LOCAL_INCLUDES})
 else ()
-	add_library(optimpplib SHARED ${SRCS} ${LOCAL_INCLUDES})
+	add_library(optimpplib ${SRCS} ${LOCAL_INCLUDES})
 endif ()
 
 target_include_directories(optimpplib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include/)

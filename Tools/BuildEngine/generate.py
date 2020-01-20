@@ -7,7 +7,6 @@ Parser.add_argument("-c","--compiler",type=str,choices=Compilers,default=Compile
 Parser.add_argument("-g","--debug",action="store_true",help="If we should compile in Debug mode")
 Parser.add_argument("-s","--staticAnalysis",action="store_true",help="If we should do the static analysis")
 Parser.add_argument("--undefinedBehavior","-u",action="store_true",help="")
-Parser.add_argument("--addressSanitizer","-a",action="store_true",help="")
 args = Parser.parse_args()
 
 # remove all previous build before create build directory
@@ -36,11 +35,10 @@ else:
             else:
                 cmd+=' -G "MinGW Makefiles"'
         cmd+=" -DCMAKE_C_COMPILER="+c+" -DCMAKE_CXX_COMPILER="+cxx
+        cmd+=" -DENABLE_CODE_COVERAGE=ON"
         if "clang" in c:
             if args.undefinedBehavior:
                 cmd=cmd+" -DENABLE_UNDEFINED_BEHAVIOR_SANITIZER=ON"
-            elif args.addressSanitizer:
-                cmd=cmd+" -DENABLE_ADDRESS_SANITIZER=ON"
     else:
         cmd+=" -DCMAKE_GENERATOR_PLATFORM=x64"
     cmd+=btype

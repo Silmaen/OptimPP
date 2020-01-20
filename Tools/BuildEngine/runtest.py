@@ -39,7 +39,7 @@ if (doCoverage):
     else:
         cmdGcov="gcov"
 
-    ret = runcommand('gcovr -r  ../.. -o index.html --html-details -bup -e "(.+/)?Test(.+/)?" --gcov-executable '+cmdGcov+' --exclude-unreachable-branches ../Test/UnitTests/CMakeFiles/optimpp_unit_test.dir ../Source/CMakeFiles/optimpplib.dir')
+    ret = runcommand('gcovr -r  ../.. -o index.html --html-details -bup -e "(.+/)?Test(.+/)?" -e "(.+/)?main.cpp(.+/)?" --gcov-executable '+cmdGcov+' --exclude-unreachable-branches ../Test/UnitTests ../Source')
     with zipfile.ZipFile('coverage.zip', 'w') as myzip:
         for file in os.listdir("."):
             if not file.endswith(".html"):
