@@ -1,44 +1,143 @@
 # - encoding: UTF-8 -
-import platform
-import sys
-import argparse
-import subprocess
-import os
-import shutil
-import time
-import zipfile
+import platform, sys, argparse, subprocess, os, shutil, time, zipfile, copy, datetime
 
 SupportedCompiler = {"Windows":["MSVC","gcc/g++"],"OpenBSD":["egcc/eg++","clang/clang++"]}
-CompileModes = ["LOCAL","SERVER","BUILDER","COVERAGE","PROFILING"]
-
+SupportedCompilerShort = {"Windows":["MSVC","gcc"],"OpenBSD":["gcc","clang"]}
+Corresponding = {"WindowsMSVC":"MSVC","Windowsgcc":"gcc/g++","OpenBSDgcc":"egcc/eg++","OpenBSDclang":"clang/clang++"}
 OS = platform.system()
 MAX_RM_TRY=50
-
 if OS not in SupportedCompiler.keys():
     print("Unsupported OS: " + str(OS))
     sys.exit(1)
-
 Compilers = SupportedCompiler[OS]
-
+CompilersShort = SupportedCompilerShort[OS]
 srcRoot= os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+BuildEnginePath = os.path.dirname(os.path.abspath(__file__))
 buildDir=os.path.join(srcRoot,"Build")
+ActionList = ["generate","build","test","doc","package"]
+fullActionList = ["All"] + ActionList
+staticanalysisdir=os.path.join(buildDir, "static-analysis")
+
+scanbuildcheckers =[
+"alpha.clone.CloneChecker",
+"alpha.core.BoolAssignment",
+"alpha.core.CallAndMessageUnInitRefArg",
+"alpha.core.CastSize",
+"alpha.core.CastToStruct",
+"alpha.core.Conversion",
+"alpha.core.DynamicTypeChecker",
+"alpha.core.FixedAddr",
+"alpha.core.IdenticalExpr",
+"alpha.core.PointerArithm",
+"alpha.core.PointerSub",
+"alpha.core.SizeofPtr",
+"alpha.core.StackAddressAsyncEscape",
+"alpha.core.TestAfterDivZero",
+"alpha.cplusplus.DeleteWithNonVirtualDtor",
+"alpha.cplusplus.EnumCastOutOfRange",
+"alpha.cplusplus.InvalidatedIterator",
+"alpha.cplusplus.MismatchedIterator",
+"alpha.cplusplus.UninitializedObject",
+#"alpha.deadcode.UnreachableCode",
+"alpha.llvm.Conventions",
+"alpha.security.ArrayBound",
+"alpha.security.ArrayBoundV2",
+"alpha.security.MallocOverflow",
+"alpha.security.MmapWriteExec",
+"alpha.security.ReturnPtrRange",
+"alpha.security.taint.TaintPropagation",
+"alpha.unix.BlockInCriticalSection",
+"alpha.unix.Chroot",
+"alpha.unix.PthreadLock",
+"alpha.unix.SimpleStream",
+"alpha.unix.Stream",
+"alpha.unix.cstring.BufferOverlap",
+"alpha.unix.cstring.NotNullTerminated",
+"alpha.unix.cstring.OutOfBounds",
+#"apiModeling.StdCLibraryFunctions",
+#"apiModeling.TrustNonnull",
+#"apiModeling.google.GTest",
+"core.CallAndMessage",
+"core.DivideZero",
+"core.DynamicTypePropagation",
+"core.NonNullParamChecker",
+"core.NonnilStringConstants",
+"core.NullDereference",
+"core.StackAddressEscape",
+"core.UndefinedBinaryOperatorResult",
+"core.VLASize",
+"core.builtin.BuiltinFunctions",
+"core.builtin.NoReturnFunctions",
+"core.uninitialized.ArraySubscript",
+"core.uninitialized.Assign",
+"core.uninitialized.Branch",
+"core.uninitialized.CapturedBlockVariable",
+"core.uninitialized.UndefReturn",
+"cplusplus.InnerPointer",
+"cplusplus.Move",
+"cplusplus.NewDelete",
+"cplusplus.NewDeleteLeaks",
+"cplusplus.SelfAssignment",
+"deadcode.DeadStores",
+#"debug.AnalysisOrder",
+#"debug.ConfigDumper",
+#"debug.DumpCFG",
+#"debug.DumpCallGraph",
+#"debug.DumpCalls",
+#"debug.DumpDominators",
+#"debug.DumpLiveStmts",
+#"debug.DumpLiveVars",
+#"debug.DumpTraversal",
+#"debug.ExprInspection",
+#"debug.Stats",
+#"debug.TaintTest",
+#"debug.ViewCFG",
+#"debug.ViewCallGraph",
+#"debug.ViewExplodedGraph",
+"nullability.NullPassedToNonnull",
+"nullability.NullReturnedFromNonnull",
+"nullability.NullableDereferenced",
+"nullability.NullablePassedToNonnull",
+"nullability.NullableReturnedFromNonnull",
+"optin.cplusplus.VirtualCall",
+#"optin.mpi.MPI-Checker",
+"optin.performance.GCDAntipattern",
+"optin.performance.Padding",
+"optin.portability.UnixAPI",
+"security.FloatLoopCounter",
+"security.insecureAPI.UncheckedReturn",
+"security.insecureAPI.bcmp",
+"security.insecureAPI.bcopy",
+"security.insecureAPI.bzero",
+"security.insecureAPI.getpw",
+"security.insecureAPI.gets",
+"security.insecureAPI.mkstemp",
+"security.insecureAPI.mktemp",
+"security.insecureAPI.rand",
+"security.insecureAPI.strcpy",
+"security.insecureAPI.vfork",
+"unix.API",
+"unix.Malloc",
+"unix.MallocSizeof",
+"unix.MismatchedDeallocator",
+"unix.Vfork",
+"unix.cstring.BadSizeArg",
+"unix.cstring.NullArg",
+"valist.CopyToSelf",
+"valist.Uninitialized",
+"valist.Unterminated",
+]
+
+ScanbuildParam="-v -k --use-analyzer=/usr/local/bin/clang --use-cc=/usr/local/bin/clang --use-c++=/usr/local/bin/clang++  --status-bugs -o " + staticanalysisdir
+ScanbuildParam+=" -enable-checker " + ",".join(scanbuildcheckers) + " --exclude Test"
+
+PytonExe = "python"
+if OS in ["OpenBSD"]:
+    PytonExe+="3"
 
 if os.getcwd() != srcRoot:
     #print("WARNING: not in the source's root directory",file=sys.stderr)
     os.chdir(srcRoot)
-
-from pathlib import Path
-def findMSBuild():
-    if platform.system()!="Windows":
-        return []
-    fileList=[]
-    # search in Program Files
-    for filename in Path(os.environ["ProgramFiles"]).rglob('MSBuild.exe'):
-        if "64" in str(filename):fileList.append(filename)
-    # search in Program Files x86
-    for filename in Path(os.environ["ProgramFiles(x86)"]).rglob('MSBuild.exe'):
-        if "64" in str(filename):fileList.append(filename)
-    return fileList
 
 def safeRmTree(path,checkExistance:bool=True):
     '''
@@ -62,14 +161,19 @@ def safeRmTree(path,checkExistance:bool=True):
 def runcommand(cmd:str):
     try:
         print(">>>"+cmd)
-        ret = subprocess.call(cmd,shell=True,stdout=sys.stdout,stderr=sys.stderr)
-        print("<<< "+str(ret))
+        ret = subprocess.run(cmd,shell=True,stdout=sys.stdout,stderr=sys.stderr).returncode
     except:
         print("errors!!")
-        sys.exit(1)
-    if ret !=0:
-        sys.exit(ret)
-    return
+        ret = -8
+    return ret;
+
+def runPython(pythonscript:str,params:list):
+    try: 
+        cmd = PytonExe+" "+pythonscript+" "+" ".join(params)
+    except:
+        print("bad Python command")
+        return -87
+    return runcommand(cmd)
 
 def getCPUNumber():
     try:

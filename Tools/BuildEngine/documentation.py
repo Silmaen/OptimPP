@@ -11,6 +11,9 @@ doxyfile=os.path.join(srcRoot,"doc","Doxyfile")
 cc = os.getcwd()
 os.chdir(srcRoot)
 # TODO: check for doxygen command!
-runcommand("doxygen "+doxyfile)
+ret = runcommand("doxygen "+doxyfile)
 
 os.chdir(cc)
+
+print(" *** return code = "+str(ret) )
+sys.exit(ret)

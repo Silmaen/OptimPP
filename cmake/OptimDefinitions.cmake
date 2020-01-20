@@ -22,3 +22,13 @@ if (MSVC)
 	)
 endif ()
 
+if (NOT MSVC)
+	# add this flag required for TBB on Linux with gcc > c+11
+	add_compile_definitions(__GXX_EXPERIMENTAL_CXX0X__)
+	add_compile_options(-Wno-deprecated-declarations)
+else ()
+	set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS 1)
+endif ()
+
+# add this flag to set the test files
+add_compile_definitions(ROOT_TEST_FILE_PATH="${OPTIM_ROOT_DIR}")

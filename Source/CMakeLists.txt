@@ -5,8 +5,7 @@ project(optimpp)
 file(
 	GLOB
 	SRCS
-	
-	${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp
+
 	${CMAKE_CURRENT_SOURCE_DIR}/source/*/*.cpp
 )
 
@@ -16,7 +15,13 @@ file(GLOB
     ${CMAKE_CURRENT_SOURCE_DIR}/include/*/*.h
     )
 
-add_library(optimpplib ${SRCS} ${LOCAL_INCLUDES})
+# TODO: make this shared also for windows!
+if (OPP_PLATFORM_WINDOWS)
+	add_library(optimpplib ${SRCS} ${LOCAL_INCLUDES})
+else ()
+	add_library(optimpplib ${SRCS} ${LOCAL_INCLUDES})
+endif ()
+
 target_include_directories(optimpplib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include/)
 
 set_target_properties(optimpplib
