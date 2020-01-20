@@ -5,6 +5,7 @@ from common import *
 Parser = argparse.ArgumentParser()
 Parser.add_argument("-c","--compiler",type=str,choices=Compilers,default=Compilers[0],help="The compiler to be used")
 Parser.add_argument("-g","--debug",action="store_true",help="If we should compile in Debug mode")
+Parser.add_argument("-s","--staticAnalysis",action="store_true",help="If we should do the static analysis")
 Parser.add_argument("--undefinedBehavior","-u",action="store_true",help="")
 Parser.add_argument("--addressSanitizer","-a",action="store_true",help="")
 args = Parser.parse_args()
@@ -36,10 +37,13 @@ else:
     cmd+=" -DCMAKE_GENERATOR_PLATFORM=x64"
 cmd+=btype
 
-if args.undefinedBehavior
+if args.undefinedBehavior:
     cmd=cmd+" -DENABLE_UNDEFINED_BEHAVIOR_SANITIZER=ON"
 if args.addressSanitizer:
     cmd=cmd+" -DENABLE_ADDRESS_SANITIZER=ON"
+
+if args.staticAnalysis:
+    cmd = "scan-build --use-cc=clang --use-c++=clang++ -o static-analysis " + cmd
 
 # execute CMake command
 runcommand(cmd)

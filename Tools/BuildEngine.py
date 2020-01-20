@@ -2,7 +2,7 @@
 # - encoding: UTF-8 -
 from BuildEngine.common import *
 
-def generate(cc:str,debug:bool,undefinedBehavior:bool, addressSanitizer:bool):
+def generate(cc:str,debug:bool,undefinedBehavior:bool, addressSanitizer:bool, staticAnalysis:bool):
     if cc not in Corresponding:
         print("ERROR: unknown config compiler:"+cc)
         sys.exit(1)
@@ -14,9 +14,11 @@ def generate(cc:str,debug:bool,undefinedBehavior:bool, addressSanitizer:bool):
         opt += ['-u']
     if addressSanitizer:
         opt += ['-a']
+    if staticAnalysis:
+        opt += ['-s']
     return runPython(scr,opt)
 
-def build(target:str):
+def build(target:str, staticAnalysis:bool):
     cmakelist=os.path.join(srcRoot,"Build","CMakeCache.txt")
     if not os.path.exists(cmakelist):
         print("ERROR: unable to compile: please configure first")
@@ -25,6 +27,8 @@ def build(target:str):
     opt=[]
     if target not in [None,""]:
         opt+=["-t "+target]
+    if staticAnalysis:
+        opt += ['-s']
     return runPython(scr,opt)
 
 def testncover():
@@ -56,11 +60,11 @@ def package():
     scr=os.path.join(BuildEnginePath,"package.py")
     return runPython(scr,[])
 
-def doAction(action,OSCompiler,Debug,Target,undefinedBehavior):
+def doAction(action,OSCompiler,Debug,Target,undefinedBehavior, addressSanitizer, staticAnalysis):
     if action == "generate":
-        return generate(OSCompiler,Debug,undefinedBehavior)
+        return generate(OSCompiler,Debug,undefinedBehavior, addressSanitizer, staticAnalysis)
     elif action == "build":
-        return build(Target)
+        return build(Target, staticAnalysis)
     elif action == "test":
         return testncover()
     elif action == "doc":
@@ -76,13 +80,14 @@ def main():
     Parser.add_argument("action",nargs='+',default=fullActionList[0],choices=fullActionList,help="what to do")
     Parser.add_argument("-c","--compiler",type=str,choices=CompilersShort,default=CompilersShort[0],help="The compiler to be used")
     Parser.add_argument("-g","--debug",action="store_true",help="If we should compile in Debug mode")
+    Parser.add_argument("-s","--staticAnalysis",action="store_true",help="If we should do the static analysis")
     Parser.add_argument("--undefinedBehavior","-u",action="store_true",help="")
     Parser.add_argument("--addressSanitizer","-a",action="store_true",help="")
     Parser.add_argument("-t","--target",type=str,help="The compiler target")
     args = Parser.parse_args()
     # filling up the todo list
     todo = []
-    if "all" in args.action:
+    if "All" in args.action:
         todo = copy.deepcopy(ActionList)
     else:
         for a in ActionList:
@@ -90,7 +95,7 @@ def main():
                 todo.append(a)
     # execute the todo list
     for action in todo:
-        ret = doAction(action, OS+args.compiler, args.debug, args.target, args.undefinedBehavior, args.addressSanitizer)
+        ret = doAction(action, OS+args.compiler, args.debug, args.target, args.undefinedBehavior, args.addressSanitizer, args.staticAnalysis)
         if ret != 0:
             sys.exit(ret)
 
