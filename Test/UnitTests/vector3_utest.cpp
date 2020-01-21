@@ -99,6 +99,7 @@ TEST(Vector3, AngleTest) {
     EXPECT_FALSE(V.isPerpandicular(V2));
 }
 
+Vector3 fe(const Vector3& a);
 TEST(Vector3, LengthDistance) {
     Vector3 V(-1, 666, 666666);
     Vector3 V2(2 * V);
@@ -106,6 +107,12 @@ TEST(Vector3, LengthDistance) {
     EXPECT_DOUBLE_EQ(V.Length(), V2.Length() / 2.0);
     EXPECT_DOUBLE_EQ(V.Distance(V2), V.Length());
     EXPECT_DOUBLE_EQ(V.DistanceSQ(V2), V.LengthSQ());
+    EXPECT_DOUBLE_EQ(V.Normalized().Length(), 1.0);
+    EXPECT_THROW(fe(Vector3()),optim::Exception);
+}
+
+Vector3 fe(const Vector3& a){
+    return a.Normalized();
 }
 
 #include <sstream>

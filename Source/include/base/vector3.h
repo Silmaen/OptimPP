@@ -9,6 +9,7 @@
 #include <ostream>
 
 /**
+ * @namespace optim::base
  * @brief namespace for all base structures
  */
 namespace optim::base
@@ -23,8 +24,16 @@ public:
     // rule of fives
     Vector3(const Vector3&) = default; ///< Default copy constructor
     Vector3(Vector3&&)noexcept = default; ///< Default move constructor
-    Vector3& operator=(const Vector3&) = default; ///< Default copy affectation
-    Vector3& operator=(Vector3&&)noexcept = default; ///< Default move affectation
+    /**
+     * default copy affectation
+     * @return this object
+     */
+    Vector3& operator=(const Vector3&) = default;
+    /**
+     * default move affectation
+     * @return this object
+     */
+    Vector3& operator=(Vector3&&)noexcept = default;
     ~Vector3() = default; ///< Default destructor
     // constructors
     /**
@@ -73,32 +82,32 @@ public:
      * @brief Get the first vector component
      * @return the first component
      */
-    [[nodiscard]] double& getX() { return at(0); }
+    [[nodiscard]] double& getX() noexcept { return m_data[0]; }
     /**
      * @brief Get the first vector component
      * @return the first component
      */
-    [[nodiscard]] const double& getX()const { return at(0); }
+    [[nodiscard]] const double& getX()const noexcept { return m_data[0]; }
     /**
      * @brief Get the second vector component
      * @return the second component
      */
-    [[nodiscard]] double& getY() { return at(1); }
+    [[nodiscard]] double& getY() noexcept { return m_data[1]; }
     /**
      * @brief Get the second vector component
      * @return the second component
      */
-    [[nodiscard]] const double& getY()const { return at(1); }
+    [[nodiscard]] const double& getY()const noexcept { return m_data[1]; }
     /**
      * @brief Get the third vector component
      * @return the third component
      */
-    [[nodiscard]] double& getZ() { return at(2); }
+    [[nodiscard]] double& getZ() noexcept { return m_data[2]; }
     /**
      * @brief Get the third vector component
      * @return the third component
      */
-    [[nodiscard]] const double& getZ()const { return at(2); }
+    [[nodiscard]] const double& getZ()const noexcept { return m_data[2]; }
     /**
      * @brief Get the i-st vector component
      * @param[in] i the index of the component
@@ -116,7 +125,7 @@ public:
      * @param[in] i the index of the component
      * @param[in] value the value to set
      */
-    void set(const u8 i, double value);
+    void set(const u8 i,const double value);
     // base operations
     /**
      * @brief add the other vector to this one
@@ -197,7 +206,7 @@ public:
      */
     [[nodiscard]] bool isNull()const noexcept { return (isfNull(m_data[0]) && isfNull(m_data[1]) && isfNull(m_data[2])); }
     /**
-     * @brief check if two vectors are perpandicular
+     * @brief check if two vectors are perpendicular
      * @param[in] o the other vector to compare
      * @return true if all the two vectors are perpandicular (whitin the default tolerance)
      */
@@ -230,6 +239,15 @@ public:
      * @return the distance to the other point
      */
     [[nodiscard]] double Distance(const Vector3& o) const { return sqrt(DistanceSQ(o)); }
+    /**
+     * @brief normalize this vector is not null
+     */
+    void Normalize(){double l=Length();*this/=l;}
+    /**
+     * @brief return a normalized copy of this vector
+     * @return a normalized copy of this vector
+     */
+    [[nodiscard]] Vector3 Normalized()const{Vector3 T(*this);T.Normalize();return T;}
 private:
     double m_data[3]; ///< the data of the
 };

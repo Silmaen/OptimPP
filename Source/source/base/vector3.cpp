@@ -39,7 +39,7 @@ const double & Vector3::at(const u8 i)const
     return m_data[i];
 }
 
-void Vector3::set(const u8 i, double value)
+void Vector3::set(const u8 i,const double value)
 {
     if(i > 2)
         throw Exception(ExitCode::Value::OutOfBounds);
