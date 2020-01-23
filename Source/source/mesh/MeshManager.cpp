@@ -13,7 +13,7 @@ namespace optim::mesh
 
 shared_ptr<MeshNode> MeshManager::getNodeByID(const u64 id) const noexcept
 {
-	auto node = std::find_if(nodes.begin(), nodes.end(), [&id] (auto& node) {return node->getID() == id; });
+	auto node = std::find_if(nodes.begin(), nodes.end(), [&id] (auto& anode) {return anode->getID() == id; });
 	if(node == nodes.end())
 		return nullptr;
 	return *node;
@@ -21,7 +21,7 @@ shared_ptr<MeshNode> MeshManager::getNodeByID(const u64 id) const noexcept
 
 shared_ptr<MeshElement> MeshManager::getElementByID(const u64 id)const noexcept
 {
-	auto element = std::find_if(elements.begin(), elements.end(), [&id] (auto& element) {return element->getID() == id; });
+	auto element = std::find_if(elements.begin(), elements.end(), [&id] (auto& aelement) {return aelement->getID() == id; });
 	if(element == elements.end())
 		return nullptr;
 	return *element;

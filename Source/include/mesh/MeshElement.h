@@ -95,7 +95,7 @@ public:
 	 *
 	 * note that it will first compare the first component, if equal: the second , if equal the third
 	 */
-	[[nodiscard]] s8 CompareTo(const MeshElement& other)const noexcept { return clamp8(Id - other.Id); };
+	[[nodiscard]] s8 CompareTo(const MeshElement& other)const noexcept { return clamp8(static_cast<s64>(Id) - static_cast<s64>(other.Id)); }
 	/**
 	 * @brief check if the element informations are valid
 	 * @return true if the element is valid
@@ -105,7 +105,7 @@ public:
 	 * @brief check if the element informations are not valid
 	 * @return true if the element is not valid
 	 */
-	[[nodiscard]] bool isNotValid()const noexcept { return !isValid(); };
+	[[nodiscard]] bool isNotValid()const noexcept { return !isValid(); }
 	/**
 	 * @brief validity checker
 	 *
@@ -121,7 +121,7 @@ public:
 	 * @brief get the actual number of nodes of this element
 	 * @return the number of nodes
 	 */
-	[[nodiscard]] s8 getElementNodeNumber()const noexcept { return clamp8(nodes.size()); }
+	[[nodiscard]] s8 getElementNodeNumber()const noexcept { return clamp8(static_cast<s64>(nodes.size())); }
 	/**
 	 * @brief return the ID of the node
 	 * @return the ID of the node
