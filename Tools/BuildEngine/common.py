@@ -1,9 +1,9 @@
 # - encoding: UTF-8 -
 import platform, sys, argparse, subprocess, os, shutil, time, zipfile, copy, datetime
 
-SupportedCompiler = {"Windows":["MSVC","gcc/g++"],"OpenBSD":["egcc/eg++","clang/clang++"]}
-SupportedCompilerShort = {"Windows":["MSVC","gcc"],"OpenBSD":["gcc","clang"]}
-Corresponding = {"WindowsMSVC":"MSVC","Windowsgcc":"gcc/g++","OpenBSDgcc":"egcc/eg++","OpenBSDclang":"clang/clang++"}
+SupportedCompiler = {"Windows":["MSVC","gcc/g++","clang/clang++"],"OpenBSD":["egcc/eg++","clang/clang++"]}
+SupportedCompilerShort = {"Windows":["clang","gcc","MSVC"],"OpenBSD":["clang","gcc"]}
+Corresponding = {"WindowsMSVC":"MSVC","Windowsgcc":"gcc/g++","Windowsclang":"clang/clang++","OpenBSDgcc":"egcc/eg++","OpenBSDclang":"clang/clang++"}
 OS = platform.system()
 MAX_RM_TRY=50
 if OS not in SupportedCompiler.keys():
