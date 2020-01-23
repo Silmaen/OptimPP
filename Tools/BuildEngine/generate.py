@@ -23,10 +23,10 @@ if OS == "Windows":
 else:
     cmd="cmake"
 cmd+=" -S "+srcRoot+" -B "+buildDir
-if args.staticAnalysis and OS == "OpenBSD":
+if args.staticAnalysis:
     cmd = "scan-build " +ScanbuildParam + " " + cmd
 else:
-    if args.compiler != "MSVC":
+    if "MSVC" not in args.compiler:
         c,cxx= args.compiler.split("/")
         if OS == "Windows":
             if shutil.which("sh") is not None:
@@ -34,7 +34,8 @@ else:
             else:
                 cmd+=' -G "MinGW Makefiles"'
         cmd+=" -DCMAKE_C_COMPILER="+c+" -DCMAKE_CXX_COMPILER="+cxx
-        cmd+=" -DENABLE_CODE_COVERAGE=ON"
+        if "clang" not in args.compiler or OS != "OpenBSD":
+            cmd+=" -DENABLE_CODE_COVERAGE=ON"
     else:
         cmd+=" -DCMAKE_GENERATOR_PLATFORM=x64"
     cmd+=btype
