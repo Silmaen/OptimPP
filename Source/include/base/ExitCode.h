@@ -18,8 +18,15 @@ namespace optim::ExitCode
     enum struct Value
     {
         OK = 0,                ///< Code for a good execution
+
+        // operations
         OutOfBounds,       ///< Code for handling out of bounds exceptions
-        ArithmeticError,   ///< Code for handling Aritmetic error exceptions
+        ArithmeticError,   ///< Code for handling Arithmetic error exceptions
+
+        // elements invalidity
+        NoMeshManager,   ///< code for not existence of the meshmanager
+        WrongNodeNumber, ///< the element has the wrong number of points
+        WrongNodeId, ///< the element refers to an invalid node Id
 
         GeneralError ///< Default Error Code (unknown error)
     };
@@ -31,6 +38,9 @@ namespace optim::ExitCode
         Value::OK,
         Value::OutOfBounds,
         Value::ArithmeticError,
+        Value::NoMeshManager,
+        Value::WrongNodeNumber,
+        Value::WrongNodeId,
         Value::GeneralError,
     };
 
@@ -41,23 +51,29 @@ namespace optim::ExitCode
      */
     inline const string ToString(Value iErrorCode)
     {
-        string a;
         switch (iErrorCode) {
         case Value::OK:
-            a = "OK";
-            break;
+            return "OK";
+        // ------------------------------------------
+        // operations
         case Value::OutOfBounds:
-            a = "Out Of Bounds";
-            break;
+            return "Out Of Bounds";
         case Value::ArithmeticError:
-            a = "Arithmetic Error";
-            break;
+			return "Arithmetic Error";
+		// ------------------------------------------
+		// elements invalidity
+		case Value::NoMeshManager:
+			return "No Mesh Manager Defined";
+        case Value::WrongNodeNumber:
+            return "Wrong Node Number";
+        case Value::WrongNodeId:
+            return "Wrong Node Id";
+		// ------------------------------------------
+        // general
         case Value::GeneralError:
-            a = "General Error";
-            break;
+            return "General Error";
         }
-        a = "Unknown error";
-        return a;
+        return "Unknown error";
     }
 
 }

@@ -25,12 +25,12 @@ public:
     Vector3(const Vector3&) = default; ///< Default copy constructor
     Vector3(Vector3&&)noexcept = default; ///< Default move constructor
     /**
-     * default copy affectation
+     * @brief default copy affectation
      * @return this object
      */
     Vector3& operator=(const Vector3&) = default;
     /**
-     * default move affectation
+     * @brief default move affectation
      * @return this object
      */
     Vector3& operator=(Vector3&&)noexcept = default;
@@ -134,8 +134,8 @@ public:
      */
     Vector3& operator+=(const Vector3& o)noexcept { m_data[0] += o.m_data[0]; m_data[1] += o.m_data[1]; m_data[2] += o.m_data[2]; return *this; }
     /**
-     * @brief substract the other vector to this one
-     * @param[in] o the other vector to substract
+     * @brief subtract the other vector to this one
+     * @param[in] o the other vector to subtract
      * @return this vector updated
      */
     Vector3& operator-=(const Vector3& o)noexcept { m_data[0] -= o.m_data[0]; m_data[1] -= o.m_data[1]; m_data[2] -= o.m_data[2]; return *this; }
@@ -158,8 +158,8 @@ public:
      */
     [[nodiscard]] Vector3 operator+(const Vector3& o)const noexcept { Vector3 t(*this); t += o; return t; }
     /**
-     * @brief substract the other vector to this one
-     * @param[in] o the other vector to substract
+     * @brief subtract the other vector to this one
+     * @param[in] o the other vector to subtract
      * @return the difference of the two vectors
      */
     [[nodiscard]] Vector3 operator-(const Vector3& o)const noexcept { Vector3 t(*this); t -= o; return t; }
@@ -208,13 +208,13 @@ public:
     /**
      * @brief check if two vectors are perpendicular
      * @param[in] o the other vector to compare
-     * @return true if all the two vectors are perpandicular (whitin the default tolerance)
+     * @return true if all the two vectors are perpendicular (within the default tolerance)
      */
     [[nodiscard]] bool isPerpandicular(const Vector3& o)const noexcept { return isfNull(DotProduct(o)); }
     /**
-     * @brief check if two vectors are colinear
+     * @brief check if two vectors are collinear
      * @param[in] o the other vector to compare
-     * @return true if all the two vectors are colinear (whitin the default tolerance)
+     * @return true if all the two vectors are collinear (within the default tolerance)
      */
     [[nodiscard]] bool isColinear(const Vector3& o)const noexcept { return CrossProduct(o).isNull(); }
     /**

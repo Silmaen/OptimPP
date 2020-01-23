@@ -5,22 +5,26 @@ using namespace optim;
 
 TEST(optimbase, clamp)
 {
-    EXPECT_EQ(clamp(0, -1, 1), 0);
-    EXPECT_EQ(clamp(-4, -1, 1), -1);
-    EXPECT_EQ(clamp(4, -1, 1), 1);
+    EXPECT_EQ(clamp(0ll, -1ll, 1ll), 0);
+    EXPECT_EQ(clamp(-4ll, -1ll, 1ll), -1);
+    EXPECT_EQ(clamp(4ll, -1ll, 1ll), 1);
     EXPECT_FLOAT_EQ(clamp(0.0f, -1.0f, 1.0f), 0.0f);
     EXPECT_FLOAT_EQ(clamp(-4.0f, -1.0f, 1.0f),-1.0f);
     EXPECT_FLOAT_EQ(clamp(4.0f, -1.0f, 1.0f), 1.0f);
     EXPECT_DOUBLE_EQ(clamp(0.0, -1.0, 1.0), 0.0);
     EXPECT_DOUBLE_EQ(clamp(-4.0, -1.0, 1.0), -1.0);
     EXPECT_DOUBLE_EQ(clamp(4.0, -1.0, 1.0), 1.0);
+
+	EXPECT_EQ(clamp8(4), 4);
+	EXPECT_EQ(clamp8(-400), -128);
+	EXPECT_EQ(clamp8(400), 127);
 }
 
 TEST(optimbase, sign)
 {
-    EXPECT_EQ(sign(0), 0);
-    EXPECT_EQ(sign(-1), -1);
-    EXPECT_EQ(sign(1), 1);
+    EXPECT_EQ(sign(0ll), 0);
+    EXPECT_EQ(sign(-1ll), -1);
+    EXPECT_EQ(sign(1ll), 1);
     EXPECT_FLOAT_EQ(sign(0.0f), 0.0f);
     EXPECT_FLOAT_EQ(sign(-1.0f), -1.0f);
     EXPECT_FLOAT_EQ(sign(1.0f), 1.0f);
@@ -31,8 +35,8 @@ TEST(optimbase, sign)
 
 TEST(optimbase, abs)
 {
-    EXPECT_EQ(optim::abs(static_cast<s32>(-1)), static_cast<s32>(1));
-    EXPECT_EQ(optim::abs(static_cast<s32>(1)), static_cast<s32>(1));
+    EXPECT_EQ(optim::abs(-1ll), 1);
+    EXPECT_EQ(optim::abs(1ll), 1);
     EXPECT_FLOAT_EQ(optim::abs(-1.0f), 1.0f);
     EXPECT_FLOAT_EQ(optim::abs(1.0f), 1.0f);
     EXPECT_DOUBLE_EQ(optim::abs(-1.0), 1.0);
