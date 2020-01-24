@@ -97,7 +97,7 @@ if (NOT OPP_COMPILER_MSVC)
 endif ()
 
 message(STATUS "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
-
+message(STATUS "The OS identification is ${CMAKE_SYSTEM} ${CMAKE_SYSTEM_NAME}")
 message(STATUS "The CXX compiler identification is ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
 
 include("OptimDefinitions")
@@ -118,8 +118,8 @@ option(ENABLE_CODE_COVERAGE "Enable generation of coverage data (only in debug u
 if (NOT OPP_COMPILER_MSVC)
 	if (CMAKE_BUILD_TYPE MATCHES "Debug")
 		if (ENABLE_CODE_COVERAGE)
-			
-			set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
+
+			set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0")
 			if (OPP_COMPILER_GCC)
 				set(OPP_CXX_FLAGS_COVERAGE "--coverage -fprofile-arcs -ftest-coverage -fno-inline -fno-inline-small-functions -fno-default-inline")
 			endif ()

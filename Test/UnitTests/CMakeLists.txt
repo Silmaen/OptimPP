@@ -7,14 +7,14 @@ file(GLOB
     ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
     )
 
-if (CMAKE_CXX_COMPILER_ID MATCHES "Clang") 
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 	add_definitions(-Wno-global-constructors)
 endif ()
 
 add_executable(optimpp_unit_test ${SRCS})
 
 # base includes
-target_include_directories(optimpp_unit_test PUBLIC ${OPTIM_ROOT_DIR}/Source/include/)
+target_include_directories(optimpp_unit_test PUBLIC ${OPTIM_ROOT_DIR}/Source/include)
 target_link_libraries(optimpp_unit_test gtest gtest_main optimpplib)
 
 add_test(optimpp_UnitTests ./optimpp_unit_test  --gtest_output=xml:test/UnitTest_Report.xml --gtest_filter=*:-:*LongTest*)

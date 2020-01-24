@@ -1,9 +1,17 @@
 # - encoding: UTF-8 -
 import platform, sys, argparse, subprocess, os, shutil, time, zipfile, copy, datetime
 
-SupportedCompiler = {"Windows":["MSVC","gcc/g++","clang/clang++"],"OpenBSD":["egcc/eg++","clang/clang++"]}
-SupportedCompilerShort = {"Windows":["clang","gcc","MSVC"],"OpenBSD":["clang","gcc"]}
-Corresponding = {"WindowsMSVC":"MSVC","Windowsgcc":"gcc/g++","Windowsclang":"clang/clang++","OpenBSDgcc":"egcc/eg++","OpenBSDclang":"clang/clang++"}
+SupportedCompiler = {"Windows":["MSVC","gcc/g++","clang/clang++"],"OpenBSD":["egcc/eg++","clang/clang++"],"Linux":["gcc/g++","clang/clang++"]}
+SupportedCompilerShort = {"Windows":["clang","gcc","MSVC"],"OpenBSD":["clang","gcc"],"Linux":["clang","gcc"]}
+Corresponding = {
+	"WindowsMSVC":"MSVC",
+	"Windowsgcc":"gcc/g++",
+	"Windowsclang":"clang/clang++",
+	"OpenBSDgcc":"egcc/eg++",
+	"OpenBSDclang":"clang/clang++",
+	"Linuxgcc":"gcc/g++",
+	"Linuxclang":"clang/clang++"
+}
 OS = platform.system()
 MAX_RM_TRY=50
 if OS not in SupportedCompiler.keys():
@@ -168,7 +176,7 @@ def runcommand(cmd:str):
     return ret;
 
 def runPython(pythonscript:str,params:list):
-    try: 
+    try:
         cmd = PytonExe+" "+pythonscript+" "+" ".join(params)
     except:
         print("bad Python command")
