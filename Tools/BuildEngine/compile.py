@@ -17,7 +17,7 @@ if args.target not in [None,""]:
     cmd+=" --target "+args.target
 nbc= getCPUNumber()
 if nbc>1:
-    cmd+=" -j"+str(nbc)
+    cmd+=" -j "+str(nbc)
 
 if args.staticAnalysis:
     cmd = "scan-build " + ScanbuildParam + " make -j" + str(nbc)

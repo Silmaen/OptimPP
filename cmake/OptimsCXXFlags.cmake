@@ -28,8 +28,10 @@ if (WIN32 OR CYGWIN)
 	set(OPP_PLATFORM_WINDOWS ON)
 elseif (APPLE)
 	set(OPP_PLATFORM_MAC ON)
-elseif (UNIX)
+elseif (CMAKE_SYSTEM_NAME MATCHES "Linux")
 	set(OPP_PLATFORM_LINUX ON)
+elseif (CMAKE_SYSTEM_NAME MATCHES "OpenBSD")
+	set(OPP_PLATFORM_OBSD ON)
 endif ()
 
 if (OPP_COMPILER_MSVC)
@@ -70,6 +72,14 @@ elseif (OPP_COMPILER_CLANG)
 #		-Wno-exit-time-destructors
 #		-Wno-global-constructors
 	)
+	if (OPP_PLATFORM_LINUX)
+	  set(
+		OPP_CXX_FLAGS_COMMON
+
+		${OPP_CXX_FLAGS_COMMON}
+		-Wno-disabled-macro-expansion
+		)
+	endif()
 
 	# Handling warnings available since Clang 8
 	if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 8)
