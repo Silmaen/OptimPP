@@ -16,13 +16,39 @@ gcnodir = os.path.join(buildDir,"Test","UnitTests","CMakeFiles","optimpp_unit_te
 #gcvor options
 gcovrExclusions = ['"(.+/)?Test(.+/)?"','"(.+/)?main.cpp(.+/)?"']
 gcovrSources = ['../Test/UnitTests','../Source']
-#==================================================
-def HaveGcovR():
-    if runcommand("gcovr --version") == 0:
-        return True
-    return False
+minimalgcovrVersion = "4.2"
 
+#===============================================================================
+def HaveGcovR():
+    '''
+    Check the presence and version of gcovr
+    '''
+    ret,out = runcommandWithOutPut("gcovr --version")
+    if ret != 0:
+        print("no gcovr present...")
+        return False
+    lineFound = False
+    minids = [int(i) for i in minimalgcovrVersion.split(".")]
+    for line in out:
+        if line not startswith("gcovr"):
+            continue
+        try:
+            ids = [int(i) for i in line.split()[1].split(".")]
+            if ids[0] < minids[0] or (ids[0]>= minids[0] and ids[1] < minids[1]):
+                print("Too old version of gcovr, version 4.2 needed")
+                return False
+        except:
+            print("Error decoding the gcovr version")
+            return False
+        lineFound = True
+        break
+    return lineFound
+
+#===============================================================================
 def HaveCoverageInfos():
+    '''
+    check the presence of coverage infos
+    '''
     gcno = False
     for root, dirs, files in os.walk(buildDir):
         for file in files:
@@ -33,7 +59,11 @@ def HaveCoverageInfos():
             break
     return gcno
 
+#===============================================================================
 def GetGcovProgram():
+    '''
+    get the 'gcov'-equivalent program depending on the compiler and environment
+    '''
     fp = open(os.path.join(buildDir,"CMakeCache.txt"),"r")
     lines = fp.readlines()
     fp.close()
@@ -60,7 +90,7 @@ def GetGcovProgram():
         return '"llvm-cov gcov"'
     return ""
 
-#run
+#===============================================================================
 def main():
     # ---------------------
     # run the test
@@ -70,7 +100,7 @@ def main():
         ret = runcommand(testcmd + s)
         if ret != 0:
             print(" *** /!\\ Error during test run, return code = " + str(ret))
-            sys.exit(ret)
+            endCommand(ret)
 
     # ---------------------
     # analyse the coverage
@@ -85,7 +115,7 @@ def main():
 
         # run the coverage
         nbc = getCPUNumber()
-        cmd = 'gcovr -v -r  ../../Source -o index.html --html-details -bup '+['--exclude-unreachable-branches',""]["llvm" in gcov]+' --exclude-throw-branches --gcov-executable=' + gcov
+        cmd = 'gcovr -v -r ../../Source -o index.html --html-details -bup '+['--exclude-unreachable-branches',""]["llvm" in gcov]+' --exclude-throw-branches --gcov-executable=' + gcov
         for ex in gcovrExclusions:
             cmd += ' -e ' +ex
         for sr in gcovrSources:
@@ -95,7 +125,7 @@ def main():
         ret = runcommand(cmd)
         if ret != 0:
             print(" *** /!\\ Error during Coverage analysis, return code = " + str(ret))
-            sys.exit(ret)
+            endCommand(ret)
 
         # artifact creation
         with zipfile.ZipFile('coverage.zip', 'w') as myzip:
@@ -108,8 +138,7 @@ def main():
         #directory restore
         os.chdir(srcRoot)
 
-    print(" *** return code = " + str(ret))
-    sys.exit(ret)
+    endCommand(ret)
 
 if __name__ == "__main__":
     main()

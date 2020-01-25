@@ -147,6 +147,8 @@ if os.getcwd() != srcRoot:
     #print("WARNING: not in the source's root directory",file=sys.stderr)
     os.chdir(srcRoot)
 
+
+# ==============================================================================
 def safeRmTree(path,checkExistance:bool=True):
     '''
     function to safely delete folder with exception handling
@@ -166,23 +168,38 @@ def safeRmTree(path,checkExistance:bool=True):
         print("Warning: unable to delete folder "+path,file=sys.stderr)
     return
 
+# ==============================================================================
+def runcommandWithOutPut(cmd:str):
+    try:
+        print(">>>"+cmd)
+        retour = subprocess.run(cmd, stderr=STDOUT, capture_output=True)
+        ret = retour.returncode
+        output = retour.stdout.decode("utf-8").split(os.linesep)
+    except:
+        output = ["error in command"]
+        ret = -8
+    return ret,output;
+
+# ==============================================================================
 def runcommand(cmd:str):
     try:
         print(">>>"+cmd)
-        ret = subprocess.run(cmd,shell=True,stdout=sys.stdout,stderr=sys.stderr).returncode
+        ret = subprocess.run(cmd, shell = True, stdout = sys.stdout, stderr = sys.stderr).returncode
     except:
-        print("errors!!")
+        print("error in command")
         ret = -8
     return ret;
 
+# ==============================================================================
 def runPython(pythonscript:str,params:list):
     try:
-        cmd = PytonExe+" "+pythonscript+" "+" ".join(params)
+        cmd = PytonExe + " " + pythonscript + " " + " ".join(params)
     except:
         print("bad Python command")
         return -87
     return runcommand(cmd)
 
+# ==============================================================================
 def getCPUNumber():
     try:
         import multiprocessing
@@ -190,3 +207,17 @@ def getCPUNumber():
     except (ImportError, NotImplementedError):
         print("Error while finding number of processors")
         return 1
+
+# ==============================================================================
+def getCMakeProgram():
+    # definition of the CMake command
+    if OS == "Windows":
+        return '"C:\\Program Files\\CMake\\bin\\cmake.exe"'
+    else:
+        return "cmake"
+
+# ==============================================================================
+def endCommand(ret):
+	os.chdir(srcRoot)
+	print(" *** return code = " + str(ret) )
+	sys.exit(ret)

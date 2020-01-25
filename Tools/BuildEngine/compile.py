@@ -8,11 +8,7 @@ def main():
     Parser.add_argument("-s","--staticAnalysis",action="store_true",help="If we should do the static analysis")
     args = Parser.parse_args()
 
-    if OS == "Windows":
-        cmd='"C:\\Program Files\\CMake\\bin\\cmake.exe"'
-    else:
-        cmd="cmake"
-    cmd+=" --build ."
+    cmd = getCMakeProgram() + " --build " + buildDir
     if args.target not in [None,""]:
         cmd+=" --target "+args.target
     nbc= getCPUNumber()
@@ -20,9 +16,8 @@ def main():
         cmd+=" -j "+str(nbc)
 
     if args.staticAnalysis:
-        cmd = "scan-build " + ScanbuildParam + " make -j" + str(nbc)
+        cmd = "scan-build " + ScanbuildParam + " " + cmd
 
-    os.chdir(buildDir)
     ret = runcommand(cmd)
 
     if args.staticAnalysis:
@@ -38,10 +33,7 @@ def main():
             zipf.write(f)
         zipf.close()
         ret = 0
-
-    os.chdir(srcRoot)
-    print(" *** return code = "+str(ret) )
-    sys.exit(ret)
+    endCommand(ret)
 
 if __name__ == "__main__":
     main()
