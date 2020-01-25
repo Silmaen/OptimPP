@@ -172,12 +172,16 @@ def safeRmTree(path,checkExistance:bool=True):
 def runcommandWithOutPut(cmd:str):
     try:
         print(">>>"+cmd)
-        retour = subprocess.run(cmd, stderr=STDOUT, capture_output=True)
+        retour = subprocess.run(cmd,
+                     shell = True,
+                     stdout= subprocess.PIPE,
+                     stderr=subprocess.STDOUT,
+                     text=os.linesep)
         ret = retour.returncode
-        output = retour.stdout.decode("utf-8").split(os.linesep)
+        output = retour.stdout.split(os.linesep)
     except:
         output = ["error in command"]
-        ret = -8
+        ret = -6
     return ret,output;
 
 # ==============================================================================

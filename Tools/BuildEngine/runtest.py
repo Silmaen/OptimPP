@@ -25,12 +25,12 @@ def HaveGcovR():
     '''
     ret,out = runcommandWithOutPut("gcovr --version")
     if ret != 0:
-        print("no gcovr present...")
+        print("no gcovr present... "+str(ret))
         return False
     lineFound = False
     minids = [int(i) for i in minimalgcovrVersion.split(".")]
     for line in out:
-        if line not startswith("gcovr"):
+        if not line.startswith("gcovr"):
             continue
         try:
             ids = [int(i) for i in line.split()[1].split(".")]
@@ -115,7 +115,7 @@ def main():
 
         # run the coverage
         nbc = getCPUNumber()
-        cmd = 'gcovr -v -r ../../Source -o index.html --html-details -bup '+['--exclude-unreachable-branches',""]["llvm" in gcov]+' --exclude-throw-branches --gcov-executable=' + gcov
+        cmd = 'gcovr -r ../../Source -o index.html --html-details -bup '+['--exclude-unreachable-branches',""]["llvm" in gcov]+' --exclude-throw-branches --gcov-executable=' + gcov
         for ex in gcovrExclusions:
             cmd += ' -e ' +ex
         for sr in gcovrSources:
