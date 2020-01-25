@@ -118,15 +118,15 @@ option(ENABLE_CODE_COVERAGE "Enable generation of coverage data (only in debug u
 if (NOT OPP_COMPILER_MSVC)
 	if (CMAKE_BUILD_TYPE MATCHES "Debug")
 		if (ENABLE_CODE_COVERAGE)
-
+			
 			set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0")
 			if (OPP_COMPILER_GCC)
 				set(OPP_CXX_FLAGS_COVERAGE "--coverage -fprofile-arcs -ftest-coverage -fno-inline -fno-inline-small-functions -fno-default-inline")
 			endif ()
 
 			if (OPP_COMPILER_CLANG)
-				set(OPP_CXX_FLAGS_COVERAGE "--coverage -fno-inline") # -fprofile-instr-generate -fcoverage-mapping
-				#set(CMAKE_EXE_LINKER_FLAGS "--coverage")# -fprofile-instr-generate
+				set(OPP_CXX_FLAGS_COVERAGE "-fprofile-arcs -ftest-coverage -fno-inline") # -fprofile-instr-generate -fcoverage-mapping
+				set(CMAKE_EXE_LINKER_FLAGS "--coverage")# -fprofile-instr-generate
 
 				#find_program(LLVM_COV_BIN "llvm-cov" PATHS ${COMPILER_PATH})
 				#if (LLVM_COV_BIN)
@@ -180,6 +180,8 @@ if (NOT OPP_COMPILER_MSVC)
 	string(TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_UPPER)
 	message(STATUS "Compilation flags: CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE_UPPER} = ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}")
 endif ()
+message(STATUS "Compilation flags: CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE_UPPER} = ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}")
+message(STATUS "Linking  flags   : CMAKE_EXE_LINKER_FLAGS = ${CMAKE_EXE_LINKER_FLAGS}")
 
 enable_testing()
 
