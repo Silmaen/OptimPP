@@ -125,8 +125,8 @@ if (NOT OPP_COMPILER_MSVC)
 			endif ()
 
 			if (OPP_COMPILER_CLANG)
-				set(OPP_CXX_FLAGS_COVERAGE "-fprofile-arcs -ftest-coverage -fno-inline") # -fprofile-instr-generate -fcoverage-mapping
-				set(CMAKE_EXE_LINKER_FLAGS "--coverage")# -fprofile-instr-generate
+				set(OPP_CXX_FLAGS_COVERAGE "--coverage -fno-inline") # -fprofile-instr-generate -fcoverage-mapping
+				#set(CMAKE_EXE_LINKER_FLAGS "--coverage")# -fprofile-instr-generate
 
 				#find_program(LLVM_COV_BIN "llvm-cov" PATHS ${COMPILER_PATH})
 				#if (LLVM_COV_BIN)

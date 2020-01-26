@@ -115,7 +115,7 @@ def main():
 
         # run the coverage
         nbc = getCPUNumber()
-        cmd = 'gcovr -r ../../Source -o index.html --html-details -bup '+['--exclude-unreachable-branches',""]["llvm" in gcov]+' --exclude-throw-branches --gcov-executable=' + gcov
+        cmd = 'gcovr -v -r ../../Source -o index.html --html-details -bup '+['--exclude-unreachable-branches',""]["llvm" in gcov]+' --exclude-throw-branches --gcov-executable=' + gcov
         for ex in gcovrExclusions:
             cmd += ' -e ' +ex
         for sr in gcovrSources:
