@@ -13,6 +13,7 @@ Corresponding = {
 	"Linuxclang":"clang/clang++"
 }
 OS = platform.system()
+
 MAX_RM_TRY=50
 if OS not in SupportedCompiler.keys():
     print("Unsupported OS: " + str(OS))
@@ -136,8 +137,9 @@ scanbuildcheckers =[
 "valist.Unterminated",
 ]
 
-ScanbuildParam="-v -k --use-analyzer=/usr/local/bin/clang --use-cc=/usr/local/bin/clang --use-c++=/usr/local/bin/clang++  --status-bugs -o " + staticanalysisdir
-ScanbuildParam+=" -enable-checker " + ",".join(scanbuildcheckers) + " --exclude Test"
+ScanbuildParam = "-v -k --status-bugs -o " + staticanalysisdir
+ScanbuildParam += " --use-analyzer=/usr/local/bin/clang --use-cc=/usr/local/bin/clang --use-c++=/usr/local/bin/clang++"
+ScanbuildParam += " -enable-checker " + ",".join(scanbuildcheckers) + " --exclude Test"
 
 PytonExe = "python"
 if OS in ["OpenBSD"]:
@@ -225,3 +227,18 @@ def endCommand(ret):
 	os.chdir(srcRoot)
 	print(" *** return code = " + str(ret) )
 	sys.exit(ret)
+
+# ==============================================================================
+def getClangCompilers():
+    if OS in ["OpenBSD"]:
+        return "/usr/local/bin/clang","/usr/local/bin/clang++"
+    if OS in ["Linux"]:
+        return "/usr/bin/clang","/usr/bin/clang++"
+    if OS in ["Windows"]:
+        return "C:\\msys64\\mingw64\\bin\\clang","C:\\msys64\\mingw64\\bin\\clang++"
+
+
+cc,cxx = getClangCompilers()
+ScanbuildParam = "-v -k --status-bugs -o " + staticanalysisdir
+ScanbuildParam += " --use-analyzer="+cc+" --use-cc="+cc+" --use-c++="+cxx
+ScanbuildParam += " -enable-checker " + ",".join(scanbuildcheckers) + " --exclude Test"

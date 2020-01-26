@@ -16,6 +16,8 @@ def main():
         cmd+=" -j "+str(nbc)
 
     if args.staticAnalysis:
+        if not os.path.exists(staticanalysisdir):
+            os.makedirs(staticanalysisdir)
         cmd = "scan-build " + ScanbuildParam + " " + cmd
 
     ret = runcommand(cmd)
