@@ -86,7 +86,7 @@ def GetGcovProgram():
             return '"egcov"'
         else:
             return '"gcov"'
-    if Compiler == "clang":
+    if Compiler == "clang" and  OS != "Windows":
         return '"llvm-cov gcov"'
     return ""
 
