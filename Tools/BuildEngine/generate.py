@@ -2,48 +2,48 @@
 # - encoding: UTF-8 -
 from common import *
 
-Parser = argparse.ArgumentParser()
-Parser.add_argument("-c","--compiler",type=str,choices=Compilers,default=Compilers[0],help="The compiler to be used")
-Parser.add_argument("-g","--debug",action="store_true",help="If we should compile in Debug mode")
-Parser.add_argument("-s","--staticAnalysis",action="store_true",help="If we should do the static analysis")
-args = Parser.parse_args()
-
-# remove all previous build before create build directory
-safeRmTree(buildDir)
-os.mkdir(buildDir)
-
-# build type
-btype=" -DCMAKE_BUILD_TYPE=Release"
-if args.debug:
-    btype=" -DCMAKE_BUILD_TYPE=Debug"
-
-# definition of the CMake command
-if OS == "Windows":
-    cmd='"C:\\Program Files\\CMake\\bin\\cmake.exe"'
-else:
-    cmd="cmake"
-cmd+=" -S "+srcRoot+" -B "+buildDir
-if args.staticAnalysis:
+def generStaticAnalysis():
+    cmd = getCMakeProgram() + " -DCMAKE_BUILD_TYPE=Debug -S "+srcRoot+" -B "+buildDir
     cmd = "scan-build " +ScanbuildParam + " " + cmd
-else:
-    if "MSVC" not in args.compiler:
-        c,cxx= args.compiler.split("/")
+    ret = runcommand(cmd)
+    return 0
+
+def generBuildConfig(dbg:bool, compiler:str):
+    # build type
+    btype=" -DCMAKE_BUILD_TYPE=Release"
+    if dbg:
+        btype=" -DCMAKE_BUILD_TYPE=Debug"
+    cmd = getCMakeProgram() + " -S " + srcRoot+" -B " + buildDir
+    if "MSVC" not in compiler:
+        c,cxx= compiler.split("/")
         if OS == "Windows":
             if shutil.which("sh") is not None:
                 cmd+=' -G "MSYS Makefiles"'
             else:
                 cmd+=' -G "MinGW Makefiles"'
         cmd+=" -DCMAKE_C_COMPILER="+c+" -DCMAKE_CXX_COMPILER="+cxx
-        if "clang" not in args.compiler or OS != "OpenBSD":
+        if "clang" not in compiler or OS != "OpenBSD":
             cmd+=" -DENABLE_CODE_COVERAGE=ON"
     else:
         cmd+=" -DCMAKE_GENERATOR_PLATFORM=x64"
     cmd+=btype
+    # execute CMake command
+    ret = runcommand(cmd)
 
-# execute CMake command
-ret = runcommand(cmd)
+def main():
+    Parser = argparse.ArgumentParser()
+    Parser.add_argument("-c","--compiler",type=str,choices=Compilers,default=Compilers[0],help="The compiler to be used")
+    Parser.add_argument("-g","--debug",action="store_true",help="If we should compile in Debug mode")
+    Parser.add_argument("-s","--staticAnalysis",action="store_true",help="If we should do the static analysis")
+    args = Parser.parse_args()
+    # remove all previous build before create build directory
+    safeRmTree(buildDir)
+    os.mkdir(buildDir)
+    if args.staticAnalysis:
+        ret = generStaticAnalysis()
+    else:
+        ret = generBuildConfig(args.debug, args.compiler)
+    endCommand(ret)
 
-if args.staticAnalysis:
-    ret = 0
-print(" *** return code = "+str(ret) )
-sys.exit(ret)
+if __name__ == "__main__":
+    main()
