@@ -31,28 +31,28 @@ SupportedConfiguration = {
     "Linux_clang":           {
         "Minimum_version": "101.0",
         "Build_Type":      ["Release", "Debug"],
-        "Toolchain":       "Makefiles",
+        "Toolchain":       "Unix Makefiles",
         "C_Compiler":      "/usr/bin/clang",
         "CXX_Compiler":    "/usr/bin/clang++",
     },
     "Linux_gcc":             {
         "Minimum_version": "10.0",
         "Build_Type":      ["Release", "Debug"],
-        "Toolchain":       "Makefiles",
+        "Toolchain":       "Unix Makefiles",
         "C_Compiler":      "/usr/bin/gcc",
         "CXX_Compiler":    "/usr/bin/g++",
     },
     "OpenBSD_clang":         {
         "Minimum_version": "101.0",
         "Build_Type":      ["Release", "Debug"],
-        "Toolchain":       "Makefiles",
+        "Toolchain":       "Unix Makefiles",
         "C_Compiler":      "/usr/local/bin/clang",
         "CXX_Compiler":    "/usr/local/bin/clang++",
     },
     "OpenBSD_gcc":           {
         "Minimum_version": "10.0",
         "Build_Type":      ["Release", "Debug"],
-        "Toolchain":       "Makefiles",
+        "Toolchain":       "Unix Makefiles",
         "C_Compiler":      "/usr/bin/egcc",
         "CXX_Compiler":    "/usr/bin/eg++",
     }
