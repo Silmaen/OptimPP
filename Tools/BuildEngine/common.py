@@ -286,14 +286,20 @@ def find_program(program: str, additional_path=None):
     if additional_path is None:
         additional_path = []
     from shutil import which
+    to_return = ""
     if which(program) is not None:
-        return program
-    for p in additional_path:
-        for pp in p.rglob(program):
-            return str(pp)
-    if system() == "Windows":
+        to_return = program
+    if to_return == "":
+        for p in additional_path:
+            for pp in p.rglob(program):
+                to_return = str(pp)
+    if system() == "Windows" and to_return == "":
         for p in classic_windows_file_path:
             for pp in p.rglob(program):
-                return str(pp)
-    print("ERROR: could not find " + program + " on this system")
-    exit(1)
+                to_return = str(pp)
+    if to_return == "":
+        print("ERROR: could not find " + program + " on this system")
+        exit(1)
+    if " " in to_return:
+        to_return = '"' + to_return + '"'
+    return to_return
