@@ -293,10 +293,16 @@ def find_program(program: str, additional_path=None):
         for p in additional_path:
             for pp in p.rglob(program):
                 to_return = str(pp)
+                break
+            if to_return != "":
+                break
     if system() == "Windows" and to_return == "":
         for p in classic_windows_file_path:
             for pp in p.rglob(program):
                 to_return = str(pp)
+                break
+            if to_return != "":
+                break
     if to_return == "":
         print("ERROR: could not find " + program + " on this system")
         exit(1)
