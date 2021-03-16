@@ -1,10 +1,11 @@
 # - encoding: UTF-8 -
 import platform, sys, argparse, subprocess, os, shutil, time, zipfile, copy, datetime
 
-SupportedCompiler = {"Windows":["MSVC","gcc/g++","clang/clang++"],"OpenBSD":["egcc/eg++","clang/clang++"],"Linux":["gcc/g++","clang/clang++"]}
-SupportedCompilerShort = {"Windows":["clang","gcc","MSVC"],"OpenBSD":["clang","gcc"],"Linux":["clang","gcc"]}
+SupportedCompiler = {"Windows":["MSVC","Visual-Studio","gcc/g++","clang/clang++"],"OpenBSD":["egcc/eg++","clang/clang++"],"Linux":["gcc/g++","clang/clang++"]}
+SupportedCompilerShort = {"Windows":["clang","gcc","MSVC","Visual-Studio"],"OpenBSD":["clang","gcc"],"Linux":["clang","gcc"]}
 Corresponding = {
 	"WindowsMSVC":"MSVC",
+    "WindowsVisual-Studio":"MSVC",
 	"Windowsgcc":"gcc/g++",
 	"Windowsclang":"clang/clang++",
 	"OpenBSDgcc":"egcc/eg++",
