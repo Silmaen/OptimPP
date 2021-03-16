@@ -26,9 +26,13 @@ include(CMakeDependentOption)
 include(GNUInstallDirs)
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-	add_definitions(
+  if (CMAKE_CXX_COMPILER_VERSION GREATER_EQUAL 11)
+    add_definitions(
             -Wno-suggest-override
             -Wno-suggest-destructor-override
+    )
+  endif()
+	add_definitions(
             -Wno-nonportable-system-include-path
             -Wno-language-extension-token
             -Wno-undef
