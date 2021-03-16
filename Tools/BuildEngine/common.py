@@ -2,7 +2,7 @@
 import platform, sys, argparse, subprocess, os, shutil, time, zipfile, copy, datetime
 
 SupportedCompiler = {"Windows":["MSVC","visual-studio","gcc/g++","clang/clang++"],"OpenBSD":["egcc/eg++","clang/clang++"],"Linux":["gcc/g++","clang/clang++"]}
-SupportedCompilerShort = {"Windows":["clang","gcc","MSVC","Visual-Studio"],"OpenBSD":["clang","gcc"],"Linux":["clang","gcc"]}
+SupportedCompilerShort = {"Windows":["clang","gcc","MSVC","visual-studio"],"OpenBSD":["clang","gcc"],"Linux":["clang","gcc"]}
 Corresponding = {
 	"WindowsMSVC":"MSVC",
     "Windowsvisual-studio":"MSVC",
