@@ -33,7 +33,6 @@ def generBuildConfig(dbg:bool, compiler:str):
     cmd+=btype
     # execute CMake command
     ret = runcommand(cmd)
-    return ret
 
 def main():
     Parser = argparse.ArgumentParser()
