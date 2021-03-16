@@ -26,7 +26,26 @@ include(CMakeDependentOption)
 include(GNUInstallDirs)
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-	add_definitions(-Wno-undef -Wno-global-constructors -Wno-exit-time-destructors -Wno-vla -Wno-old-style-cast -Wno-covered-switch-default -Wno-weak-vtables -Wno-switch-enum -Wno-used-but-marked-unused -Wno-missing-noreturn -Wno-vla-extension -Wno-shift-sign-overflow -Wno-zero-as-null-pointer-constant -Wno-unused-member-function)
+	add_definitions(
+            -Wno-suggest-override
+            -Wno-suggest-destructor-override
+            -Wno-nonportable-system-include-path
+            -Wno-language-extension-token
+            -Wno-undef
+            -Wno-global-constructors
+            -Wno-exit-time-destructors
+            -Wno-vla
+            -Wno-old-style-cast
+            -Wno-covered-switch-default
+            -Wno-weak-vtables
+            -Wno-switch-enum
+            -Wno-used-but-marked-unused
+            -Wno-missing-noreturn
+            -Wno-vla-extension
+            -Wno-shift-sign-overflow
+            -Wno-zero-as-null-pointer-constant
+            -Wno-unused-member-function
+    )
 endif ()
 #Note that googlemock target already builds googletest
 option(BUILD_GMOCK "Builds the googlemock subproject" OFF)

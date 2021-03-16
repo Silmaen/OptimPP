@@ -18,29 +18,15 @@ namespace optim::base
 /**
  * @brief Default base structure for 3D vector
  */
-class Vector3 : public Comparable<Vector3>
+class Vector3 : public TieComparable<Vector3>
 {
 public:
-    // rule of fives
-    Vector3(const Vector3&) = default; ///< Default copy constructor
-    Vector3(Vector3&&)noexcept = default; ///< Default move constructor
-    /**
-     * @brief default copy affectation
-     * @return this object
-     */
-    Vector3& operator=(const Vector3&) = default;
-    /**
-     * @brief default move affectation
-     * @return this object
-     */
-    Vector3& operator=(Vector3&&)noexcept = default;
-    ~Vector3() = default; ///< Default destructor
     // constructors
     /**
      * @brief One Constant constructor
      * @param[in] a the value to affect to all components
      */
-    Vector3(double a = 0) :m_data { a, a, a } {}
+    explicit Vector3(double a = 0) :m_data { a, a, a } {}
     /**
      * @brief One Constant constructor
      * @param[in] x the value of the first component
@@ -58,12 +44,10 @@ public:
     // comparison
     /**
      * @brief Key function of comparison
-     * @param[in] other the other vector to compare
-     * @return negative value if this vector is lesser than other, positive value if greater, 0 if equal
-     *
-     * note that it will first compare the first component, if equal: the second , if equal the third
      */
-    [[nodiscard]] s8 CompareTo(const Vector3& other)const noexcept;
+    [[nodiscard]] auto Tie()const noexcept{
+      return std::tie(m_data[0], m_data[1], m_data[2]);
+    }
 
     // access
     /**
@@ -113,19 +97,19 @@ public:
      * @param[in] i the index of the component
      * @return the i-st component
      */
-    [[nodiscard]] double& at(const u8 i);
+    [[nodiscard]] double& at(u8 i);
     /**
      * @brief Get the i-st vector component
      * @param[in] i the index of the component
      * @return the i-st component
      */
-    [[nodiscard]] const double& at(const u8 i)const;
+    [[nodiscard]] const double& at(u8 i)const;
     /**
      * @brief Get the i-st vector component
      * @param[in] i the index of the component
      * @param[in] value the value to set
      */
-    void set(const u8 i,const double value);
+    void set(u8 i,double value);
     // base operations
     /**
      * @brief add the other vector to this one
@@ -210,13 +194,13 @@ public:
      * @param[in] o the other vector to compare
      * @return true if all the two vectors are perpendicular (within the default tolerance)
      */
-    [[nodiscard]] bool isPerpandicular(const Vector3& o)const noexcept { return isfNull(DotProduct(o)); }
+    [[nodiscard]] bool isPerpendicular(const Vector3& o)const noexcept { return isfNull(DotProduct(o)); }
     /**
      * @brief check if two vectors are collinear
      * @param[in] o the other vector to compare
      * @return true if all the two vectors are collinear (within the default tolerance)
      */
-    [[nodiscard]] bool isColinear(const Vector3& o)const noexcept { return CrossProduct(o).isNull(); }
+    [[nodiscard]] bool isCollinear(const Vector3& o)const noexcept { return CrossProduct(o).isNull(); }
     /**
      * @brief compute the square length of the vector
      * @return the square norm of the vector

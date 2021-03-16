@@ -7,25 +7,20 @@
 
 namespace optim::mesh {
 
-bool MeshNode::isValid() const noexcept
-{
-	try
-	{
-		checkValidity();
-	}
-	catch(Exception & e)
-	{
-		if(e.GetCode() == ExitCode::Value::OK)
-			return true;
-	}
-	return false;
+bool MeshNode::isValid() const noexcept{
+    try{
+        checkValidity();
+    }    catch(Exception & e){
+        if(e.GetCode() == ExitCode::Value::OK)
+            return true;
+    }
+    return false;
 }
 
-void MeshNode::checkValidity(bool AllThrow) const
-{
-	if(meshManager == nullptr)
-		throw Exception(ExitCode::Value::NoMeshManager);
-	if (AllThrow)throw Exception(ExitCode::Value::OK);
+void MeshNode::checkValidity(bool AllThrow) const{
+    if(meshManager == nullptr)
+        throw Exception(ExitCode::Value::NoMeshManager);
+    if (AllThrow)throw Exception(ExitCode::Value::OK);
 }
 
 }

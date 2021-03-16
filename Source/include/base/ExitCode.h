@@ -24,7 +24,7 @@ namespace optim::ExitCode
         ArithmeticError,   ///< Code for handling Arithmetic error exceptions
 
         // elements invalidity
-        NoMeshManager,   ///< code for not existence of the meshmanager
+        NoMeshManager,   ///< code for not existence of the MeshManager
         WrongNodeNumber, ///< the element has the wrong number of points
         WrongNodeId, ///< the element refers to an invalid node Id
 
@@ -49,7 +49,7 @@ namespace optim::ExitCode
      * @param[in] iErrorCode the ExitCode to convert
      * @return the string corresponding to the given ExitCode
      */
-    inline const string ToString(Value iErrorCode)
+    inline const char* ToString(Value iErrorCode)
     {
         switch (iErrorCode) {
         case Value::OK:
@@ -59,16 +59,16 @@ namespace optim::ExitCode
         case Value::OutOfBounds:
             return "Out Of Bounds";
         case Value::ArithmeticError:
-			return "Arithmetic Error";
-		// ------------------------------------------
-		// elements invalidity
-		case Value::NoMeshManager:
-			return "No Mesh Manager Defined";
+            return "Arithmetic Error";
+        // ------------------------------------------
+        // elements invalidity
+            case Value::NoMeshManager:
+            return "No Mesh Manager Defined";
         case Value::WrongNodeNumber:
             return "Wrong Node Number";
         case Value::WrongNodeId:
             return "Wrong Node Id";
-		// ------------------------------------------
+        // ------------------------------------------
         // general
         case Value::GeneralError:
             return "General Error";

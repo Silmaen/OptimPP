@@ -12,7 +12,7 @@ namespace optim::base
 /**
  * @brief Basic class for handling transformation matrices
  */
-class Matrix4 : public Comparable<Matrix4>
+class Matrix4 : public TieComparable<Matrix4>
 {
 public:
     // rule of fives
@@ -33,15 +33,15 @@ public:
      * @brief constructor by a constant
      * @param[in] c the constant to apply to all components
      */
-    Matrix4(const double& c = 0) :m_data { c,c,c,c,c,c,c,c,c,c,c,c,c,c,c,c } {}
+    explicit Matrix4(const double& c = 0) :m_data { c,c,c,c,c,c,c,c,c,c,c,c,c,c,c,c } {}
     /**
      * @brief constructor by initializer_list
-     * @param[in] l the list of componnents
+     * @param[in] l the list of components
      */
     Matrix4(std::initializer_list<double> l);
     /**
      * @brief affectation by initializer_list
-     * @param[in] l the list of componnents
+     * @param[in] l the list of components
      * @return this object
      */
     Matrix4& operator=(std::initializer_list<double> l);
@@ -49,9 +49,9 @@ public:
      * @brief static method for creating a identity matrix
      * @return identity matrix
      */
-    static Matrix4 makeIdentity() noexcept { Matrix4 t; t[0] = 1.0; t[5] = 1.0; t[10] = 1.0; t[15] = 1.0; return t; }
+    static Matrix4 makeIdentity()  noexcept { Matrix4 t; t[0] = 1.0; t[5] = 1.0; t[10] = 1.0; t[15] = 1.0; return t; }
     /**
-     * @brief construct a rotation matrix base on Cardan's rotation components
+     * @brief construct a rotation matrix base on rotation components
      * @param[in] roll the rotation in radian around X axis
      * @param[in] pitch the rotation in radian around Y axis
      * @param[in] yaw the rotation in radian around Z axis
@@ -65,7 +65,7 @@ public:
      */
     static Matrix4 makeRotationMatrix(const Vector3& rotationVector) noexcept{ return makeRotationMatrix(rotationVector.getX(), rotationVector.getY(), rotationVector.getZ());}
     /**
-     * @brief construct a rotation matrix base on Cardan's rotation components
+     * @brief construct a rotation matrix base on rotation components
      * @param[in] roll the rotation in degree around X axis
      * @param[in] pitch the rotation in degree around Y axis
      * @param[in] yaw the rotation in degree around Z axis
@@ -88,12 +88,10 @@ public:
     // comparison
     /**
      * @brief Key function of comparison
-     * @param[in] other the other matrix to compare
-     * @return negative value if this matrix is lesser than other, positive value if greater, 0 if equal
-     *
-     * note that it will first compare the first component, then the next one, etc.
      */
-    [[nodiscard]] s8 CompareTo(const Matrix4& other)const noexcept;
+    [[nodiscard]] auto Tie()const noexcept{
+        return std::tie(m_data[0],m_data[1],m_data[2],m_data[3],m_data[4],m_data[5],m_data[6],m_data[7],m_data[8],m_data[9],m_data[10],m_data[11],m_data[12],m_data[13],m_data[14],m_data[15]);
+    }
     // access
     /**
      * @brief Get the i-st matrix component in linear order
@@ -126,40 +124,40 @@ public:
      * @param[in] i the index of the component
      * @return the i-st component
      */
-    [[nodiscard]] double& at(const u8 i);
+    [[nodiscard]] double& at(u8 i);
     /**
      * @brief Get the i-st matrix component in linear order
      * @param[in] i the index of the component
      * @return the i-st component
      */
-    [[nodiscard]] const double& at(const u8 i)const;
+    [[nodiscard]] const double& at(u8 i)const;
     /**
      * @brief Get the i-st matrix component in linear order
      * @param[in] i the index of the component's row
      * @param[in] j the index of the component's column
      * @return the (i,j)-st component
      */
-    [[nodiscard]] double& at(const u8 i, const u8 j);
+    [[nodiscard]] double& at(u8 i, u8 j);
     /**
      * @brief Get the (i,j)-st matrix component
      * @param[in] i the index of the component's row
      * @param[in] j the index of the component's column
      * @return the (i,j)-st component
      */
-    [[nodiscard]] const double& at(const u8 i, const u8 j)const;
+    [[nodiscard]] const double& at(u8 i, u8 j)const;
     /**
      * @brief Set the i-st matrix component in linear order
      * @param[in] i the index of the component
      * @param[in] value the value to set
      */
-    void set(const u8 i, const double value);
+    void set(u8 i, double value);
     /**
      * @brief Set the (i,j)-st matrix component
      * @param[in] i the index of the component's row
      * @param[in] j the index of the component's column
      * @param[in] value the value to set
      */
-    void set(const u8 i, const u8 j, const double value);
+    void set(u8 i, u8 j, double value);
 
     // base operations
     /**
@@ -179,7 +177,7 @@ public:
      * @param[in] o the constant to multiply
      * @return this matrix updated
      */
-    Matrix4& operator*=(const double& o)noexcept { for(u8 i = 0; i < 16; ++i) { m_data[i] *= o; } return *this; }
+    Matrix4& operator*=(const double& o)noexcept { for(double & i : m_data) { i *= o; } return *this; }
     /**
      * @brief divide this matrix to a constant
      * @param[in] o the constant to divide
@@ -232,12 +230,12 @@ public:
      * @brief check if the matrix is an identity matrix.
      * @return true if the matrix is only constituted by 1 on the diagonal
      */
-    [[nodiscard]] bool isIdentity()const noexcept { return(*this == makeIdentity()); }
+    [[nodiscard]] bool isIdentity()const noexcept { bool r = true; for(u8 i = 0; i < 15; ++i) { if((i == 0)||(i == 5)||(i == 10))r&=isfEqual(m_data[i], 1.); r &= isfNull(m_data[i]); } return r; }
     /**
      * @brief check if the matrix is Null
      * @return true if the matrix is only constituted by 0 (within tolerance)
      */
-    [[nodiscard]] bool isNull()const noexcept { bool r = true; for(u8 i = 0; i < 16; ++i) { r &= isfNull(m_data[i]); } return r; }
+    [[nodiscard]] bool isNull()const noexcept { bool r = true; for(double i : m_data) { r &= isfNull(i); } return r; }
     /**
      * @brief check if the matrix is diagonal
      * @return true if the matrix is diagonal
@@ -279,6 +277,6 @@ private:
  * @param[in] m the matrix to stream
  * @return the stream
  */
-std::ostream& operator<<(std::ostream& os, const Matrix4 m);
+std::ostream& operator<<(std::ostream& os, const Matrix4& m);
 
 }

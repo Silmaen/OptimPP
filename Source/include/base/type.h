@@ -15,7 +15,7 @@ namespace optim
 {
 
 constexpr double DefaultTolerance = 1.e-7; ///< default tolerance for double comparison
-constexpr float DefaultfTolerance = static_cast<float>(1.e-7); ///< default tolerence for float comparison
+constexpr float DefaultfTolerance = static_cast<float>(1.e-7); ///< default tolerance for float comparison
 
 // base int types
 // SIGNED INTEGERS
@@ -115,7 +115,7 @@ using std::vector;
 [[nodiscard]] inline double abs(const double& x) { return(x < 0 ? -x : x); }
 //MIN
 /**
- * @brief get the lesser of two nuimbers
+ * @brief get the lesser of two numbers
  * @param[in] a the first number to test
  * @param[in] b the second number to test
  * @return a if a lesser than b else b
@@ -172,7 +172,7 @@ using std::vector;
 [[nodiscard]] inline double min(const double& a, const  double& b) { return((a > b) ? b : a); }
 //MAX
 /**
- * @brief get the greater of two nuimbers
+ * @brief get the greater of two numbers
  * @param[in] a the first number to test
  * @param[in] b the second number to test
  * @return a if a greater than b else b
@@ -295,24 +295,24 @@ inline void bitToggle(u64& number, const u8& bit) { number ^= 1ull << bit; }
 
 // float Equality
 /**
- * @brief test if the given real number is null (with the given tolerence)
+ * @brief test if the given real number is null (with the given tolerance)
  * @param[in] a the real number to test
- * @param[in] tolerance the asolute value of tolerance for comparison
+ * @param[in] tolerance the absolute value of tolerance for comparison
  * @return true if a is closer to 0 than tolerance
  */
 [[nodiscard]] inline bool isfNull(const float& a, const float& tolerance = DefaultfTolerance) { return(abs(a) < tolerance); }
 /**
  * @overload
  * @param[in] a the real number to test
- * @param[in] tolerance the asolute value of tolerance for comparison
+ * @param[in] tolerance the absolute value of tolerance for comparison
  * @return true if a is closer to 0 than tolerance
  */
 [[nodiscard]] inline bool isfNull(const double& a, const double& tolerance = DefaultTolerance) { return(abs(a) < tolerance); }
 /**
- * @brief test if the given real numbers are equal (closer than the given tolerence)
+ * @brief test if the given real numbers are equal (closer than the given tolerance)
  * @param[in] a the first real number to test
  * @param[in] b the second real number to test
- * @param[in] tolerance the asolute value of tolerance for comparison
+ * @param[in] tolerance the absolute value of tolerance for comparison
  * @return true if a is closer to b than tolerance
  */
 [[nodiscard]] inline bool isfEqual(const float& a, const float& b, const float& tolerance = DefaultfTolerance) { return(abs(a - b) < tolerance); }
@@ -320,7 +320,7 @@ inline void bitToggle(u64& number, const u8& bit) { number ^= 1ull << bit; }
  * @overload
  * @param[in] a the first real number to test
  * @param[in] b the second real number to test
- * @param[in] tolerance the asolute value of tolerance for comparison
+ * @param[in] tolerance the absolute value of tolerance for comparison
  * @return true if a is closer to b than tolerance
  */
 [[nodiscard]] inline bool isfEqual(const double& a, const double& b, const double& tolerance = DefaultTolerance) { return(abs(a - b) < tolerance); }

@@ -1,37 +1,34 @@
 # Defining helper variables
+message(STATUS "** Configuration:")
 if (MSVC) # MSVC
-	set(OPP_COMPILER_MSVC ON)
+	if (CMAKE_CXX_COMPILER_ID MATCHES "Clang") # Clang
+		set(OPP_COMPILER_CLANG ON)
+		message(STATUS "** Compiler detected Clang-cl")
+		message(FATAL-ERROR "Clang-cl for msvc build is not supported.")
+	else()
+		set(OPP_COMPILER_MSVC ON)
+		message(STATUS "** Compiler detected MSVC")
+	endif()
 elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang") # Clang
 	set(OPP_COMPILER_CLANG ON)
+	message(STATUS "** Compiler detected Clang")
 elseif (CMAKE_CXX_COMPILER_ID MATCHES "GNU") # GCC
 	set(OPP_COMPILER_GCC ON)
+	message(STATUS "** Compiler detected GCC")
 endif ()
 
 if (WIN32 OR CYGWIN)
 	set(OPP_PLATFORM_WINDOWS ON)
-elseif (APPLE)
-	set(OPP_PLATFORM_MAC ON)
-elseif (UNIX)
-	set(OPP_PLATFORM_LINUX ON)
-endif ()
-
-# Defining helper variables
-if (MSVC) # MSVC
-	set(OPP_COMPILER_MSVC ON)
-elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang") # Clang
-	set(OPP_COMPILER_CLANG ON)
-elseif (CMAKE_CXX_COMPILER_ID MATCHES "GNU") # GCC
-	set(OPP_COMPILER_GCC ON)
-endif ()
-
-if (WIN32 OR CYGWIN)
-	set(OPP_PLATFORM_WINDOWS ON)
+	message(STATUS "** Platform detected Windows")
 elseif (APPLE)
 	set(OPP_PLATFORM_MAC ON)
 elseif (CMAKE_SYSTEM_NAME MATCHES "Linux")
+	message(STATUS "** Platform detected Mac")
+elseif (UNIX)
 	set(OPP_PLATFORM_LINUX ON)
 elseif (CMAKE_SYSTEM_NAME MATCHES "OpenBSD")
 	set(OPP_PLATFORM_OBSD ON)
+	message(STATUS "** Platform detected Linux")
 endif ()
 
 if (OPP_COMPILER_MSVC)
@@ -69,8 +66,6 @@ elseif (OPP_COMPILER_CLANG)
 		-Wno-c++98-compat
 		-Wno-c++98-compat-pedantic
 		-Wno-padded
-#		-Wno-exit-time-destructors
-#		-Wno-global-constructors
 	)
 	if (OPP_PLATFORM_LINUX)
 	  set(
