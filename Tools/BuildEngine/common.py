@@ -283,12 +283,20 @@ def get_cpu_number():
 
 
 def find_program(program: str, additional_path=None):
+    """
+    Search for a program
+    :param program:
+    :param additional_path:
+    :return:
+    """
     if additional_path is None:
         additional_path = []
     from shutil import which
     to_return = ""
     if which(program) is not None:
         to_return = program
+    if system() == "Windows":
+        program += ".exe"
     if to_return == "":
         for p in additional_path:
             for pp in p.rglob(program):
@@ -299,6 +307,8 @@ def find_program(program: str, additional_path=None):
     if system() == "Windows" and to_return == "":
         for p in classic_windows_file_path:
             for pp in p.rglob(program):
+                if pp.is_dir():
+                    continue
                 to_return = str(pp)
                 break
             if to_return != "":
