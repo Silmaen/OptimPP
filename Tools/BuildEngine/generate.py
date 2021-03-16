@@ -6,7 +6,7 @@ def generStaticAnalysis():
     cmd = getCMakeProgram() + " -DCMAKE_BUILD_TYPE=Debug -S "+srcRoot+" -B "+buildDir
     cmd = "scan-build " +ScanbuildParam + " " + cmd
     ret = runcommand(cmd)
-    return ret
+    return 0
 
 def generBuildConfig(dbg:bool, compiler:str):
     # build type
