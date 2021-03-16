@@ -29,7 +29,7 @@ SupportedConfiguration = {
         "Toolchain":       "CodeBlocks - NMake Makefiles"
     },
     "Linux_clang":           {
-        "Minimum_version": "101.0",
+        "Minimum_version": "10.0",
         "Build_Type":      ["Release", "Debug"],
         "Toolchain":       "Unix Makefiles",
         "C_Compiler":      "/usr/bin/clang",
@@ -43,7 +43,7 @@ SupportedConfiguration = {
         "CXX_Compiler":    "/usr/bin/g++",
     },
     "OpenBSD_clang":         {
-        "Minimum_version": "101.0",
+        "Minimum_version": "10.0",
         "Build_Type":      ["Release", "Debug"],
         "Toolchain":       "Unix Makefiles",
         "C_Compiler":      "/usr/local/bin/clang",
@@ -53,8 +53,8 @@ SupportedConfiguration = {
         "Minimum_version": "10.0",
         "Build_Type":      ["Release", "Debug"],
         "Toolchain":       "Unix Makefiles",
-        "C_Compiler":      "/usr/bin/egcc",
-        "CXX_Compiler":    "/usr/bin/eg++",
+        "C_Compiler":      "/usr/local/bin/egcc",
+        "CXX_Compiler":    "/usr/local/bin/eg++",
     }
 
 }
@@ -103,6 +103,8 @@ def config_by_compiler(compiler: str):
     config = system() + "_" + compiler
     if config in SupportedConfiguration:
         return config
+    print("ERROR: Unsupported compiler")
+    exit(1)
     return ""
 
 
@@ -235,10 +237,14 @@ def make_scan_build_param(compiler: str, debug: bool):
         "valist.Uninitialized",
         "valist.Unterminated",
     ]
+    if "clang" not in compiler.lower():
+        print("ERROR: Static analysis only works with clang")
+        exit(1)
+    opt = SupportedConfiguration[config_by_compiler(compiler)]
     scan_build_param = "-v -k --status-bugs -o " + str(make_output_dir(compiler, debug))
-    scan_build_param += " --use-analyzer=/usr/local/bin/clang"
-    scan_build_param += " --use-cc=/usr/local/bin/clang"
-    scan_build_param += " --use-c++=/usr/local/bin/clang++"
+    scan_build_param += " --use-analyzer=" + opt["C_Compiler"]
+    scan_build_param += " --use-cc=" + opt["C_Compiler"]
+    scan_build_param += " --use-c++=" + opt["CXX_Compiler"]
     scan_build_param += " -enable-checker " + ",".join(scan_build_checkers) + " --exclude Test"
     return scan_build_param
 

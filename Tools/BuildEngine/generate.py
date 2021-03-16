@@ -35,26 +35,21 @@ def main():
     build_dir.mkdir()
 
     # Construct the CMake command
+    options = SupportedConfiguration[config_by_compiler(args.compiler)]
     cmd = find_program("cmake")
     cmd += " -S " + str(src_root) + " -B " + str(build_dir)
+    cmd += " -DCMAKE_BUILD_TYPE=" + options["Build_Type"][args.debug]
+    for key in options:
+        if key in ["Minimum_version", "Build_Type"]:
+            continue
+        if key == "Toolchain":
+            cmd += ' -G "' + options[key] + '"'
+            continue
+        cmd += " -DCMAKE_" + key.upper() + '="' + options[key] + '"'
     if args.staticAnalysis:
         scb = find_program("scan-build")
         scb += " " + make_scan_build_param(args.compiler, args.debug) + " " + cmd
     else:
-        c_key = config_by_compiler(args.compiler)
-        if c_key == "":
-            print("ERROR: Unsupported compiler")
-            exit(1)
-        options = SupportedConfiguration[c_key]
-        cmd += " -DCMAKE_BUILD_TYPE=" + options["Build_Type"][args.debug]
-        for key in options:
-            if key in ["Minimum_version", "Build_Type"]:
-                continue
-            if key == "Toolchain":
-                cmd += ' -G "' + options[key] + '"'
-                continue
-            cmd += " -DCMAKE_" + key.upper() + '="' + options[key] + '"'
-
         if "MSVC" not in args.compiler:
             if "clang" not in args.compiler or system() != "OpenBSD":
                 cmd += " -DENABLE_CODE_COVERAGE=ON"
