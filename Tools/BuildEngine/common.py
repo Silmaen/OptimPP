@@ -21,12 +21,12 @@ SupportedConfiguration = {
     "Windows_gcc":           {
         "Minimum_version": "10.0",
         "Build_Type":      ["Release", "Debug"],
-        "Toolchain":       "CodeBlocks - MinGW Makefiles"
+        "Toolchain":       "CodeBlocks - MinGW Makefiles",
     },
     "Windows_visual-studio": {
         "Minimum_version": "19.28",
         "Build_Type":      ["Release", "Debug"],
-        "Toolchain":       "CodeBlocks - NMake Makefiles"
+        "Generator_Platform": "x64",
     },
     "Linux_clang":           {
         "Minimum_version": "10.0",

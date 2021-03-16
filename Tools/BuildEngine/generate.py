@@ -50,7 +50,7 @@ def main():
         scb = find_program("scan-build")
         scb += " " + make_scan_build_param(args.compiler, args.debug) + " " + cmd
     else:
-        if "MSVC" not in args.compiler:
+        if "visual-studio" not in args.compiler:
             if "clang" not in args.compiler or system() != "OpenBSD":
                 cmd += " -DENABLE_CODE_COVERAGE=ON"
 
