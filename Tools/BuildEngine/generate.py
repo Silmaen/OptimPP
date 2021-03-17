@@ -59,7 +59,7 @@ def main():
 
     if args.staticAnalysis:
         ret = 0
-    print(" *** return code = " + str(ret))
+    print_log(" *** return code = " + str(ret), 4)
     exit(ret)
 
 

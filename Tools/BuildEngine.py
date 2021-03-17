@@ -5,7 +5,7 @@ from BuildEngine.common import *
 
 def generate(cc: str, debug: bool, static_analysis: bool):
     if cc not in get_compiler_for_os():
-        print("ERROR: unknown config compiler:" + cc)
+        print_log("unknown config compiler:" + cc)
         exit(1)
     config = config_by_compiler(cc)
     scr = build_engine / "generate.py"
@@ -22,7 +22,7 @@ def generate(cc: str, debug: bool, static_analysis: bool):
 def build(cc: str, debug: bool, target: str, static_analysis: bool):
     cmake_cache = make_output_dir(cc, debug) / "CMakeCache.txt"
     if not cmake_cache.exists():
-        print("ERROR: unable to compile: please configure first")
+        print_log("unable to compile: please configure first")
         exit(2)
     scr = build_engine / "compile.py"
     opt = ['-c ' + cc]
@@ -39,14 +39,14 @@ def build(cc: str, debug: bool, target: str, static_analysis: bool):
 def testncover(cc: str, debug: bool):
     cmake_cache = make_output_dir(cc, debug) / "CMakeCache.txt"
     if not cmake_cache.exists():
-        print("ERROR: unable to test: please configure first")
+        print_log("unable to test: please configure first")
         exit(2)
     unit_test_dir = make_output_dir(cc, debug) / "Test" / "UnitTests"
     unit_test_make = unit_test_dir / "optimpp_unit_test"
     unit_test_make_w = unit_test_dir / "optimpp_unit_test.exe"
     unit_test_msvc = unit_test_dir / "Debug" / "optimpp_unit_test.exe"
     if not (unit_test_make.exists() or unit_test_make_w.exists() or unit_test_msvc.exists()):
-        print("ERROR: unable to test: please compile target 'optimpp_unit_test' first")
+        print_log("unable to test: please compile target 'optimpp_unit_test' first")
         exit(3)
     coverinfo = unit_test_dir / "CMakeFiles" / "optimpp_unit_test.dir" / "test.cpp.gcno"
     if coverinfo.exists():
@@ -83,7 +83,7 @@ def do_action(action, compiler, debug, target, static_analysis):
     elif action == "doc":
         return documentation(compiler, debug)
     else:
-        print("ERROR: Unknown Action: '" + action + "'")
+        print_log("Unknown Action: '" + action + "'")
         return -98
 
 
@@ -91,7 +91,7 @@ def main():
     from argparse import ArgumentParser
     from copy import deepcopy
     if not check_os():
-        print("ERROR: unsupported OS")
+        print_log("unsupported OS")
         exit(1)
 
     parser = ArgumentParser()
@@ -145,7 +145,7 @@ def main():
             exit(ret)
 
     # Final message
-    print("Everything ends up quite well!")
+    print_log("Everything ends up quite well!", 4)
 
 
 if __name__ == "__main__":

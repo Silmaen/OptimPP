@@ -35,7 +35,7 @@ def main():
 
     os.chdir(cc)
 
-    print(" *** return code = " + str(ret))
+    print_log(" *** return code = " + str(ret), 4)
     exit(ret)
 
 

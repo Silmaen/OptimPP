@@ -37,7 +37,7 @@ def main():
 
     build_dir = make_output_dir(args.compiler, args.debug)
     if not build_dir.exists():
-        print("ERROR trying to compile a non configured options")
+        print_log("trying to compile a non configured options")
         exit(4)
     os.chdir(build_dir)
     cmd = find_program("cmake")
@@ -69,7 +69,7 @@ def main():
         ret = 0
 
     os.chdir(src_root)
-    print(" *** return code = " + str(ret))
+    print_log(" *** return code = " + str(ret), 4)
     exit(ret)
 
 
