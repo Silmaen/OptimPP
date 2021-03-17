@@ -23,20 +23,15 @@ def main():
     ret = runcommand(cmd)
 
     if args.staticAnalysis:
-    #    if ret == 0:
-    #        os.makedirs(os.path.join(staticanalysisdir,"noerror"))
-    #        fp = open(os.path.join(staticanalysisdir,"noerror","index.html"),"w")
-    #        fp.write("No bug found!! yes!")
-    #        fp.close()
-        zipf = zipfile.ZipFile(os.path.join(buildDir,"StaticAnalysis.zip"), 'w')
-        print("We are at "+os.getcwd())
+        if ret == 0:
+            os.makedirs(os.path.join(staticanalysisdir,"noerror"))
+            fp = open(os.path.join(staticanalysisdir,"noerror","index.html"),"w")
+            fp.write("No bug found!! yes!")
+            fp.close()
+        zipf = zipfile.ZipFile("StaticAnalysis.zip", 'w')
         os.chdir(staticanalysisdir)
-        print("Now, we are at "+os.getcwd())
-        print("Want to go to: "+os.listdir(".")[-1])
         os.chdir(os.listdir(".")[-1])
-        print("Finally, we are at "+os.getcwd())
         for f in os.listdir("."):
-            print("zipping: "+f)
             zipf.write(f)
         zipf.close()
         ret = 0

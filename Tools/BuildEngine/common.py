@@ -1,10 +1,11 @@
 # - encoding: UTF-8 -
 import platform, sys, argparse, subprocess, os, shutil, time, zipfile, copy, datetime
 
-SupportedCompiler = {"Windows":["MSVC","gcc/g++","clang/clang++"],"OpenBSD":["egcc/eg++","clang/clang++"],"Linux":["gcc/g++","clang/clang++"]}
-SupportedCompilerShort = {"Windows":["clang","gcc","MSVC"],"OpenBSD":["clang","gcc"],"Linux":["clang","gcc"]}
+SupportedCompiler = {"Windows":["MSVC","visual-studio","gcc/g++","clang/clang++"],"OpenBSD":["egcc/eg++","clang/clang++"],"Linux":["gcc/g++","clang/clang++"]}
+SupportedCompilerShort = {"Windows":["clang","gcc","MSVC","visual-studio"],"OpenBSD":["clang","gcc"],"Linux":["clang","gcc"]}
 Corresponding = {
 	"WindowsMSVC":"MSVC",
+    "Windowsvisual-studio":"MSVC",
 	"Windowsgcc":"gcc/g++",
 	"Windowsclang":"clang/clang++",
 	"OpenBSDgcc":"egcc/eg++",
@@ -46,7 +47,7 @@ scanbuildcheckers =[
 "alpha.cplusplus.EnumCastOutOfRange",
 "alpha.cplusplus.InvalidatedIterator",
 "alpha.cplusplus.MismatchedIterator",
-"alpha.cplusplus.UninitializedObject",
+#"alpha.cplusplus.UninitializedObject",
 #"alpha.deadcode.UnreachableCode",
 "alpha.llvm.Conventions",
 "alpha.security.ArrayBound",

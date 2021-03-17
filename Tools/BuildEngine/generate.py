@@ -14,13 +14,17 @@ def generBuildConfig(dbg:bool, compiler:str):
     if dbg:
         btype=" -DCMAKE_BUILD_TYPE=Debug"
     cmd = getCMakeProgram() + " -S " + srcRoot+" -B " + buildDir
-    if "MSVC" not in compiler:
+    if "MSVC" not in compiler and "visual-studio" not in compiler:
         c,cxx= compiler.split("/")
-        if OS == "Windows":
-            if shutil.which("sh") is not None:
-                cmd+=' -G "MSYS Makefiles"'
-            else:
-                cmd+=' -G "MinGW Makefiles"'
+        if "clang" in c:
+        #    c,cxx = getClangCompilers()
+            pass
+        else:
+            if OS == "Windows":
+                if shutil.which("sh") is not None:
+                    cmd+='-G "CodeBlocks - MinGW Makefiles"'
+                else:
+                    cmd+=' -G "CodeBlocks - MinGW Makefiles"'
         cmd+=" -DCMAKE_C_COMPILER="+c+" -DCMAKE_CXX_COMPILER="+cxx
         if "clang" not in compiler or OS != "OpenBSD":
             cmd+=" -DENABLE_CODE_COVERAGE=ON"
