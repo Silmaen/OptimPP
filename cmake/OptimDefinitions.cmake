@@ -6,7 +6,7 @@ if (WIN32)
 	)
 endif ()
 
-if (MSVC)
+if (OPP_COMPILER_MSVC)
 	add_compile_definitions(
 		# Prevent MSVC from emitting warnings when using deprecated CRT functions
 		_CRT_SECURE_NO_WARNINGS
@@ -22,10 +22,10 @@ if (MSVC)
 	)
 endif ()
 
-if (NOT MSVC)
+if (NOT OPP_COMPILER_MSVC)
 	# add this flag required for TBB on Linux with gcc > c+11
-	add_compile_definitions(__GXX_EXPERIMENTAL_CXX0X__)
-	add_compile_options(-Wno-deprecated-declarations)
+	#add_compile_definitions(__GXX_EXPERIMENTAL_CXX0X__)
+	#add_compile_options(-Wno-deprecated-declarations)
 else ()
 	set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS 1)
 endif ()

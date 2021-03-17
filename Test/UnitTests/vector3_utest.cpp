@@ -95,8 +95,8 @@ TEST(Vector3, baseOperations) {
 TEST(Vector3, AngleTest) {
     Vector3 V(-1, 666, 666666);
     Vector3 V2(2*V);
-    EXPECT_TRUE(V.isColinear(V2));
-    EXPECT_FALSE(V.isPerpandicular(V2));
+    EXPECT_TRUE(V.isCollinear(V2));
+    EXPECT_FALSE(V.isPerpendicular(V2));
 }
 
 Vector3 fe(const Vector3& a);

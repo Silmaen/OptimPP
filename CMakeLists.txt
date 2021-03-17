@@ -48,7 +48,7 @@ if (${OPTIM_ROOT_DIR} STREQUAL ${PROJECT_BINARY_DIR})
 endif()
 
 # Set the common compiler flags
-message(STATUS "Setup the compilation flags")
+message(STATUS ">>> Setup the compilation flags")
 include("OptimsCXXFlags")
 
 # set the C++ standard that we use
@@ -96,9 +96,9 @@ if (NOT OPP_COMPILER_MSVC)
 	endif ()
 endif ()
 
-message(STATUS "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
-message(STATUS "The OS identification is ${CMAKE_SYSTEM} ${CMAKE_SYSTEM_NAME}")
-message(STATUS "The CXX compiler identification is ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
+message(STATUS ">>> CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
+message(STATUS ">>> The OS identification is ${CMAKE_SYSTEM} ${CMAKE_SYSTEM_NAME}")
+message(STATUS ">>> The CXX compiler identification is ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
 
 include("OptimDefinitions")
 
@@ -113,20 +113,20 @@ option(ENABLE_ADDRESS_SANITIZER "Enable AddressSanitizer (only in debug under li
 option(ENABLE_UNDEFINED_BEHAVIOR_SANITIZER "Enable UndefinedBehavior (only in debug under linux)" OFF)
 
 # Code coverage option (only in debug under linux)
-option(ENABLE_CODE_COVERAGE "Enable generation of coverage data (only in debug under linux)" OFF)
+option(ENABLE_CODE_COVERAGE "Enable generation of coverage data (only in debug)" OFF)
 
 if (NOT OPP_COMPILER_MSVC)
 	if (CMAKE_BUILD_TYPE MATCHES "Debug")
 		if (ENABLE_CODE_COVERAGE)
-
+			
 			set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0")
 			if (OPP_COMPILER_GCC)
 				set(OPP_CXX_FLAGS_COVERAGE "--coverage -fprofile-arcs -ftest-coverage -fno-inline -fno-inline-small-functions -fno-default-inline")
 			endif ()
 
 			if (OPP_COMPILER_CLANG)
-				set(OPP_CXX_FLAGS_COVERAGE "--coverage -fno-inline") # -fprofile-instr-generate -fcoverage-mapping
-				#set(CMAKE_EXE_LINKER_FLAGS "--coverage")# -fprofile-instr-generate
+				set(OPP_CXX_FLAGS_COVERAGE "-fprofile-arcs -ftest-coverage -fno-inline") # -fprofile-instr-generate -fcoverage-mapping
+				set(CMAKE_EXE_LINKER_FLAGS "--coverage")# -fprofile-instr-generate
 
 				#find_program(LLVM_COV_BIN "llvm-cov" PATHS ${COMPILER_PATH})
 				#if (LLVM_COV_BIN)
@@ -180,6 +180,9 @@ if (NOT OPP_COMPILER_MSVC)
 	string(TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_UPPER)
 	message(STATUS "Compilation flags: CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE_UPPER} = ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}")
 endif ()
+set(CMAKE_VERBOSE_MAKEFILE OFF)
+message(STATUS "Compilation flags: CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE_UPPER} = ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}")
+message(STATUS "Linking  flags   : CMAKE_EXE_LINKER_FLAGS = ${CMAKE_EXE_LINKER_FLAGS}")
 
 enable_testing()
 

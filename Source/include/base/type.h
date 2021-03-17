@@ -5,15 +5,17 @@
 #pragma once
 #include <cinttypes>
 #include <string>
+#include <memory>
+#include <vector>
 
 /**
- * @brief namesapce of the whole project
+ * @brief namespace of the whole project
  */
 namespace optim
 {
 
-constexpr double DefaultTolerance = 1.e-7; ///< default tolerence for double comparison
-constexpr float DefaultfTolerance = static_cast<float>(1.e-7); ///< default tolerence for float comparison
+constexpr double DefaultTolerance = 1.e-7; ///< default tolerance for double comparison
+constexpr float DefaultfTolerance = static_cast<float>(1.e-7); ///< default tolerance for float comparison
 
 // base int types
 // SIGNED INTEGERS
@@ -37,6 +39,10 @@ typedef uint8_t  u8;   // 0 to 255
 /// @brief base string type
 typedef std::string string;
 
+// shortcut for std structures
+using std::shared_ptr;
+using std::vector;
+
 // ------------------------------------------ BASE FCT ------------------------------------------
 // CLAMP
 /**
@@ -46,7 +52,13 @@ typedef std::string string;
  * @param[in] b the upper value of the clamp interval
  * @return a if x lesser than a, b if x greater than b else x
  */
-[[nodiscard]] inline s32 clamp(const s32& x, const s32& a, const s32& b) { return((x < a) ? a : ((x > b) ? b : x)); }
+[[nodiscard]] inline s64 clamp(const s64& x, const s64& a, const s64& b) { return((x < a) ? a : ((x > b) ? b : x)); }
+/**
+ * @brief clamp a value int the s8 range
+ * @param[in] x the value to clamp
+ * @return the s8 value in the range [-128, 127]
+ */
+[[nodiscard]] inline s8 clamp8(const s64& x) { return static_cast<s8>(clamp(x, -128, 127)); }
 /**
  * @overload
  * @param[in] x the value to clamp
@@ -69,26 +81,26 @@ typedef std::string string;
  * @param[in] x the value to sign
  * @return -1 if x lesser than 0, 1 if x greater than 0 else 0
  */
-[[nodiscard]] inline s32 sign(const s32&x) { return(x < 0 ? -1 : ((x > 0) ? 1 : 0)); }
+[[nodiscard]] inline s64 sign(const s64& x) { return(x < 0 ? -1 : ((x > 0) ? 1 : 0)); }
 /**
  * @overload
  * @param[in] x the value to sign
  * @return -1 if x lesser than 0, 1 if x greater than 0 else 0
  */
-[[nodiscard]] inline float sign(const float&x) { return(x < 0 ? -1.0f : ((x > 0) ? 1.0f : 0.0f)); }
+[[nodiscard]] inline float sign(const float& x) { return(x < 0 ? -1.0f : ((x > 0) ? 1.0f : 0.0f)); }
 /**
  * @overload
  * @param[in] x the value to sign
  * @return -1 if x lesser than 0, 1 if x greater than 0 else 0
  */
-[[nodiscard]] inline double sign(const double&x) { return(x < 0 ? -1.0 : ((x > 0) ? 1.0 : 0.0)); }
+[[nodiscard]] inline double sign(const double& x) { return(x < 0 ? -1.0 : ((x > 0) ? 1.0 : 0.0)); }
 // ABS
 /**
  * @brief compute the absolute value of x
  * @param[in] x the value to abs
  * @return -x if x lesser than 0, else x
  */
-[[nodiscard]] inline s32 abs(const s32&x) { return(x < 0 ? -x : x); }
+[[nodiscard]] inline s64 abs(const s64& x) { return(x < 0 ? -x : x); }
 /**
  * @overload
  * @param[in] x the value to abs
@@ -103,7 +115,7 @@ typedef std::string string;
 [[nodiscard]] inline double abs(const double& x) { return(x < 0 ? -x : x); }
 //MIN
 /**
- * @brief get the lesser of two nuimbers
+ * @brief get the lesser of two numbers
  * @param[in] a the first number to test
  * @param[in] b the second number to test
  * @return a if a lesser than b else b
@@ -157,10 +169,10 @@ typedef std::string string;
  * @param[in] b the second number to test
  * @return a if a lesser than b else b
  */
-[[nodiscard]] inline double min(const double& a, const  double& b) { return((a > b) ? b : a); } 
+[[nodiscard]] inline double min(const double& a, const  double& b) { return((a > b) ? b : a); }
 //MAX
 /**
- * @brief get the greater of two nuimbers
+ * @brief get the greater of two numbers
  * @param[in] a the first number to test
  * @param[in] b the second number to test
  * @return a if a greater than b else b
@@ -228,7 +240,7 @@ inline void bitSet(u8& number, const u8& bit) { number |= 1ul << bit; }
  * @param[in] bit the index of the bit to set
  * @param[in] value the value of the bit to set
  */
-inline void bitDefine(u8& number, const u8& bit, const bool& value) { number = static_cast<u8>((number&~(static_cast<u8>(1U) << bit)) | (static_cast<u8>(value) << bit)); }
+inline void bitDefine(u8& number, const u8& bit, const bool& value) { number = static_cast<u8>((number & ~(static_cast<u8>(1U) << bit)) | (static_cast<u8>(value) << bit)); }
 /**
  * @brief clear a bit in number
  * @param[in,out] number the number where to clear the bit
@@ -260,7 +272,7 @@ inline void bitSet(u64& number, const u8& bit) { number |= 1ull << bit; }
  * @param[in] bit the index of the bit to set
  * @param[in] value the value of the bit to set
  */
-inline void bitDefine(u64& number, const u8& bit, const bool& value) { number = (number&~(1ull << bit)) | (static_cast<u64>(value) << bit); }
+inline void bitDefine(u64& number, const u8& bit, const bool& value) { number = (number & ~(1ull << bit)) | (static_cast<u64>(value) << bit); }
 /**
  * @overload
  * @param[in,out] number the number where to clear the bit
@@ -283,24 +295,24 @@ inline void bitToggle(u64& number, const u8& bit) { number ^= 1ull << bit; }
 
 // float Equality
 /**
- * @brief test if the given real number is null (with the given tolerence)
+ * @brief test if the given real number is null (with the given tolerance)
  * @param[in] a the real number to test
- * @param[in] tolerance the asolute value of tolerance for comparison
+ * @param[in] tolerance the absolute value of tolerance for comparison
  * @return true if a is closer to 0 than tolerance
  */
 [[nodiscard]] inline bool isfNull(const float& a, const float& tolerance = DefaultfTolerance) { return(abs(a) < tolerance); }
 /**
  * @overload
  * @param[in] a the real number to test
- * @param[in] tolerance the asolute value of tolerance for comparison
+ * @param[in] tolerance the absolute value of tolerance for comparison
  * @return true if a is closer to 0 than tolerance
  */
 [[nodiscard]] inline bool isfNull(const double& a, const double& tolerance = DefaultTolerance) { return(abs(a) < tolerance); }
 /**
- * @brief test if the given real numbers are equal (closer than the given tolerence)
+ * @brief test if the given real numbers are equal (closer than the given tolerance)
  * @param[in] a the first real number to test
  * @param[in] b the second real number to test
- * @param[in] tolerance the asolute value of tolerance for comparison
+ * @param[in] tolerance the absolute value of tolerance for comparison
  * @return true if a is closer to b than tolerance
  */
 [[nodiscard]] inline bool isfEqual(const float& a, const float& b, const float& tolerance = DefaultfTolerance) { return(abs(a - b) < tolerance); }
@@ -308,7 +320,7 @@ inline void bitToggle(u64& number, const u8& bit) { number ^= 1ull << bit; }
  * @overload
  * @param[in] a the first real number to test
  * @param[in] b the second real number to test
- * @param[in] tolerance the asolute value of tolerance for comparison
+ * @param[in] tolerance the absolute value of tolerance for comparison
  * @return true if a is closer to b than tolerance
  */
 [[nodiscard]] inline bool isfEqual(const double& a, const double& b, const double& tolerance = DefaultTolerance) { return(abs(a - b) < tolerance); }

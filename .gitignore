@@ -2,3 +2,5 @@
 /Build
 /Tools/BuildEngine/__pycache__
 /out
+/cmake-*
+/doc/build

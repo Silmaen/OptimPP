@@ -1,53 +1,67 @@
 #!/usr/bin/env python3
 # - encoding: UTF-8 -
+
 from common import *
 
-def generStaticAnalysis():
-    cmd = getCMakeProgram() + " -DCMAKE_BUILD_TYPE=Debug -S "+srcRoot+" -B "+buildDir
-    cmd = "scan-build " +ScanbuildParam + " " + cmd
-    ret = runcommand(cmd)
-    return 0
 
-def generBuildConfig(dbg:bool, compiler:str):
-    # build type
-    btype=" -DCMAKE_BUILD_TYPE=Release"
-    if dbg:
-        btype=" -DCMAKE_BUILD_TYPE=Debug"
-    cmd = getCMakeProgram() + " -S " + srcRoot+" -B " + buildDir
-    if "MSVC" not in compiler and "visual-studio" not in compiler:
-        c,cxx= compiler.split("/")
-        if "clang" in c:
-        #    c,cxx = getClangCompilers()
-            pass
-        else:
-            if OS == "Windows":
-                if shutil.which("sh") is not None:
-                    cmd+='-G "CodeBlocks - MinGW Makefiles"'
-                else:
-                    cmd+=' -G "CodeBlocks - MinGW Makefiles"'
-        cmd+=" -DCMAKE_C_COMPILER="+c+" -DCMAKE_CXX_COMPILER="+cxx
-        if "clang" not in compiler or OS != "OpenBSD":
-            cmd+=" -DENABLE_CODE_COVERAGE=ON"
+def main():
+    from argparse import ArgumentParser
+    parser = ArgumentParser()
+    compilers = get_compiler_for_os()
+    parser.add_argument(
+        "-c", "--compiler",
+        type=str,
+        choices=compilers,
+        default=compilers[0],
+        help="The compiler to be used"
+    )
+    parser.add_argument(
+        "-g", "--debug",
+        action="store_true",
+        help="If we should compile in Debug mode"
+    )
+    parser.add_argument(
+        "-s", "--staticAnalysis",
+        action="store_true",
+        help="If we should do the static analysis"
+    )
+    args = parser.parse_args()
+
+    # Remove all previous build before create build directory
+    build_dir = make_output_dir(args.compiler, args.debug)
+    if build_dir.exists():
+        from shutil import rmtree
+        rmtree(build_dir, ignore_errors=True)
+    build_dir.mkdir()
+
+    # Construct the CMake command
+    options = SupportedConfiguration[config_by_compiler(args.compiler)]
+    cmd = find_program("cmake")
+    cmd += " -S " + str(src_root) + " -B " + str(build_dir)
+    cmd += " -DCMAKE_BUILD_TYPE=" + options["Build_Type"][args.debug]
+    for key in options:
+        if key in ["Minimum_version", "Build_Type"]:
+            continue
+        if key == "Toolchain":
+            cmd += ' -G "' + options[key] + '"'
+            continue
+        cmd += " -DCMAKE_" + key.upper() + '="' + options[key] + '"'
+    if args.staticAnalysis:
+        scb = find_program("scan-build")
+        scb += " " + make_scan_build_param(args.compiler, args.debug) + " " + cmd
     else:
-        cmd+=" -DCMAKE_GENERATOR_PLATFORM=x64"
-    cmd+=btype
+        if "visual-studio" not in args.compiler:
+            if "clang" not in args.compiler or system() != "OpenBSD":
+                cmd += " -DENABLE_CODE_COVERAGE=ON"
+
     # execute CMake command
     ret = runcommand(cmd)
 
-def main():
-    Parser = argparse.ArgumentParser()
-    Parser.add_argument("-c","--compiler",type=str,choices=Compilers,default=Compilers[0],help="The compiler to be used")
-    Parser.add_argument("-g","--debug",action="store_true",help="If we should compile in Debug mode")
-    Parser.add_argument("-s","--staticAnalysis",action="store_true",help="If we should do the static analysis")
-    args = Parser.parse_args()
-    # remove all previous build before create build directory
-    safeRmTree(buildDir)
-    os.mkdir(buildDir)
     if args.staticAnalysis:
-        ret = generStaticAnalysis()
-    else:
-        ret = generBuildConfig(args.debug, args.compiler)
-    endCommand(ret)
+        ret = 0
+    print(" *** return code = " + str(ret))
+    exit(ret)
+
 
 if __name__ == "__main__":
     main()

@@ -1,56 +1,32 @@
 #!/usr/bin/env python3
 # - encoding: UTF-8 -
+import os
+import zipfile
+from shutil import rmtree, which, move
+
 from common import *
 
-#==================================================
-# definition of the CMake command
-if OS == "Windows":
-    cmdT = '"C:\\Program Files\\CMake\\bin\\ctest.exe"'
-else:
-    cmdT = "ctest"
+# ==================================================
+# Construction of the CMake command
+cmdT = find_program("ctest")
 testcmd = cmdT + " -V -D Experimental"
 # adding parameters
-subcmd = ["Start","Test"]
-# location of coverage infos
-gcnodir = os.path.join(buildDir,"Test","UnitTests","CMakeFiles","optimpp_unit_test.dir")
-#gcvor options
-gcovrExclusions = ['"(.+/)?Test(.+/)?"','"(.+/)?main.cpp(.+/)?"']
-gcovrSources = ['../Test/UnitTests','../Source']
-minimalgcovrVersion = "4.2"
+sub_cmd = ["Start", "Test"]
+# gcovr options
+gcovrExclusions = ['"(.+/)?Test(.+/)?"', '"(.+/)?main.cpp(.+/)?"']
+gcovrSources = ['../Test/UnitTests', '../Source']
 
-#===============================================================================
-def HaveGcovR():
-    '''
-    Check the presence and version of gcovr
-    '''
-    ret,out = runcommandWithOutPut("gcovr --version")
-    if ret != 0:
-        print("no gcovr present... "+str(ret))
-        return False
-    lineFound = False
-    minids = [int(i) for i in minimalgcovrVersion.split(".")]
-    for line in out:
-        if not line.startswith("gcovr"):
-            continue
-        try:
-            ids = [int(i) for i in line.split()[1].split(".")]
-            if ids[0] < minids[0] or (ids[0]>= minids[0] and ids[1] < minids[1]):
-                print("Too old version of gcovr, version 4.2 needed")
-                return False
-        except:
-            print("Error decoding the gcovr version")
-            return False
-        lineFound = True
-        break
-    return lineFound
 
-#===============================================================================
-def HaveCoverageInfos():
-    '''
-    check the presence of coverage infos
-    '''
+# ==================================================
+def have_gcovr():
+    if runcommand("gcovr --version") == 0:
+        return True
+    return False
+
+
+def have_coverage_infos(build_dir: Path):
     gcno = False
-    for root, dirs, files in os.walk(buildDir):
+    for root, dirs, files in os.walk(build_dir):
         for file in files:
             if file.endswith(".gcno"):
                 gcno = True
@@ -59,86 +35,108 @@ def HaveCoverageInfos():
             break
     return gcno
 
-#===============================================================================
-def GetGcovProgram():
-    '''
-    get the 'gcov'-equivalent program depending on the compiler and environment
-    '''
-    fp = open(os.path.join(buildDir,"CMakeCache.txt"),"r")
+
+def get_gcov_program(build_dir: Path):
+    fp = open(build_dir / "CMakeCache.txt", "r")
     lines = fp.readlines()
     fp.close()
-    # search for the used compiler
-    Compiler = ""
+    # Search for the used compiler
+    compiler = ""
     for line in lines:
         if not line.startswith("CMAKE_CXX_COMPILER:STRING"):
             continue
         if "clang" in line:
-            Compiler = "clang"
+            compiler = "clang"
             break
         if "g++" in line:
-            Compiler = "g++"
+            compiler = "g++"
             break
-    if Compiler == "":
+    if compiler == "":
         print("Compiler not supported for coverage analysis")
         return ""
-    if Compiler == "g++":
-        if shutil.which("egcov"):
+    if compiler == "g++":
+        if which("egcov"):
             return '"egcov"'
         else:
             return '"gcov"'
-    if Compiler == "clang":
+    if compiler == "clang":
         return '"llvm-cov gcov"'
     return ""
 
-#===============================================================================
+
+# run
 def main():
+    from argparse import ArgumentParser
+    parser = ArgumentParser()
+    compilers = get_compiler_for_os()
+    parser.add_argument(
+        "-c", "--compiler",
+        type=str,
+        choices=compilers,
+        default=compilers[0],
+        help="The compiler to be used"
+    )
+    parser.add_argument(
+        "-g", "--debug",
+        action="store_true",
+        help="If we should compile in Debug mode"
+    )
+    args = parser.parse_args()
+    build_dir = make_output_dir(args.compiler, args.debug)
+
     # ---------------------
-    # run the test
+    # Run the test
     # ---------------------
-    os.chdir(buildDir)
-    for s in subcmd:
+    os.chdir(build_dir)
+    ret = 0
+    for s in sub_cmd:
         ret = runcommand(testcmd + s)
         if ret != 0:
             print(" *** /!\\ Error during test run, return code = " + str(ret))
-            endCommand(ret)
+            exit(ret)
 
     # ---------------------
-    # analyse the coverage
+    # Analyse the coverage
     # ---------------------
-    gcov = GetGcovProgram()
-    if (HaveGcovR() and HaveCoverageInfos() and gcov not in ["",None]):
-        # directory change
-        os.chdir(buildDir)
-        safeRmTree("Coverage")
-        os.mkdir("Coverage")
-        os.chdir("Coverage")
+    gcov = get_gcov_program(build_dir)
+    if have_gcovr() and have_coverage_infos(build_dir) and gcov not in ["", None]:
+        # Directory change
+        os.chdir(build_dir)
+        cov_dir = build_dir / "Coverage"
+        if cov_dir.exists():
+            rmtree(cov_dir)
+        cov_dir.mkdir(parents=True)
+        os.chdir(cov_dir)
 
-        # run the coverage
-        nbc = getCPUNumber()
-        cmd = 'gcovr -r ../../Source -o index.html --html-details -bup '+['--exclude-unreachable-branches',""]["llvm" in gcov]+' --exclude-throw-branches --gcov-executable=' + gcov
+        # Run the coverage
+        nbc = get_cpu_number()
+        cmd = 'gcovr -v -r  ../../Source -o index.html --html-details -bup ' + ['--exclude-unreachable-branches', ""][
+            "llvm" in gcov] + ' --exclude-throw-branches --gcov-executable=' + gcov
         for ex in gcovrExclusions:
-            cmd += ' -e ' +ex
+            cmd += ' -e ' + ex
         for sr in gcovrSources:
             cmd += ' ' + sr
         if nbc > 1:
-            cmd+=" -j " + str(nbc)
+            cmd += " -j " + str(nbc)
         ret = runcommand(cmd)
         if ret != 0:
             print(" *** /!\\ Error during Coverage analysis, return code = " + str(ret))
-            endCommand(ret)
+            exit(ret)
 
-        # artifact creation
-        with zipfile.ZipFile('coverage.zip', 'w') as myzip:
+        # Artifact creation
+        with zipfile.ZipFile('coverage.zip', 'w') as my_zip:
             for file in os.listdir("."):
                 if not file.endswith(".html"):
                     continue
-                myzip.write(file)
-        shutil.move('coverage.zip','../coverage.zip')
+                my_zip.write(file)
+        move('coverage.zip', '../coverage.zip')
 
-        #directory restore
-        os.chdir(srcRoot)
+        # Directory restore
+        os.chdir(src_root)
 
-    endCommand(ret)
+    print(" *** return code = " + str(ret))
+    exit(ret)
+
 
 if __name__ == "__main__":
     main()

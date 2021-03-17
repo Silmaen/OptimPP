@@ -1,213 +1,285 @@
 # - encoding: UTF-8 -
-import platform, sys, argparse, subprocess, os, shutil, time, zipfile, copy, datetime
 
-SupportedCompiler = {"Windows":["MSVC","visual-studio","gcc/g++","clang/clang++"],"OpenBSD":["egcc/eg++","clang/clang++"],"Linux":["gcc/g++","clang/clang++"]}
-SupportedCompilerShort = {"Windows":["clang","gcc","MSVC","visual-studio"],"OpenBSD":["clang","gcc"],"Linux":["clang","gcc"]}
-Corresponding = {
-	"WindowsMSVC":"MSVC",
-    "Windowsvisual-studio":"MSVC",
-	"Windowsgcc":"gcc/g++",
-	"Windowsclang":"clang/clang++",
-	"OpenBSDgcc":"egcc/eg++",
-	"OpenBSDclang":"clang/clang++",
-	"Linuxgcc":"gcc/g++",
-	"Linuxclang":"clang/clang++"
+from pathlib import Path
+from platform import system
+
+SupportedConfiguration = {
+    "Windows_clang-native":  {
+        "Minimum_version": "11.0",
+        "Build_Type":      ["Release", "Debug"],
+        "Toolchain":       "CodeBlocks - MinGW Makefiles",
+        "C_Compiler":      "C:/Program Files/LLVM/bin/clang.exe",
+        "CXX_Compiler":    "C:/Program Files/LLVM/bin/clang++.exe",
+    },
+    "Windows_clang":         {
+        "Minimum_version": "11.0",
+        "Build_Type":      ["Release", "Debug"],
+        "Toolchain":       "CodeBlocks - MinGW Makefiles",
+        "C_Compiler":      "C:/msys64/mingw64/bin/clang.exe",
+        "CXX_Compiler":    "C:/msys64/mingw64/bin/clang++.exe",
+    },
+    "Windows_gcc":           {
+        "Minimum_version": "10.0",
+        "Build_Type":      ["Release", "Debug"],
+        "Toolchain":       "CodeBlocks - MinGW Makefiles",
+    },
+    "Windows_visual-studio": {
+        "Minimum_version": "19.28",
+        "Build_Type":      ["Release", "Debug"],
+        "Generator_Platform": "x64",
+    },
+    "Linux_clang":           {
+        "Minimum_version": "10.0",
+        "Build_Type":      ["Release", "Debug"],
+        "Toolchain":       "Unix Makefiles",
+        "C_Compiler":      "/usr/bin/clang",
+        "CXX_Compiler":    "/usr/bin/clang++",
+    },
+    "Linux_gcc":             {
+        "Minimum_version": "10.0",
+        "Build_Type":      ["Release", "Debug"],
+        "Toolchain":       "Unix Makefiles",
+        "C_Compiler":      "/usr/bin/gcc",
+        "CXX_Compiler":    "/usr/bin/g++",
+    },
+    "OpenBSD_clang":         {
+        "Minimum_version": "10.0",
+        "Build_Type":      ["Release", "Debug"],
+        "Toolchain":       "Unix Makefiles",
+        "C_Compiler":      "/usr/local/bin/clang",
+        "CXX_Compiler":    "/usr/local/bin/clang++",
+    },
+    "OpenBSD_gcc":           {
+        "Minimum_version": "10.0",
+        "Build_Type":      ["Release", "Debug"],
+        "Toolchain":       "Unix Makefiles",
+        "C_Compiler":      "/usr/local/bin/egcc",
+        "CXX_Compiler":    "/usr/local/bin/eg++",
+    }
+
 }
-OS = platform.system()
 
-MAX_RM_TRY=50
-if OS not in SupportedCompiler.keys():
-    print("Unsupported OS: " + str(OS))
-    sys.exit(1)
-Compilers = SupportedCompiler[OS]
-CompilersShort = SupportedCompilerShort[OS]
-srcRoot= os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-BuildEnginePath = os.path.dirname(os.path.abspath(__file__))
-buildDir=os.path.join(srcRoot,"Build")
-ActionList = ["generate","build","test","doc","package"]
-fullActionList = ["All"] + ActionList
-staticanalysisdir=os.path.join(buildDir, "static-analysis")
-
-scanbuildcheckers =[
-"alpha.clone.CloneChecker",
-"alpha.core.BoolAssignment",
-"alpha.core.CallAndMessageUnInitRefArg",
-"alpha.core.CastSize",
-"alpha.core.CastToStruct",
-"alpha.core.Conversion",
-"alpha.core.DynamicTypeChecker",
-"alpha.core.FixedAddr",
-"alpha.core.IdenticalExpr",
-"alpha.core.PointerArithm",
-"alpha.core.PointerSub",
-"alpha.core.SizeofPtr",
-"alpha.core.StackAddressAsyncEscape",
-"alpha.core.TestAfterDivZero",
-"alpha.cplusplus.DeleteWithNonVirtualDtor",
-"alpha.cplusplus.EnumCastOutOfRange",
-"alpha.cplusplus.InvalidatedIterator",
-"alpha.cplusplus.MismatchedIterator",
-#"alpha.cplusplus.UninitializedObject",
-#"alpha.deadcode.UnreachableCode",
-"alpha.llvm.Conventions",
-"alpha.security.ArrayBound",
-"alpha.security.ArrayBoundV2",
-"alpha.security.MallocOverflow",
-"alpha.security.MmapWriteExec",
-"alpha.security.ReturnPtrRange",
-"alpha.security.taint.TaintPropagation",
-"alpha.unix.BlockInCriticalSection",
-"alpha.unix.Chroot",
-"alpha.unix.PthreadLock",
-"alpha.unix.SimpleStream",
-"alpha.unix.Stream",
-"alpha.unix.cstring.BufferOverlap",
-"alpha.unix.cstring.NotNullTerminated",
-"alpha.unix.cstring.OutOfBounds",
-#"apiModeling.StdCLibraryFunctions",
-#"apiModeling.TrustNonnull",
-#"apiModeling.google.GTest",
-"core.CallAndMessage",
-"core.DivideZero",
-"core.DynamicTypePropagation",
-"core.NonNullParamChecker",
-"core.NonnilStringConstants",
-"core.NullDereference",
-"core.StackAddressEscape",
-"core.UndefinedBinaryOperatorResult",
-"core.VLASize",
-"core.builtin.BuiltinFunctions",
-"core.builtin.NoReturnFunctions",
-"core.uninitialized.ArraySubscript",
-"core.uninitialized.Assign",
-"core.uninitialized.Branch",
-"core.uninitialized.CapturedBlockVariable",
-"core.uninitialized.UndefReturn",
-"cplusplus.InnerPointer",
-"cplusplus.Move",
-"cplusplus.NewDelete",
-"cplusplus.NewDeleteLeaks",
-"cplusplus.SelfAssignment",
-"deadcode.DeadStores",
-#"debug.AnalysisOrder",
-#"debug.ConfigDumper",
-#"debug.DumpCFG",
-#"debug.DumpCallGraph",
-#"debug.DumpCalls",
-#"debug.DumpDominators",
-#"debug.DumpLiveStmts",
-#"debug.DumpLiveVars",
-#"debug.DumpTraversal",
-#"debug.ExprInspection",
-#"debug.Stats",
-#"debug.TaintTest",
-#"debug.ViewCFG",
-#"debug.ViewCallGraph",
-#"debug.ViewExplodedGraph",
-"nullability.NullPassedToNonnull",
-"nullability.NullReturnedFromNonnull",
-"nullability.NullableDereferenced",
-"nullability.NullablePassedToNonnull",
-"nullability.NullableReturnedFromNonnull",
-"optin.cplusplus.VirtualCall",
-#"optin.mpi.MPI-Checker",
-"optin.performance.GCDAntipattern",
-"optin.performance.Padding",
-"optin.portability.UnixAPI",
-"security.FloatLoopCounter",
-"security.insecureAPI.UncheckedReturn",
-"security.insecureAPI.bcmp",
-"security.insecureAPI.bcopy",
-"security.insecureAPI.bzero",
-"security.insecureAPI.getpw",
-"security.insecureAPI.gets",
-"security.insecureAPI.mkstemp",
-"security.insecureAPI.mktemp",
-"security.insecureAPI.rand",
-"security.insecureAPI.strcpy",
-"security.insecureAPI.vfork",
-"unix.API",
-"unix.Malloc",
-"unix.MallocSizeof",
-"unix.MismatchedDeallocator",
-"unix.Vfork",
-"unix.cstring.BadSizeArg",
-"unix.cstring.NullArg",
-"valist.CopyToSelf",
-"valist.Uninitialized",
-"valist.Unterminated",
+classic_windows_file_path = [
+    Path("c:/Program Files/"),
+    Path("c:/Program Files (x86)/"),
+    Path("c:/msys64/"),
 ]
 
-ScanbuildParam = "-v -k --status-bugs -o " + staticanalysisdir
-ScanbuildParam += " --use-analyzer=/usr/local/bin/clang --use-cc=/usr/local/bin/clang --use-c++=/usr/local/bin/clang++"
-ScanbuildParam += " -enable-checker " + ",".join(scanbuildcheckers) + " --exclude Test"
 
-PytonExe = "python"
-if OS in ["OpenBSD"]:
-    PytonExe+="3"
+def get_supported_os():
+    """
+    Get the list of supported OS
+    :return:
+    """
+    oss = []
+    for key in SupportedConfiguration:
+        k = key.split("_")[0]
+        if k in oss:
+            continue
+        oss.append(k)
+    return oss
 
-if os.getcwd() != srcRoot:
-    #print("WARNING: not in the source's root directory",file=sys.stderr)
-    os.chdir(srcRoot)
+
+def get_compiler_for_os():
+    """
+    Get the list of possible compiler for the current OS.
+    :return:
+    """
+    current_os = system()
+    compiler_list = []
+    for key in SupportedConfiguration:
+        o, c = key.split("_", 1)
+        if o == current_os:
+            compiler_list.append(c)
+    return compiler_list
 
 
-# ==============================================================================
-def safeRmTree(path,checkExistance:bool=True):
-    '''
-    function to safely delete folder with exception handling
-    '''
-    if not checkExistance and not os.path.exists(path):
-        print("Warning: folder '"+path+"' does not exists for delete",file=sys.stderr)
-    for i in range(MAX_RM_TRY):
-        if os.path.exists(path):
-            try:
-                shutil.rmtree(path,ignore_errors=True)
-            except Exception as e:
-                time.sleep(0.05) #wait before retry
-                continue
-        else:
-            break
-    if os.path.exists(path):
-        print("Warning: unable to delete folder "+path,file=sys.stderr)
-    return
+def config_by_compiler(compiler: str):
+    """
+    Get the Id
+    :param compiler:
+    :return:
+    """
+    config = system() + "_" + compiler
+    if config in SupportedConfiguration:
+        return config
+    print("ERROR: Unsupported compiler")
+    exit(1)
+    return ""
 
-# ==============================================================================
-def runcommandWithOutPut(cmd:str):
+
+def check_os():
+    """
+    Check the support of the current os
+    :return: True if supported
+    """
+    return system() in get_supported_os()
+
+
+src_root = Path(__file__).parent.parent.parent
+build_engine = src_root / "Tools" / "BuildEngine"
+
+ActionList = ["generate", "build", "test", "doc"]
+fullActionList = ["All"] + ActionList
+
+
+def make_output_dir(compiler: str, debug: bool):
+    return src_root / ("cmake-build-" + ["release", "debug"][debug] + "-" + compiler)
+
+
+def make_scan_build_param(compiler: str, debug: bool):
+    scan_build_checkers = [
+        "alpha.clone.CloneChecker",
+        "alpha.core.BoolAssignment",
+        "alpha.core.CallAndMessageUnInitRefArg",
+        "alpha.core.CastSize",
+        "alpha.core.CastToStruct",
+        "alpha.core.Conversion",
+        "alpha.core.DynamicTypeChecker",
+        "alpha.core.FixedAddr",
+        "alpha.core.IdenticalExpr",
+        "alpha.core.PointerArithm",
+        "alpha.core.PointerSub",
+        "alpha.core.SizeofPtr",
+        "alpha.core.StackAddressAsyncEscape",
+        "alpha.core.TestAfterDivZero",
+        "alpha.cplusplus.DeleteWithNonVirtualDtor",
+        "alpha.cplusplus.EnumCastOutOfRange",
+        "alpha.cplusplus.InvalidatedIterator",
+        "alpha.cplusplus.MismatchedIterator",
+        "alpha.cplusplus.UninitializedObject",
+        # "alpha.deadcode.UnreachableCode",
+        "alpha.llvm.Conventions",
+        "alpha.security.ArrayBound",
+        "alpha.security.ArrayBoundV2",
+        "alpha.security.MallocOverflow",
+        "alpha.security.MmapWriteExec",
+        "alpha.security.ReturnPtrRange",
+        "alpha.security.taint.TaintPropagation",
+        "alpha.unix.BlockInCriticalSection",
+        "alpha.unix.Chroot",
+        "alpha.unix.PthreadLock",
+        "alpha.unix.SimpleStream",
+        "alpha.unix.Stream",
+        "alpha.unix.cstring.BufferOverlap",
+        "alpha.unix.cstring.NotNullTerminated",
+        "alpha.unix.cstring.OutOfBounds",
+        # "apiModeling.StdCLibraryFunctions",
+        # "apiModeling.TrustNonnull",
+        # "apiModeling.google.GTest",
+        "core.CallAndMessage",
+        "core.DivideZero",
+        "core.DynamicTypePropagation",
+        "core.NonNullParamChecker",
+        "core.NonnilStringConstants",
+        "core.NullDereference",
+        "core.StackAddressEscape",
+        "core.UndefinedBinaryOperatorResult",
+        "core.VLASize",
+        "core.builtin.BuiltinFunctions",
+        "core.builtin.NoReturnFunctions",
+        "core.uninitialized.ArraySubscript",
+        "core.uninitialized.Assign",
+        "core.uninitialized.Branch",
+        "core.uninitialized.CapturedBlockVariable",
+        "core.uninitialized.UndefReturn",
+        "cplusplus.InnerPointer",
+        "cplusplus.Move",
+        "cplusplus.NewDelete",
+        "cplusplus.NewDeleteLeaks",
+        "cplusplus.SelfAssignment",
+        "deadcode.DeadStores",
+        # "debug.AnalysisOrder",
+        # "debug.ConfigDumper",
+        # "debug.DumpCFG",
+        # "debug.DumpCallGraph",
+        # "debug.DumpCalls",
+        # "debug.DumpDominators",
+        # "debug.DumpLiveStmts",
+        # "debug.DumpLiveVars",
+        # "debug.DumpTraversal",
+        # "debug.ExprInspection",
+        # "debug.Stats",
+        # "debug.TaintTest",
+        # "debug.ViewCFG",
+        # "debug.ViewCallGraph",
+        # "debug.ViewExplodedGraph",
+        "nullability.NullPassedToNonnull",
+        "nullability.NullReturnedFromNonnull",
+        "nullability.NullableDereferenced",
+        "nullability.NullablePassedToNonnull",
+        "nullability.NullableReturnedFromNonnull",
+        "optin.cplusplus.VirtualCall",
+        # "optin.mpi.MPI-Checker",
+        "optin.performance.GCDAntipattern",
+        "optin.performance.Padding",
+        "optin.portability.UnixAPI",
+        "security.FloatLoopCounter",
+        "security.insecureAPI.UncheckedReturn",
+        "security.insecureAPI.bcmp",
+        "security.insecureAPI.bcopy",
+        "security.insecureAPI.bzero",
+        "security.insecureAPI.getpw",
+        "security.insecureAPI.gets",
+        "security.insecureAPI.mkstemp",
+        "security.insecureAPI.mktemp",
+        "security.insecureAPI.rand",
+        "security.insecureAPI.strcpy",
+        "security.insecureAPI.vfork",
+        "unix.API",
+        "unix.Malloc",
+        "unix.MallocSizeof",
+        "unix.MismatchedDeallocator",
+        "unix.Vfork",
+        "unix.cstring.BadSizeArg",
+        "unix.cstring.NullArg",
+        "valist.CopyToSelf",
+        "valist.Uninitialized",
+        "valist.Unterminated",
+    ]
+    if "clang" not in compiler.lower():
+        print("ERROR: Static analysis only works with clang")
+        exit(1)
+    opt = SupportedConfiguration[config_by_compiler(compiler)]
+    scan_build_param = "-v -k --status-bugs -o " + str(make_output_dir(compiler, debug))
+    scan_build_param += " --use-analyzer=" + opt["C_Compiler"]
+    scan_build_param += " --use-cc=" + opt["C_Compiler"]
+    scan_build_param += " --use-c++=" + opt["CXX_Compiler"]
+    scan_build_param += " -enable-checker " + ",".join(scan_build_checkers) + " --exclude Test"
+    return scan_build_param
+
+
+def runcommand(cmd: str):
+    """
+    Execute safely a system command
+    :param cmd: the command to execute
+    :return: the return code
+    """
+    from subprocess import run
     try:
-        print(">>>"+cmd)
-        retour = subprocess.run(cmd,
-                     shell = True,
-                     stdout= subprocess.PIPE,
-                     stderr=subprocess.STDOUT,
-                     text=os.linesep)
-        ret = retour.returncode
-        output = retour.stdout.split(os.linesep)
-    except:
-        output = ["error in command"]
-        ret = -6
-    return ret,output;
-
-# ==============================================================================
-def runcommand(cmd:str):
-    try:
-        print(">>>"+cmd)
-        ret = subprocess.run(cmd, shell = True, stdout = sys.stdout, stderr = sys.stderr).returncode
-    except:
-        print("error in command")
+        print(">>>" + cmd)
+        ret = run(cmd, shell=True).returncode
+    except Exception as err:
+        print("Execution Error: " + str(err))
         ret = -8
-    return ret;
+    return ret
 
-# ==============================================================================
-def runPython(pythonscript:str,params:list):
-    try:
-        cmd = PytonExe + " " + pythonscript + " " + " ".join(params)
-    except:
-        print("bad Python command")
-        return -87
-    return runcommand(cmd)
 
-# ==============================================================================
-def getCPUNumber():
+def run_python(script: str, options: list):
+    """
+    run a python script
+    :param script:
+    :param options:
+    :return:
+    """
+    return runcommand("python" + ["", "3"][system() in ["OpenBSD", "Linux"]] + " " + str(script) + " " + " ".join(options))
+
+
+def get_cpu_number():
+    """
+    Retrieve the number of CPU of the current machine
+    :return: the number of CPU
+    """
     try:
         import multiprocessing
         return multiprocessing.cpu_count()
@@ -215,31 +287,41 @@ def getCPUNumber():
         print("Error while finding number of processors")
         return 1
 
-# ==============================================================================
-def getCMakeProgram():
-    # definition of the CMake command
-    if OS == "Windows":
-        return '"C:\\Program Files\\CMake\\bin\\cmake.exe"'
-    else:
-        return "cmake"
 
-# ==============================================================================
-def endCommand(ret):
-	os.chdir(srcRoot)
-	print(" *** return code = " + str(ret) )
-	sys.exit(ret)
-
-# ==============================================================================
-def getClangCompilers():
-    if OS in ["OpenBSD"]:
-        return "/usr/local/bin/clang","/usr/local/bin/clang++"
-    if OS in ["Linux"]:
-        return "/usr/bin/clang","/usr/bin/clang++"
-    if OS in ["Windows"]:
-        return "C:\\msys64\\mingw64\\bin\\clang","C:\\msys64\\mingw64\\bin\\clang++"
-
-
-cc,cxx = getClangCompilers()
-ScanbuildParam = "-v -k --status-bugs -o " + staticanalysisdir
-ScanbuildParam += " --use-analyzer="+cc+" --use-cc="+cc+" --use-c++="+cxx
-ScanbuildParam += " -enable-checker " + ",".join(scanbuildcheckers) + " --exclude Test"
+def find_program(program: str, additional_path=None):
+    """
+    Search for a program
+    :param program:
+    :param additional_path:
+    :return:
+    """
+    if additional_path is None:
+        additional_path = []
+    from shutil import which
+    to_return = ""
+    if which(program) is not None:
+        to_return = program
+    if system() == "Windows":
+        program += ".exe"
+    if to_return == "":
+        for p in additional_path:
+            for pp in p.rglob(program):
+                to_return = str(pp)
+                break
+            if to_return != "":
+                break
+    if system() == "Windows" and to_return == "":
+        for p in classic_windows_file_path:
+            for pp in p.rglob(program):
+                if pp.is_dir():
+                    continue
+                to_return = str(pp)
+                break
+            if to_return != "":
+                break
+    if to_return == "":
+        print("ERROR: could not find " + program + " on this system")
+        exit(1)
+    if " " in to_return:
+        to_return = '"' + to_return + '"'
+    return to_return
