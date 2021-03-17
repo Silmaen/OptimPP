@@ -29,7 +29,7 @@ def main():
             fp.write("No bug found!! yes!")
             fp.close()
         zipf = zipfile.ZipFile("StaticAnalysis.zip", 'w')
-        os.chdir("static-analysis")
+        os.chdir(staticanalysisdir)
         os.chdir(os.listdir(".")[-1])
         for f in os.listdir("."):
             zipf.write(f)
