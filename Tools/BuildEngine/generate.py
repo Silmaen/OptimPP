@@ -51,7 +51,7 @@ def main():
         scb += " " + make_scan_build_param(args.compiler, args.debug) + " " + cmd
     else:
         if "visual-studio" not in args.compiler:
-            if "clang" not in args.compiler or system() != "OpenBSD":
+            if args.compiler in ["gcc"]:
                 cmd += " -DENABLE_CODE_COVERAGE=ON"
 
     # execute CMake command
