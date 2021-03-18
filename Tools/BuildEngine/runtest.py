@@ -52,7 +52,7 @@ def get_gcov_program(build_dir: Path):
             compiler = "g++"
             break
     if compiler == "":
-        print("Compiler not supported for coverage analysis")
+        print_log("Compiler not supported for coverage analysis", 3)
         return ""
     if compiler == "g++":
         if which("egcov"):
@@ -92,7 +92,7 @@ def main():
     for s in sub_cmd:
         ret = runcommand(testcmd + s)
         if ret != 0:
-            print(" *** /!\\ Error during test run, return code = " + str(ret))
+            print_log(" *** /!\\ Error during test run, return code = " + str(ret))
             exit(ret)
 
     # ---------------------
@@ -120,7 +120,7 @@ def main():
             cmd += " -j " + str(nbc)
         ret = runcommand(cmd)
         if ret != 0:
-            print(" *** /!\\ Error during Coverage analysis, return code = " + str(ret))
+            print_log(" *** /!\\ Error during Coverage analysis, return code = " + str(ret))
             exit(ret)
 
         # Artifact creation
@@ -134,7 +134,7 @@ def main():
         # Directory restore
         os.chdir(src_root)
 
-    print(" *** return code = " + str(ret))
+    print_log(" *** return code = " + str(ret), 4)
     exit(ret)
 
 

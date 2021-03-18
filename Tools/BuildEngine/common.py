@@ -1,5 +1,5 @@
 # - encoding: UTF-8 -
-
+import sys
 from pathlib import Path
 from platform import system
 
@@ -65,6 +65,25 @@ classic_windows_file_path = [
     Path("c:/msys64/"),
 ]
 
+log_level = 5
+
+
+def print_log(msg: str, lvl: int = 1):
+    """
+    Display a message.
+    :param msg: the message
+    :param lvl: the message level:
+           0 : FATAL ERROR
+           1 : ERROR
+           2 : WARNING
+           3 : REMARK
+           4 : STATUS
+           5 : DEBUG
+    """
+    log_levels = ["FATAL ERROR", "ERROR", "WARNING", "REMARK", "STATUS", "DEBUG"]
+    log_where = [sys.stderr, sys.stderr, sys.stderr, sys.stdout, sys.stdout, sys.stdout]
+    print(log_levels[lvl] + msg, file=log_where[lvl])
+
 
 def get_supported_os():
     """
@@ -103,7 +122,7 @@ def config_by_compiler(compiler: str):
     config = system() + "_" + compiler
     if config in SupportedConfiguration:
         return config
-    print("ERROR: Unsupported compiler")
+    print_log("Unsupported compiler")
     exit(1)
     return ""
 
@@ -238,7 +257,7 @@ def make_scan_build_param(compiler: str, debug: bool):
         "valist.Unterminated",
     ]
     if "clang" not in compiler.lower():
-        print("ERROR: Static analysis only works with clang")
+        print_log("Static analysis only works with clang")
         exit(1)
     opt = SupportedConfiguration[config_by_compiler(compiler)]
     scan_build_param = "-v -k --status-bugs -o " + str(make_output_dir(compiler, debug))
@@ -257,10 +276,10 @@ def runcommand(cmd: str):
     """
     from subprocess import run
     try:
-        print(">>>" + cmd)
+        print_log(">>>" + cmd, 4)
         ret = run(cmd, shell=True).returncode
     except Exception as err:
-        print("Execution Error: " + str(err))
+        print_log("Execution Error: " + str(err))
         ret = -8
     return ret
 
@@ -284,7 +303,7 @@ def get_cpu_number():
         import multiprocessing
         return multiprocessing.cpu_count()
     except (ImportError, NotImplementedError):
-        print("Error while finding number of processors")
+        print_log("while finding number of processors")
         return 1
 
 
@@ -320,7 +339,7 @@ def find_program(program: str, additional_path=None):
             if to_return != "":
                 break
     if to_return == "":
-        print("ERROR: could not find " + program + " on this system")
+        print_log("could not find " + program + " on this system")
         exit(1)
     if " " in to_return:
         to_return = '"' + to_return + '"'
