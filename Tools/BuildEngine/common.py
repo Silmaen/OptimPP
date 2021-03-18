@@ -140,6 +140,7 @@ build_engine = src_root / "Tools" / "BuildEngine"
 
 ActionList = ["generate", "build", "test", "doc"]
 fullActionList = ["All"] + ActionList
+doc_build_dir = src_root / "doc" / "build"
 
 
 def make_output_dir(compiler: str, debug: bool):

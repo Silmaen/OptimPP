@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # - encoding: UTF-8 -
 import os
+import zipfile
+
 from common import *
 
 
@@ -10,6 +12,14 @@ def main():
     os.chdir(src_root)
     cmd = find_program("doxygen")
     ret = runcommand(str(cmd) + " " + str(doxygen_file))
+
+    # Package the doc
+    if ret == 0:
+        os.chdir(doc_build_dir / "html")
+        with zipfile.ZipFile(doc_build_dir / 'documentation.zip', 'w') as my_zip:
+            for file in os.listdir("."):
+                my_zip.write(file)
+
     os.chdir(cc)
     print_log(" *** return code = " + str(ret), 4)
     exit(ret)
