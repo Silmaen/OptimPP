@@ -3,6 +3,17 @@
 from BuildEngine.common import *
 
 
+def clear_all():
+    import shutil
+    print("Clearing the repository")
+    for build_folder in src_root.glob("cmake-build-*"):
+        print("removing: " + str(build_folder))
+        shutil.rmtree(build_folder, ignore_errors=True)
+    if doc_build_dir.exists():
+        print("removing: " + str(doc_build_dir))
+        shutil.rmtree(doc_build_dir, ignore_errors=True)
+
+
 def generate(cc: str, debug: bool, static_analysis: bool):
     if cc not in get_compiler_for_os():
         print_log("unknown config compiler:" + cc)
@@ -82,6 +93,8 @@ def do_action(action, compiler, debug, target, static_analysis):
     :param static_analysis:
     :return:
     """
+    if action == "clear":
+        return clear_all()
     if action == "generate":
         return generate(compiler, debug, static_analysis)
     elif action == "build":

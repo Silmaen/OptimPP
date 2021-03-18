@@ -138,7 +138,7 @@ def check_os():
 src_root = Path(__file__).parent.parent.parent
 build_engine = src_root / "Tools" / "BuildEngine"
 
-ActionList = ["generate", "build", "test", "doc", "package"]
+ActionList = ["clear", "generate", "build", "test", "doc", "package"]
 fullActionList = ["All"] + ActionList
 doc_build_dir = src_root / "doc" / "build"
 
