@@ -180,7 +180,7 @@ if (NOT OPP_COMPILER_MSVC)
 	string(TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_UPPER)
 	message(STATUS "Compilation flags: CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE_UPPER} = ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}")
 endif ()
-set(CMAKE_VERBOSE_MAKEFILE OFF)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 message(STATUS "Compilation flags: CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE_UPPER} = ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}")
 message(STATUS "Linking  flags   : CMAKE_EXE_LINKER_FLAGS = ${CMAKE_EXE_LINKER_FLAGS}")
 
@@ -194,6 +194,32 @@ add_subdirectory(Test)
 
 # subproject Documentation
 add_subdirectory(doc)
+
+if (CMAKE_BUILD_TYPE MATCHES "Debug")
+	set(LCONFIG "-g")
+endif()
+
+
+message(STATUS "CMAKE_BUILD_TYPE_UPPER: ${CMAKE_BUILD_TYPE_UPPER}")
+message(STATUS "CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
+
+string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_LOWER)
+
+get_filename_component(CONF_NAME ${CMAKE_BINARY_DIR} NAME)
+string(REPLACE "cmake-build-${CMAKE_BUILD_TYPE_LOWER}-" "" COMPILER_NAME ${CONF_NAME})
+
+message(STATUS "COMPILER_NAME: ${COMPILER_NAME}")
+message(STATUS "LCONFIG: ${LCONFIG}")
+
+# packaging:
+add_custom_target(
+		Packaging
+		COMMAND python "Tools/BuildEngine/packaging.py" "${LCONFIG}" "-c" "${COMPILER_NAME}"
+		WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+		COMMENT "Package Application"
+		VERBATIM
+)
+
 
 ## CTEST SUPPORT ----------------------------------------------------
 include(CTest)

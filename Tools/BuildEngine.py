@@ -64,6 +64,14 @@ def documentation(cc: str, debug: bool):
     return run_python(scr, [])
 
 
+def package(cc: str, debug: bool):
+    scr = build_engine / "packaging.py"
+    opt = ['-c ' + cc]
+    if debug:
+        opt += ['-g']
+    return run_python(scr, opt)
+
+
 def do_action(action, compiler, debug, target, static_analysis):
     """
     Do the action
@@ -82,6 +90,8 @@ def do_action(action, compiler, debug, target, static_analysis):
         return testncover(compiler, debug)
     elif action == "doc":
         return documentation(compiler, debug)
+    elif action == "package":
+        return package(compiler, debug)
     else:
         print_log("Unknown Action: '" + action + "'")
         return -98

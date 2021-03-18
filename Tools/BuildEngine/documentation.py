@@ -17,8 +17,7 @@ def main():
     if ret == 0:
         os.chdir(doc_build_dir / "html")
         with zipfile.ZipFile(doc_build_dir / 'documentation.zip', 'w') as my_zip:
-            for file in os.listdir("."):
-                my_zip.write(file)
+            zip_folder(my_zip, ".")
 
     os.chdir(cc)
     print_log(" *** return code = " + str(ret), 4)

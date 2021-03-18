@@ -24,8 +24,8 @@ SupportedConfiguration = {
         "Toolchain":       "CodeBlocks - MinGW Makefiles",
     },
     "Windows_visual-studio": {
-        "Minimum_version": "19.28",
-        "Build_Type":      ["Release", "Debug"],
+        "Minimum_version":    "19.28",
+        "Build_Type":         ["Release", "Debug"],
         "Generator_Platform": "x64",
     },
     "Linux_clang":           {
@@ -138,13 +138,29 @@ def check_os():
 src_root = Path(__file__).parent.parent.parent
 build_engine = src_root / "Tools" / "BuildEngine"
 
-ActionList = ["generate", "build", "test", "doc"]
+ActionList = ["generate", "build", "test", "doc", "package"]
 fullActionList = ["All"] + ActionList
 doc_build_dir = src_root / "doc" / "build"
 
 
 def make_output_dir(compiler: str, debug: bool):
     return src_root / ("cmake-build-" + ["release", "debug"][debug] + "-" + compiler)
+
+
+def zip_folder(zip_file, folder, exclude_patterns=None):
+    import os
+    if exclude_patterns is None:
+        exclude_patterns = []
+    for root, dirs, files in os.walk(folder):
+        for file in files:
+            to_skip = False
+            for pat in exclude_patterns:
+                if pat in file:
+                    to_skip = True
+                    break
+            if to_skip:
+                continue
+            zip_file.write(os.path.join(root, file))
 
 
 def make_scan_build_param(compiler: str, debug: bool):
@@ -292,7 +308,8 @@ def run_python(script: str, options: list):
     :param options:
     :return:
     """
-    return runcommand("python" + ["", "3"][system() in ["OpenBSD", "Linux"]] + " " + str(script) + " " + " ".join(options))
+    return runcommand(
+        "python" + ["", "3"][system() in ["OpenBSD", "Linux"]] + " " + str(script) + " " + " ".join(options))
 
 
 def get_cpu_number():
