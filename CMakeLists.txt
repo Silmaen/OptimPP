@@ -186,10 +186,14 @@ message(STATUS "Linking  flags   : CMAKE_EXE_LINKER_FLAGS = ${CMAKE_EXE_LINKER_F
 
 enable_testing()
 
-# subproject TEST
+# subproject Source
 add_subdirectory(Source)
 
-# subproject TEST
+# subproject Test
 add_subdirectory(Test)
+
+# subproject Documentation
+add_subdirectory(doc)
+
 ## CTEST SUPPORT ----------------------------------------------------
 include(CTest)

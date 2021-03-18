@@ -36,7 +36,7 @@ private:
      * @return this object
      */
     TieComparable<T>& operator=(TieComparable<T>&&)noexcept = default;
-    friend T;
+    friend T; ///< allow access to template
 public:
     /**
      * @brief equality operator
@@ -109,7 +109,7 @@ private:
    * @return this object
    */
   IneqComparable<T>& operator=(IneqComparable<T>&&)noexcept = default;
-  friend T;
+  friend T; ///< allow access to template
 public:
   /**
    * @brief equality operator

@@ -16,10 +16,27 @@ namespace optim
 class Exception
 {
 public:
+    /**
+     * @brief default constructor
+     */
     Exception() : m_ErrorCode{ ExitCode::Value::GeneralError } {}
+    /**
+     * @brief copy contructor
+     */
     Exception(const Exception&) = default;
+    /**
+     * @brief affectation operator
+     * @return this object
+     */
     Exception& operator=(const Exception&) = default;
+    /**
+     * @brief move constructor
+     */
     Exception(Exception&&) = default;
+    /**
+     * @brief move affectation operator
+     * @return this object
+     */
     Exception& operator=(Exception&&) = default;
     /**
      * @brief Constructor by ExitCode
