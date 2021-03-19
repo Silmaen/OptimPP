@@ -80,9 +80,9 @@ def print_log(msg: str, lvl: int = 1):
            4 : STATUS
            5 : DEBUG
     """
-    log_levels = ["FATAL ERROR", "ERROR", "WARNING", "REMARK", "STATUS", "DEBUG"]
+    log_levels = ["FATAL ERROR", "ERROR", "WARNING", "REMARK", "", "DEBUG"]
     log_where = [sys.stderr, sys.stderr, sys.stderr, sys.stdout, sys.stdout, sys.stdout]
-    print(log_levels[lvl] + msg, file=log_where[lvl])
+    print(log_levels[lvl] +  " " + msg, file=log_where[lvl])
 
 
 def get_supported_os():
@@ -362,3 +362,21 @@ def find_program(program: str, additional_path=None):
     if " " in to_return:
         to_return = '"' + to_return + '"'
     return to_return
+        elif var_type in ["FILEPATH", "UNINITIALIZED"]:
+            if var_val == var_name + "-NOTFOUND":
+                cmake_vars[var_name] = None
+            else:
+                cmake_vars[var_name] = Path(var_val)
+        else:
+            print_log("Unknown CMakeCache variable type: " + str(var_type) + " in line '" + sline + "'", 2)
+            exit(1)
+    return cmake_vars
+        elif var_type in ["FILEPATH", "UNINITIALIZED"]:
+            if var_val == var_name + "-NOTFOUND":
+                cmake_vars[var_name] = None
+            else:
+                cmake_vars[var_name] = Path(var_val)
+        else:
+            print_log("Unknown CMakeCache variable type: " + str(var_type) + " in line '" + sline + "'", 2)
+            exit(1)
+    return cmake_vars
