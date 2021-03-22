@@ -44,6 +44,7 @@ public:
     // comparison
     /**
      * @brief Key function of comparison
+     * @return Tuple object containing the components
      */
     [[nodiscard]] auto Tie()const noexcept{
       return std::tie(m_data[0], m_data[1], m_data[2]);

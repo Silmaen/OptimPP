@@ -92,6 +92,7 @@ public:
     // comparison
     /**
      * @brief Key function of comparison
+     * @return Tuple object containing the id of the element
      */
     [[nodiscard]] auto Tie()const noexcept {
         return std::tie(Id);
@@ -108,6 +109,8 @@ public:
     [[nodiscard]] bool isNotValid()const noexcept { return !isValid(); }
     /**
      * @brief validity checker
+     * @param AllThrow if true(default) will throw an exception(OK) in case of valid element
+     *                 else, the method will throw exception only if validity issue.
      *
      * throw exceptions when error are founds
      */
