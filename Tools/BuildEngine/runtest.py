@@ -75,8 +75,6 @@ def main():
         print_log("Coverage enabled", 4)
         have_gcovr()
         gcov = cmake_cache.get("COVERAGE_COMMAND")
-        if system() == "Windows":
-            gcov = gcov.name
         if have_coverage_infos(build_dir):
 
             # Directory change

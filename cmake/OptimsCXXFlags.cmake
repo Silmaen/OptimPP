@@ -105,6 +105,8 @@ string(REPLACE ";" " " OPP_CXX_FLAGS_COMMON "${OPP_CXX_FLAGS_COMMON}")
 # Enable the debug Windows macro in Debug build type
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
 
+get_filename_component(COMPILER_PATH ${CMAKE_CXX_COMPILER} DIRECTORY)
+
 # Allowing to enable clang-tidy if compiling with Clang
 if (OPP_COMPILER_CLANG)
 	option(ENABLE_CLANG_TIDY "Enable clang-tidy" OFF)

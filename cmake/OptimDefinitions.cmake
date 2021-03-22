@@ -4,6 +4,7 @@ if (WIN32)
 		UNICODE
 		NOMINMAX # Prevent Windows from defining its min & max macros, which generates conflicts
 	)
+	set(OPP_ADDITIONAL_PATH "c:/msys64/usr/bin")
 endif ()
 
 if (OPP_COMPILER_MSVC)
@@ -32,3 +33,14 @@ endif ()
 
 # add this flag to set the test files
 add_compile_definitions(ROOT_TEST_FILE_PATH="${OPTIM_ROOT_DIR}")
+
+string(TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_UPPER)
+string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_LOWER)
+get_filename_component(OPP_CONFIGURATION_NAME ${CMAKE_BINARY_DIR} NAME)
+string(REPLACE "cmake-build-${CMAKE_BUILD_TYPE_LOWER}-" "" OPP_COMPILER_NAME ${OPP_CONFIGURATION_NAME})
+
+set(CMAKE_INSTALL_PREFIX ${PROJECT_BUILD_DIR}/Install)
+
+get_filename_component(OPP_COMPILER_PATH ${CMAKE_CXX_COMPILER} DIRECTORY)
+
+
