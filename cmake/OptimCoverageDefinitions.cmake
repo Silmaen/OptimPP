@@ -5,6 +5,7 @@ option(ENABLE_CODE_COVERAGE "Enable generation of coverage data (only in debug)"
 find_program(LLVM_COV_PATH llvm-cov PATHS ${OPP_COMPILER_PATH} ${OPP_ADDITIONAL_PATH})
 find_program(LLVM_PROFDATA_PATH llvm-profdata PATHS ${OPP_COMPILER_PATH} ${OPP_ADDITIONAL_PATH})
 find_program(GCOVR_PATH gcovr ${OPP_COMPILER_PATH} ${OPP_ADDITIONAL_PATH})
+find_program(OPP_GCOV gcov ${OPP_COMPILER_PATH} ${OPP_ADDITIONAL_PATH})
 
 message("OPP_COMPILER_PATH: ${OPP_COMPILER_PATH}")
 message("LLVM_COV_PATH: ${LLVM_COV_PATH}")
@@ -13,7 +14,7 @@ message("GCOVR_PATH: ${GCOVR_PATH}")
 
 
 # Variables
-set(CMAKE_COVERAGE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Coverage)
+set(CMAKE_COVERAGE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Coverage CACHE PATH "Path to coverage")
 
 if (ENABLE_CODE_COVERAGE AND NOT CODE_COVERAGE_ADDED)
     set(CODE_COVERAGE_ADDED ON)
@@ -43,7 +44,7 @@ if (ENABLE_CODE_COVERAGE AND NOT CODE_COVERAGE_ADDED)
 
         add_compile_options(-fprofile-arcs -ftest-coverage -fno-inline)
         add_link_options(--coverage)
-        set(OPP_COVERAGE_COMMAND "${LLVM_COV_BIN}" )
+        set(OPP_COVERAGE_COMMAND "${LLVM_COV_PATH}" CACHE FILEPATH "Path to coverage tool")
         set(OPP_GCOVR_ADD_OPTIONS "--exclude-unreachable-branches" )
         set(OPP_GCOV ${LLVM_COV_PATH})
     elseif(OPP_COMPILER_GCC)
@@ -59,14 +60,13 @@ if (ENABLE_CODE_COVERAGE AND NOT CODE_COVERAGE_ADDED)
 
         add_compile_options(--coverage -fprofile-arcs -ftest-coverage -fno-inline -fno-inline-small-functions -fno-default-inline)
         link_libraries(gcov)
-        set(OPP_COVERAGE_COMMAND "gcov" )
-        find_program(OPP_GCOV gcov ${OPP_COMPILER_PATH} ${OPP_ADDITIONAL_PATH})
+
+        set(OPP_COVERAGE_COMMAND ${OPP_GCOV} CACHE FILEPATH "Path to coverage tool")
     else()
         message(FATAL_ERROR "Code coverage requires Clang or GCC. Aborting.")
     endif()
 
     set(OPP_GCOVR_EXCLUDES "-e \"(.+/)?Test(.+/)?\" -e \"(.+/)?main.cpp(.+/)?\"")
-
 
     add_custom_target(
             coverage-processing

@@ -382,11 +382,11 @@ def get_cmake_vars(compiler: str, debug: bool):
         ll = sline.split(":", 1)
         var_name = ll[0]
         var_type, var_val = ll[1].split("=", 1)
-        if var_type in ["STRING", "PATH", "STATIC", "INTERNAL"]:
+        if var_type in ["STRING", "STATIC", "INTERNAL"]:
             cmake_vars[var_name] = var_val
         elif var_type == "BOOL":
             cmake_vars[var_name] = var_val in ["ON", "TRUE", "YES"]
-        elif var_type in ["FILEPATH", "UNINITIALIZED"]:
+        elif var_type in ["PATH", "FILEPATH", "UNINITIALIZED"]:
             if var_val == var_name + "-NOTFOUND":
                 cmake_vars[var_name] = None
             else:

@@ -32,7 +32,7 @@ def main():
     if build_dir.exists():
         from shutil import rmtree
         rmtree(build_dir, ignore_errors=True)
-    build_dir.mkdir()
+    build_dir.mkdir(exist_ok=True)
 
     # Construct the CMake command
     options = SupportedConfiguration[config_by_compiler(args.compiler)]
@@ -50,9 +50,8 @@ def main():
         scb = find_program("scan-build")
         scb += " " + make_scan_build_param(args.compiler, args.debug) + " " + cmd
     else:
-        if "visual-studio" not in args.compiler:
-            if args.compiler in ["gcc"]:
-                cmd += " -DENABLE_CODE_COVERAGE=ON"
+        if args.compiler in ["gcc", "clang"]:
+            cmd += " -DENABLE_CODE_COVERAGE=ON"
 
     # execute CMake command
     ret = runcommand(cmd)

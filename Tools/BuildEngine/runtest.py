@@ -81,6 +81,7 @@ def main():
             os.chdir(build_dir)
             print_log("**** Generate coverage report ", 4)
             cov_dir = build_dir / "Coverage"
+            cov_dir = cmake_cache.get("CMAKE_COVERAGE_OUTPUT_DIRECTORY")
             if cov_dir.exists():
                 rmtree(cov_dir)
             cov_dir.mkdir(parents=True)
@@ -88,12 +89,12 @@ def main():
 
             # Run the coverage
             nbc = get_cpu_number()
-            cmd = 'gcovr -v -r  ../../Source -o index.html --html-details -bup ' + ['--exclude-unreachable-branches', ""][
+            cmd = 'gcovr -v -r  ' + str(src_root) + ' -o index.html --html-details -bup ' + ['--exclude-unreachable-branches', ""][
                 "llvm" in str(gcov)] + ' --exclude-throw-branches --gcov-executable=' + str(gcov)
             for ex in gcovrExclusions:
                 cmd += ' -e ' + ex
-            for sr in gcovrSources:
-                cmd += ' ' + sr
+            #for sr in gcovrSources:
+            #    cmd += ' ' + sr
             if nbc > 1:
                 cmd += " -j " + str(nbc)
             ret = runcommand(cmd)
