@@ -50,7 +50,7 @@ def main():
         scb = find_program("scan-build")
         scb += " " + make_scan_build_param(args.compiler, args.debug) + " " + cmd
     else:
-        if args.compiler in ["gcc", "clang"]:
+        if args.compiler in ["gcc", "clang"] and args.debug:
             cmd += " -DENABLE_CODE_COVERAGE=ON"
 
     # execute CMake command

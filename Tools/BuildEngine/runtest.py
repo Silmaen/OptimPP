@@ -93,8 +93,6 @@ def main():
                 "llvm" in str(gcov)] + ' --exclude-throw-branches --gcov-executable=' + str(gcov)
             for ex in gcovrExclusions:
                 cmd += ' -e ' + ex
-            #for sr in gcovrSources:
-            #    cmd += ' ' + sr
             if nbc > 1:
                 cmd += " -j " + str(nbc)
             ret = runcommand(cmd)
