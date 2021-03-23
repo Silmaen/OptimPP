@@ -1,39 +1,3 @@
-# How to use
-#
-#   $ # assuming in reshaper source code root folder
-#   $ mkdir build           # create a new folder where the compiled stuff will be create
-#   $ cd build              # change to this folder
-#   $ cmake ..              # use CMake to constuct the makefile
-#   $ make -j 8             # build 3D Reshaper
-#   $ ctest                 # run all tests (output will be a summary)
-#   $  # run Rsh Geometry google tests
-#
-# To force CMake to use GCC and Debug mode
-#   $ cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ ..
-#
-# To force CMake to use Clang:
-#   $ cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ ..
-#   $ cmake -DCMAKE_BUILD_TYPE=Debug   -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ ..
-#
-# To perform memory checking (and excluding long test)
-#   $ cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ ..
-#   $ make -j 8
-#   $ ctest -T MemCheck --exclude-regex "LongTest"
-#
-# To perform code coverage
-#   $ cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ ..
-#   $ make -j 8
-#   $ ctest -T Coverage --exclude-regex "LongTest"
-#
-# To perform code coverage and publish result
-#   $ cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ ..
-#   $ make -j 8
-#   $ ctest -D Experimental
-#
-# To run Header verification
-#   $ cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ ..
-#   $ make RshGeometryHeaderVerification
-#
 
 # Min version = 3.12 to use add_compile_definitions
 cmake_minimum_required(VERSION 3.10.0)
@@ -43,17 +7,13 @@ project(Optim++)
 
 set(OPTIM_ROOT_DIR   "${PROJECT_SOURCE_DIR}")
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-set(CMAKE_VERBOSE_MAKEFILE OFF)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 
 if (${OPTIM_ROOT_DIR} STREQUAL ${PROJECT_BINARY_DIR})
     message(FATAL_ERROR "You cannot run CMake in the source directory, please create a dedicated build directory (take a look at the README).")
 endif()
 
 include("OptimConfig")
-
-# set the C++ standard that we use
-# note that setting the CMAKE_CXX_STANDARD variable to 17 to generate a Visual Studio solution is supported by CMake version 3.10.0 or above.
-cxx_17()
 
 if (OPP_COMPILER_GCC)
 	if (NOT CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL ${OPP_GCC_MINIMAL})

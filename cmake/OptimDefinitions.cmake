@@ -21,13 +21,6 @@ if (OPP_COMPILER_MSVC)
 		# Removes warnings concerning std::uncaught_exception, deprecated in C++17 (tbb/task_group)
 		_SILENCE_CXX17_UNCAUGHT_EXCEPTION_DEPRECATION_WARNING
 	)
-endif ()
-
-if (NOT OPP_COMPILER_MSVC)
-	# add this flag required for TBB on Linux with gcc > c+11
-	#add_compile_definitions(__GXX_EXPERIMENTAL_CXX0X__)
-	#add_compile_options(-Wno-deprecated-declarations)
-else ()
 	set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS 1)
 endif ()
 
@@ -36,6 +29,7 @@ add_compile_definitions(ROOT_TEST_FILE_PATH="${OPTIM_ROOT_DIR}")
 
 string(TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_UPPER)
 string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_LOWER)
+
 get_filename_component(OPP_CONFIGURATION_NAME ${CMAKE_BINARY_DIR} NAME)
 string(REPLACE "cmake-build-${CMAKE_BUILD_TYPE_LOWER}-" "" OPP_COMPILER_NAME ${OPP_CONFIGURATION_NAME})
 

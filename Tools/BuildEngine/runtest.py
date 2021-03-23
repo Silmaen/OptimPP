@@ -74,13 +74,13 @@ def main():
     if cmake_cache.get("ENABLE_CODE_COVERAGE"):
         print_log("Coverage enabled", 4)
         have_gcovr()
-        gcov = cmake_cache.get("COVERAGE_COMMAND")
+        gcov = cmake_cache.get("OPP_COVERAGE_COMMAND")
         if have_coverage_infos(build_dir):
 
             # Directory change
             os.chdir(build_dir)
             print_log("**** Generate coverage report ", 4)
-            cov_dir = build_dir / "Coverage"
+            cov_dir = cmake_cache.get("CMAKE_COVERAGE_OUTPUT_DIRECTORY")
             if cov_dir.exists():
                 rmtree(cov_dir)
             cov_dir.mkdir(parents=True)

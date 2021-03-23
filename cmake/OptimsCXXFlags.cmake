@@ -1,5 +1,4 @@
 # Defining helper variables
-message(STATUS "** Configuration:")
 if (MSVC) # MSVC
 	if (CMAKE_CXX_COMPILER_ID MATCHES "Clang") # Clang
 		set(OPP_COMPILER_CLANG ON)
@@ -9,7 +8,7 @@ if (MSVC) # MSVC
 		set(OPP_COMPILER_MSVC ON)
 		message(STATUS "** Compiler detected MSVC")
 	endif()
-elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang") # Clang
+elseif (CMAKE_CXX_COMPILER_ID MATCHES "(Apple)?[Cc]lang") # Clang
 	set(OPP_COMPILER_CLANG ON)
 	message(STATUS "** Compiler detected Clang")
 elseif (CMAKE_CXX_COMPILER_ID MATCHES "GNU") # GCC
@@ -128,3 +127,6 @@ if (OPP_COMPILER_CLANG)
 		)
 	endif ()
 endif ()
+
+include(c++-standards)
+cxx_17()
