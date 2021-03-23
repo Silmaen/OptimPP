@@ -90,7 +90,7 @@ def main():
             # Run the coverage
             nbc = get_cpu_number()
             cmd = 'gcovr -v -r  ' + str(src_root) + ' -o index.html --html-details -bup ' + ['--exclude-unreachable-branches', ""][
-                "llvm" in str(gcov)] + ' --exclude-throw-branches --gcov-executable=' + str(gcov)
+                "llvm" in str(gcov)] + ' --exclude-throw-branches --gcov-executable="' + str(gcov) + '"'
             for ex in gcovrExclusions:
                 cmd += ' -e ' + ex
             if nbc > 1:

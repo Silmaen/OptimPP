@@ -23,30 +23,26 @@ if (ENABLE_CODE_COVERAGE AND NOT CODE_COVERAGE_ADDED)
         message(FATAL_ERROR "Unable to find gcovr executable")
     endif()
 
-    add_custom_target(
-            coverage-clean
-            COMMAND ${CMAKE_COMMAND} -E remove_directory
-            ${CMAKE_COVERAGE_OUTPUT_DIRECTORY})
-    add_custom_target(
-            coverage-preprocessing
-            COMMAND ${CMAKE_COMMAND} -E make_directory
-            ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}
-            DEPENDS coverage-clean)
 
 
     if(OPP_COMPILER_CLANG)
-        # Messages
-        message(STATUS "Building with llvm Code Coverage Tools")
+        if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 11.0)
 
-        if(NOT LLVM_COV_PATH)
-            message(FATAL_ERROR "llvm-cov not found! Aborting.")
+            # Messages
+            message(STATUS "Building with llvm Code Coverage Tools")
+
+            if(NOT LLVM_COV_PATH)
+                message(FATAL_ERROR "llvm-cov not found! Aborting.")
+            endif()
+
+            add_compile_options(-fprofile-arcs -ftest-coverage -fno-inline)
+            add_link_options(--coverage)
+            set(OPP_COVERAGE_COMMAND "${LLVM_COV_PATH}" CACHE FILEPATH "Path to coverage tool")
+            set(OPP_GCOVR_ADD_OPTIONS "--exclude-unreachable-branches" )
+            set(OPP_GCOV ${LLVM_COV_PATH})
+        else()
+            set(ENABLE_CODE_COVERAGE OFF)
         endif()
-
-        add_compile_options(-fprofile-arcs -ftest-coverage -fno-inline)
-        add_link_options(--coverage)
-        set(OPP_COVERAGE_COMMAND "${LLVM_COV_PATH}" CACHE FILEPATH "Path to coverage tool")
-        set(OPP_GCOVR_ADD_OPTIONS "--exclude-unreachable-branches" )
-        set(OPP_GCOV ${LLVM_COV_PATH})
     elseif(OPP_COMPILER_GCC)
         # Messages
         message(STATUS "Building with lcov Code Coverage Tools")
@@ -66,14 +62,24 @@ if (ENABLE_CODE_COVERAGE AND NOT CODE_COVERAGE_ADDED)
         message(FATAL_ERROR "Code coverage requires Clang or GCC. Aborting.")
     endif()
 
-    set(OPP_GCOVR_EXCLUDES "-e \"(.+/)?Test(.+/)?\" -e \"(.+/)?main.cpp(.+/)?\"")
-
-    add_custom_target(
-            coverage-processing
-            COMMAND ${GCOVR_PATH} -v -r \"${CMAKE_SOURCE_DIR}\" -o index.html --html-details -bup
-                    ${OPP_GCOVR_ADD_OPTIONS} --exclude-throw-branches --gcov-executable=\"${OPP_GCOV}\"
-                    ${OPP_GCOVR_EXCLUDES}
-            WORKING_DIRECTORY ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}
-            DEPENDS testing_run coverage-preprocessing
-    )
+    if (ENABLE_CODE_COVERAGE)
+        set(OPP_GCOVR_EXCLUDES "-e \"(.+/)?Test(.+/)?\" -e \"(.+/)?main.cpp(.+/)?\"")
+        add_custom_target(
+                coverage-clean
+                COMMAND ${CMAKE_COMMAND} -E remove_directory
+                ${CMAKE_COVERAGE_OUTPUT_DIRECTORY})
+        add_custom_target(
+                coverage-preprocessing
+                COMMAND ${CMAKE_COMMAND} -E make_directory
+                ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}
+                DEPENDS coverage-clean)
+        add_custom_target(
+                coverage-processing
+                COMMAND ${GCOVR_PATH} -v -r \"${CMAKE_SOURCE_DIR}\" -o index.html --html-details -bup
+                        ${OPP_GCOVR_ADD_OPTIONS} --exclude-throw-branches --gcov-executable=\"${OPP_GCOV}\"
+                        ${OPP_GCOVR_EXCLUDES}
+                WORKING_DIRECTORY ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}
+                DEPENDS testing_run coverage-preprocessing
+        )
+    endif()
 endif()
