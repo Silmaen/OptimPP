@@ -80,7 +80,7 @@ def main():
             # Directory change
             os.chdir(build_dir)
             print_log("**** Generate coverage report ", 4)
-            cov_dir = cmake_cache.get("CMAKE_COVERAGE_OUTPUT_DIRECTORY")
+            cov_dir = build_dir / "Coverage"
             if cov_dir.exists():
                 rmtree(cov_dir)
             cov_dir.mkdir(parents=True)
