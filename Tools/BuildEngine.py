@@ -347,7 +347,8 @@ def do_action(action, compiler, debug):
         if ret != 0:
             return ret
         cmd += [scb, make_scan_build_param("clang", True), "make", "-j " + str(nbc)]
-        return runcommand(" ".join(cmd))
+        return runcommand(gogo(cmake_path, "clang", True, options))
+        # return runcommand(" ".join(cmd))
     elif action == "package":
         cmd = [cmake_path, "--build " + str(build_dir.absolute()), "-t Packaging"]
         if nbc > 1:
