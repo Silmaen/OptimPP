@@ -300,7 +300,7 @@ def runcommand(cmd: str):
 def gogo(cmake_path, compiler, debug, options):
     build_dir = make_output_dir(compiler, debug)
     cmd = [cmake_path]
-    cmd += [' -S "' + str(src_root) + '"', ' -B "' + str(build_dir) + '"']
+    cmd += [' -S "' + str(src_root.absolute()) + '"', ' -B "' + str(build_dir.absolute()) + '"']
     cmd += [" -DCMAKE_BUILD_TYPE=" + ["Release", "Debug"][debug]]
     for key in options:
         if key in ["Minimum_version", "Build_Type"]:
@@ -326,30 +326,30 @@ def do_action(action, compiler, debug):
         cmd = gogo(cmake_path, compiler, debug, options)
         return runcommand(" ".join(cmd))
     elif action == "build":
-        cmd = [cmake_path, "--build " + str(build_dir)]
+        cmd = [cmake_path, "--build " + str(build_dir.absolute())]
         if nbc > 1:
             cmd += [" -j "+str(nbc)]
         return runcommand(" ".join(cmd))
     elif action == "test":
-        cmd = [cmake_path, "--build " + str(build_dir), "-t test-and-coverage"]
+        cmd = [cmake_path, "--build " + str(build_dir.absolute()), "-t test-and-coverage"]
         if nbc > 1:
             cmd += [" -j "+str(nbc)]
         return runcommand(" ".join(cmd))
     elif action == "doc":
-        cmd = [cmake_path, "--build " + str(build_dir), "-t Documentation"]
+        cmd = [cmake_path, "--build " + str(build_dir.absolute()), "-t Documentation"]
         if nbc > 1:
             cmd += [" -j "+str(nbc)]
         return runcommand(" ".join(cmd))
     elif action == "StaticAnalysis":
         scb = find_program("scan-build")
-        cmd = [scb, str(build_dir)] + gogo(cmake_path, "clang", True, options)
+        cmd = [scb, str(build_dir.absolute())] + gogo(cmake_path, "clang", True, options)
         ret = runcommand(" ".join(cmd))
         if ret != 0:
             return ret
         cmd += [scb, make_scan_build_param("clang", True), "make", "-j " + str(nbc)]
         return runcommand(" ".join(cmd))
     elif action == "package":
-        cmd = [cmake_path, "--build " + str(build_dir), "-t Packaging"]
+        cmd = [cmake_path, "--build " + str(build_dir.absolute()), "-t Packaging"]
         if nbc > 1:
             cmd += [" -j "+str(nbc)]
         return runcommand(" ".join(cmd))
