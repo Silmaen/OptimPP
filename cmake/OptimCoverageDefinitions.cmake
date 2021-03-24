@@ -34,7 +34,7 @@ if (ENABLE_CODE_COVERAGE AND NOT CODE_COVERAGE_ADDED)
             add_link_options(--coverage)
             set(OPP_COVERAGE_COMMAND "${LLVM_COV_PATH}" CACHE FILEPATH "Path to coverage tool")
             set(OPP_COVERAGE_COMMAND_OPTION "gcov" CACHE STRING "coverage tool option")
-            set(OPP_GCOVR_ADD_OPTIONS --html-title "Clang Code Coverage Report" )
+            set(OPP_GCOVR_ADD_OPTIONS "--html-title \"Clang Code Coverage Report\"" )
             set(OPP_GCOV ${LLVM_COV_PATH})
         else()
             set(ENABLE_CODE_COVERAGE OFF)
@@ -62,7 +62,7 @@ if (ENABLE_CODE_COVERAGE AND NOT CODE_COVERAGE_ADDED)
 endif()
 
 if (ENABLE_CODE_COVERAGE)
-    set(OPP_GCOVR_EXCLUDES --exclude-directories "(.+)?Test(.+)?" -e "(.+)?main.cpp(.+)?" --exclude-directories "(.+)?gtest(.+)?")
+    set(OPP_GCOVR_EXCLUDES "--exclude-directories \"(.+)?Test(.+)?\" -e \"(.+)?main.cpp(.+)?\" --exclude-directories \"(.+)?gtest(.+)?\"")
     add_custom_target(
             test-and-coverage
             COMMAND ${CMAKE_CURRENT_BINARY_DIR}/Test/UnitTests/optimpp_unit_test "--gtest_output=xml:test/UnitTest_Report.xml" "--gtest_filter=*:-:*LongTest*"
