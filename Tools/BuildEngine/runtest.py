@@ -13,15 +13,6 @@ testcmd = cmdT + " -V -D Experimental"
 # adding parameters
 sub_cmd = ["Start", "Test"]
 # gcovr options
-gcovrExclusions = ['"(.+/)?Test(.+/)?"', '"(.+/)?main.cpp(.+/)?"']
-gcovrSources = ['../Test/UnitTests', '../Source']
-
-
-# ==================================================
-def have_gcovr():
-    if not which("gcovr"):
-        print_log("No Gcovr found for generating coverage report", 1)
-        exit(1)
 
 
 def have_coverage_infos(build_dir: Path):
@@ -73,10 +64,9 @@ def main():
     # ---------------------
     if cmake_cache.get("ENABLE_CODE_COVERAGE"):
         print_log("Coverage enabled", 4)
-        have_gcovr()
         gcov = cmake_cache.get("OPP_COVERAGE_COMMAND")
         if have_coverage_infos(build_dir):
-
+            gcovr_bin = src_root / "Tools" / "gcovr.py"
             # Directory change
             os.chdir(build_dir)
             print_log("**** Generate coverage report ", 4)
@@ -88,11 +78,12 @@ def main():
             os.chdir(cov_dir)
 
             # Run the coverage
+            gcov = str(gcov).replace("\\", "/")
             nbc = get_cpu_number()
-            cmd = 'gcovr -v -r  ' + str(src_root) + ' -o index.html --html-details -bup ' + ['--exclude-unreachable-branches', ""][
-                "llvm" in str(gcov)] + ' --exclude-throw-branches --gcov-executable="' + str(gcov) + '"'
-            for ex in gcovrExclusions:
-                cmd += ' -e ' + ex
+            cmd = 'python ' + str(gcovr_bin) + ' -v -r  ' + str(src_root) + ' -o index.html --html-details -bup ' + \
+                  ['', '--exclude-unreachable-branches --html-title "Clang Code Coverage Report" --gcov-exclude "(.+)?\\.h(.+)?" --gcov-exclude "(.+)?MSVC(.+)?"'][
+                "llvm" in str(gcov)] + ' --gcov-ignore-parse-error --exclude-throw-branches --gcov-executable="' + str(gcov) + ["", " gcov"]["llvm" in str(gcov)] + '"'
+            cmd += ' --exclude-directories "(.+)?Test(.+)?" -e "(.+)?main.cpp(.+)?" --exclude-directories "(.+)?gtest(.+)?" --gcov-exclude "(.+)?gtest(.+)?"'
             if nbc > 1:
                 cmd += " -j " + str(nbc)
             ret = runcommand(cmd)

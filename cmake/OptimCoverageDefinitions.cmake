@@ -6,7 +6,7 @@ find_program(LLVM_COV_PATH llvm-cov PATHS ${OPP_COMPILER_PATH} ${OPP_ADDITIONAL_
 find_program(LLVM_PROFDATA_PATH llvm-profdata PATHS ${OPP_COMPILER_PATH} ${OPP_ADDITIONAL_PATH} NO_DEFAULT_PATH)
 find_program(OPP_GCOV gcov ${OPP_COMPILER_PATH} ${OPP_ADDITIONAL_PATH})
 
-set(OPP_GCOVR_CMD c:/python37/python.exe ${OPTIM_ROOT_DIR}/Tools/gcovr.py)
+set(OPP_GCOVR_CMD python ${OPTIM_ROOT_DIR}/Tools/gcovr.py)
 
 message(STATUS "OPP_COMPILER_PATH: ${OPP_COMPILER_PATH}")
 message(STATUS "LLVM_COV_PATH: ${LLVM_COV_PATH}")
