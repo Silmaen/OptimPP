@@ -7,7 +7,7 @@ from copy import deepcopy
 from pathlib import Path
 from platform import system
 
-src_root = Path(__file__).parent.parent
+src_root = Path(__file__).absolute().parent.parent
 ActionList2 = ["clear", "generate", "build", "test", "doc", "StaticAnalysis", "package"]
 classic_windows_file_path = [
     Path("c:/Program Files/"),
