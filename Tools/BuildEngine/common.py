@@ -140,6 +140,7 @@ build_engine = src_root / "Tools" / "BuildEngine"
 
 ActionList = ["clear", "generate", "build", "test", "doc", "package"]
 fullActionList = ["All"] + ActionList
+ActionList2 = ["clear", "generate", "build", "test", "doc", "StaticAnalysis", "package"]
 doc_build_dir = src_root / "doc" / "build"
 
 
