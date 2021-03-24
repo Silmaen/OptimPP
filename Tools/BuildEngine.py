@@ -408,7 +408,8 @@ def main():
                 todo.append(a)
         # Execute the list of action
     for action in todo:
-        ret = do_action(action, args.compiler, args.debug)
+        cc = args.debug == True
+        ret = do_action(action, args.compiler, cc)
         if ret != 0:
             exit(ret)
 
