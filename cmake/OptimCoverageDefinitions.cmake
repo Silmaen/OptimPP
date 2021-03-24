@@ -59,24 +59,24 @@ if (ENABLE_CODE_COVERAGE AND NOT CODE_COVERAGE_ADDED)
     else()
         message(FATAL_ERROR "Code coverage requires Clang or GCC. Aborting.")
     endif()
+endif()
 
-    if (ENABLE_CODE_COVERAGE)
-        set(OPP_GCOVR_EXCLUDES "--exclude-directories \"(.+)?Test(.+)?\" -e \"(.+)?main.cpp(.+)?\" --exclude-directories \"(.+)?gtest(.+)?\"")
-        add_custom_target(
-                test-and-coverage
-                COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}
-                COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}
-                COMMAND ${OPP_GCOVR_CMD} -v -r \"${CMAKE_SOURCE_DIR}\" -o index.html --html-details -bup
-                ${OPP_GCOVR_ADD_OPTIONS} --exclude-throw-branches --gcov-ignore-parse-error --gcov-executable=\"${OPP_GCOV} ${OPP_COVERAGE_COMMAND_OPTION}\"
-                ${OPP_GCOVR_EXCLUDES}
-                WORKING_DIRECTORY ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}
-                DEPENDS testing_run
-        )
-    else()
-        add_custom_target(
-                test-and-coverage
-                COMMAND ;
-                DEPENDS testing_run
-        )
-    endif()
+if (ENABLE_CODE_COVERAGE)
+    set(OPP_GCOVR_EXCLUDES "--exclude-directories \"(.+)?Test(.+)?\" -e \"(.+)?main.cpp(.+)?\" --exclude-directories \"(.+)?gtest(.+)?\"")
+    add_custom_target(
+            test-and-coverage
+            COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}
+            COMMAND ${OPP_GCOVR_CMD} -v -r \"${CMAKE_SOURCE_DIR}\" -o index.html --html-details -bup
+            ${OPP_GCOVR_ADD_OPTIONS} --exclude-throw-branches --gcov-ignore-parse-error --gcov-executable=\"${OPP_GCOV} ${OPP_COVERAGE_COMMAND_OPTION}\"
+            ${OPP_GCOVR_EXCLUDES}
+            WORKING_DIRECTORY ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}
+            DEPENDS testing_run
+    )
+else()
+    add_custom_target(
+            test-and-coverage
+            COMMAND ;
+            DEPENDS testing_run
+    )
 endif()
