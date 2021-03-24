@@ -373,6 +373,7 @@ def get_compiler_for_os():
 
 
 def main():
+    print("*************************** " + str(src_root) + " ************************************")
     parser = ArgumentParser()
     parser.add_argument(
         "action",
@@ -408,8 +409,7 @@ def main():
                 todo.append(a)
         # Execute the list of action
     for action in todo:
-        cc = args.debug == True
-        ret = do_action(action, args.compiler, cc)
+        ret = do_action(action, args.compiler, args.debug)
         if ret != 0:
             exit(ret)
 
