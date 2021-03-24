@@ -13,15 +13,6 @@ testcmd = cmdT + " -V -D Experimental"
 # adding parameters
 sub_cmd = ["Start", "Test"]
 # gcovr options
-gcovrExclusions = ['"(.+/)?Test(.+/)?"', '"(.+/)?main.cpp(.+/)?"']
-gcovrSources = ['../Test/UnitTests', '../Source']
-
-
-# ==================================================
-def have_gcovr():
-    if runcommand("gcovr --version") == 0:
-        return True
-    return False
 
 
 def have_coverage_infos(build_dir: Path):
@@ -34,34 +25,6 @@ def have_coverage_infos(build_dir: Path):
         if gcno:
             break
     return gcno
-
-
-def get_gcov_program(build_dir: Path):
-    fp = open(build_dir / "CMakeCache.txt", "r")
-    lines = fp.readlines()
-    fp.close()
-    # Search for the used compiler
-    compiler = ""
-    for line in lines:
-        if not line.startswith("CMAKE_CXX_COMPILER:STRING"):
-            continue
-        if "clang" in line:
-            compiler = "clang"
-            break
-        if "g++" in line:
-            compiler = "g++"
-            break
-    if compiler == "":
-        print_log("Compiler not supported for coverage analysis", 3)
-        return ""
-    if compiler == "g++":
-        if which("egcov"):
-            return '"egcov"'
-        else:
-            return '"gcov"'
-    if compiler == "clang":
-        return '"llvm-cov gcov"'
-    return ""
 
 
 # run
@@ -83,6 +46,7 @@ def main():
     )
     args = parser.parse_args()
     build_dir = make_output_dir(args.compiler, args.debug)
+    cmake_cache = get_cmake_vars(args.compiler, args.debug)
 
     # ---------------------
     # Run the test
@@ -98,41 +62,47 @@ def main():
     # ---------------------
     # Analyse the coverage
     # ---------------------
-    gcov = get_gcov_program(build_dir)
-    if have_gcovr() and have_coverage_infos(build_dir) and gcov not in ["", None]:
-        # Directory change
-        os.chdir(build_dir)
-        cov_dir = build_dir / "Coverage"
-        if cov_dir.exists():
-            rmtree(cov_dir)
-        cov_dir.mkdir(parents=True)
-        os.chdir(cov_dir)
+    if cmake_cache.get("ENABLE_CODE_COVERAGE"):
+        print_log("Coverage enabled", 4)
+        gcov = cmake_cache.get("OPP_COVERAGE_COMMAND")
+        if have_coverage_infos(build_dir):
+            gcovr_bin = src_root / "Tools" / "gcovr.py"
+            # Directory change
+            os.chdir(build_dir)
+            print_log("**** Generate coverage report ", 4)
+            cov_dir = build_dir / "Coverage"
+            cov_dir = cmake_cache.get("CMAKE_COVERAGE_OUTPUT_DIRECTORY")
+            if cov_dir.exists():
+                rmtree(cov_dir)
+            cov_dir.mkdir(parents=True)
+            os.chdir(cov_dir)
 
-        # Run the coverage
-        nbc = get_cpu_number()
-        cmd = 'gcovr -v -r  ../../Source -o index.html --html-details -bup ' + ['--exclude-unreachable-branches', ""][
-            "llvm" in gcov] + ' --exclude-throw-branches --gcov-executable=' + gcov
-        for ex in gcovrExclusions:
-            cmd += ' -e ' + ex
-        for sr in gcovrSources:
-            cmd += ' ' + sr
-        if nbc > 1:
-            cmd += " -j " + str(nbc)
-        ret = runcommand(cmd)
-        if ret != 0:
-            print_log(" *** /!\\ Error during Coverage analysis, return code = " + str(ret))
-            exit(ret)
+            # Run the coverage
+            gcov = str(gcov).replace("\\", "/")
+            nbc = get_cpu_number()
+            cmd = 'python ' + str(gcovr_bin) + ' -v -r  ' + str(src_root) + ' -o index.html --html-details -bup ' + \
+                  ['', '--exclude-unreachable-branches --html-title "Clang Code Coverage Report" --gcov-exclude "(.+)?\\.h(.+)?" --gcov-exclude "(.+)?MSVC(.+)?"'][
+                "llvm" in str(gcov)] + ' --gcov-ignore-parse-error --exclude-throw-branches --gcov-executable="' + str(gcov) + ["", " gcov"]["llvm" in str(gcov)] + '"'
+            cmd += ' --exclude-directories "(.+)?Test(.+)?" -e "(.+)?main.cpp(.+)?" --exclude-directories "(.+)?gtest(.+)?" --gcov-exclude "(.+)?gtest(.+)?"'
+            if nbc > 1:
+                cmd += " -j " + str(nbc)
+            ret = runcommand(cmd)
+            if ret != 0:
+                print_log(" *** /!\\ Error during Coverage analysis, return code = " + str(ret))
+                exit(ret)
 
-        # Artifact creation
-        with zipfile.ZipFile('coverage.zip', 'w') as my_zip:
-            for file in os.listdir("."):
-                if not file.endswith(".html"):
-                    continue
-                my_zip.write(file)
-        move('coverage.zip', '../coverage.zip')
+            # Artifact creation
+            print_log("**** Archive coverage report ", 4)
+            with zipfile.ZipFile('coverage.zip', 'w') as my_zip:
+                for file in os.listdir("."):
+                    if not file.endswith(".html"):
+                        continue
+                    my_zip.write(file)
+            move('coverage.zip', build_dir / 'coverage.zip')
+            print_log("**** Archive coverage generated: '" + str(build_dir / 'coverage.zip') + "'", 4)
 
-        # Directory restore
-        os.chdir(src_root)
+            # Directory restore
+            os.chdir(src_root)
 
     print_log(" *** return code = " + str(ret), 4)
     exit(ret)

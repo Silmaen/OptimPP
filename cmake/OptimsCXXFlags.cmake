@@ -1,5 +1,4 @@
 # Defining helper variables
-message(STATUS "** Configuration:")
 if (MSVC) # MSVC
 	if (CMAKE_CXX_COMPILER_ID MATCHES "Clang") # Clang
 		set(OPP_COMPILER_CLANG ON)
@@ -9,7 +8,7 @@ if (MSVC) # MSVC
 		set(OPP_COMPILER_MSVC ON)
 		message(STATUS "** Compiler detected MSVC")
 	endif()
-elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang") # Clang
+elseif (CMAKE_CXX_COMPILER_ID MATCHES "(Apple)?[Cc]lang") # Clang
 	set(OPP_COMPILER_CLANG ON)
 	message(STATUS "** Compiler detected Clang")
 elseif (CMAKE_CXX_COMPILER_ID MATCHES "GNU") # GCC
@@ -105,6 +104,8 @@ string(REPLACE ";" " " OPP_CXX_FLAGS_COMMON "${OPP_CXX_FLAGS_COMMON}")
 # Enable the debug Windows macro in Debug build type
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
 
+get_filename_component(COMPILER_PATH ${CMAKE_CXX_COMPILER} DIRECTORY)
+
 # Allowing to enable clang-tidy if compiling with Clang
 if (OPP_COMPILER_CLANG)
 	option(ENABLE_CLANG_TIDY "Enable clang-tidy" OFF)
@@ -113,7 +114,7 @@ if (OPP_COMPILER_CLANG)
 		set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # To produce compilation commands to be used by clang-tidy
 
 		if (OPP_PLATFORM_WINDOWS)
-			set(CLANG_TIDY_EXECUTABLE "${CMAKE_HOME_DIRECTORY}/Tools/clang/clang-tidy.exe")
+			set(CLANG_TIDY_EXECUTABLE "clang-tidy")
 		else ()
 			set(CLANG_TIDY_EXECUTABLE "clang-tidy")
 		endif ()
@@ -126,3 +127,6 @@ if (OPP_COMPILER_CLANG)
 		)
 	endif ()
 endif ()
+
+include(c++-standards)
+cxx_17()
