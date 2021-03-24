@@ -80,9 +80,9 @@ def print_log(msg: str, lvl: int = 1):
            4 : STATUS
            5 : DEBUG
     """
-    log_levels = ["FATAL ERROR", "ERROR", "WARNING", "REMARK", "STATUS", "DEBUG"]
+    log_levels = ["FATAL ERROR", "ERROR", "WARNING", "REMARK", "", "DEBUG"]
     log_where = [sys.stderr, sys.stderr, sys.stderr, sys.stdout, sys.stdout, sys.stdout]
-    print(log_levels[lvl] + msg, file=log_where[lvl])
+    print(log_levels[lvl] + " " + msg, file=log_where[lvl])
 
 
 def get_supported_os():
@@ -362,3 +362,36 @@ def find_program(program: str, additional_path=None):
     if " " in to_return:
         to_return = '"' + to_return + '"'
     return to_return
+
+
+def get_cmake_vars(compiler: str, debug: bool):
+    build_dir = make_output_dir(compiler,debug)
+    if not (build_dir / "CMakeCache.txt").exists():
+        print_log("No CMakeCache found in build directory!")
+        exit(1)
+    cmake_vars = {}
+    cmake_cache = open(build_dir / "CMakeCache.txt")
+    lines = cmake_cache.readlines()
+    cmake_cache.close()
+    for line in lines:
+        sline = line.strip()
+        if len(sline) == 0:
+            continue
+        if sline.startswith("#") or sline.startswith("//"):  # comments
+            continue
+        ll = sline.split(":", 1)
+        var_name = ll[0]
+        var_type, var_val = ll[1].split("=", 1)
+        if var_type in ["STRING", "STATIC", "INTERNAL"]:
+            cmake_vars[var_name] = var_val
+        elif var_type == "BOOL":
+            cmake_vars[var_name] = var_val in ["ON", "TRUE", "YES"]
+        elif var_type in ["PATH", "FILEPATH", "UNINITIALIZED"]:
+            if var_val == var_name + "-NOTFOUND":
+                cmake_vars[var_name] = None
+            else:
+                cmake_vars[var_name] = Path(var_val)
+        else:
+            print_log("Unknown CMakeCache variable type: " + str(var_type) + " in line '" + sline + "'", 2)
+            exit(1)
+    return cmake_vars
