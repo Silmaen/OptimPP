@@ -4,8 +4,9 @@ option(ENABLE_CODE_COVERAGE "Enable generation of coverage data (only in debug)"
 
 find_program(LLVM_COV_PATH llvm-cov PATHS ${OPP_COMPILER_PATH} ${OPP_ADDITIONAL_PATH} NO_DEFAULT_PATH )
 find_program(LLVM_PROFDATA_PATH llvm-profdata PATHS ${OPP_COMPILER_PATH} ${OPP_ADDITIONAL_PATH} NO_DEFAULT_PATH)
-find_program(GCOVR_PATH gcovr ${OPP_COMPILER_PATH} ${OPP_ADDITIONAL_PATH})
 find_program(OPP_GCOV gcov ${OPP_COMPILER_PATH} ${OPP_ADDITIONAL_PATH})
+
+set(OPP_GCOVR_CMD c:/python37/python.exe ${OPTIM_ROOT_DIR}/Tools/gcovr.py)
 
 message(STATUS "OPP_COMPILER_PATH: ${OPP_COMPILER_PATH}")
 message(STATUS "LLVM_COV_PATH: ${LLVM_COV_PATH}")
@@ -19,14 +20,8 @@ set(CMAKE_COVERAGE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Coverage CACHE PATH "Pat
 if (ENABLE_CODE_COVERAGE AND NOT CODE_COVERAGE_ADDED)
     set(CODE_COVERAGE_ADDED ON)
 
-    if(NOT GCOVR_PATH)
-        message(FATAL_ERROR "Unable to find gcovr executable")
-    endif()
-
-
-
     if(OPP_COMPILER_CLANG)
-        if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 11.0 AND NOT OPP_PLATFORM_WINDOWS)
+        if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 11.0)
 
             # Messages
             message(STATUS "Building with llvm Code Coverage Tools")
@@ -39,7 +34,7 @@ if (ENABLE_CODE_COVERAGE AND NOT CODE_COVERAGE_ADDED)
             add_link_options(--coverage)
             set(OPP_COVERAGE_COMMAND "${LLVM_COV_PATH}" CACHE FILEPATH "Path to coverage tool")
             set(OPP_COVERAGE_COMMAND_OPTION "gcov" CACHE STRING "coverage tool option")
-            set(OPP_GCOVR_ADD_OPTIONS "--exclude-unreachable-branches" )
+            set(OPP_GCOVR_ADD_OPTIONS "--exclude-unreachable-branches --html-title \"Clang Code Coverage Report\" --gcov-exclude \"(.+)?\\.h(.+)?\" --gcov-exclude \"(.+)?MSVC(.+)?\"" )
             set(OPP_GCOV ${LLVM_COV_PATH})
         else()
             set(ENABLE_CODE_COVERAGE OFF)
@@ -66,7 +61,7 @@ if (ENABLE_CODE_COVERAGE AND NOT CODE_COVERAGE_ADDED)
     endif()
 
     if (ENABLE_CODE_COVERAGE)
-        set(OPP_GCOVR_EXCLUDES "-e \"(.+/)?Test(.+/)?\" -e \"(.+/)?main.cpp(.+/)?\"")
+        set(OPP_GCOVR_EXCLUDES "-exclude \"(.+)?Test(.+)?\" -e \"(.+)?main.cpp(.+)?\" -exclude \"(.+)?gtest(.+)?\" --gcov-exclude \"(.+)?gtest(.+)?\"")
         add_custom_target(
                 coverage-clean
                 COMMAND ${CMAKE_COMMAND} -E remove_directory
@@ -78,8 +73,8 @@ if (ENABLE_CODE_COVERAGE AND NOT CODE_COVERAGE_ADDED)
                 DEPENDS coverage-clean)
         add_custom_target(
                 coverage-processing
-                COMMAND ${GCOVR_PATH} -v -r \"${CMAKE_SOURCE_DIR}\" -o index.html --html-details -bup
-                ${OPP_GCOVR_ADD_OPTIONS} --exclude-throw-branches --gcov-executable=\"${OPP_GCOV} ${OPP_COVERAGE_COMMAND_OPTION}\"
+                COMMAND ${OPP_GCOVR_CMD} -v -r \"${CMAKE_SOURCE_DIR}\" -o index.html --html-details -bup
+                ${OPP_GCOVR_ADD_OPTIONS} --exclude-throw-branches --gcov-ignore-parse-error --gcov-executable=\"${OPP_GCOV} ${OPP_COVERAGE_COMMAND_OPTION}\"
                 ${OPP_GCOVR_EXCLUDES}
                 WORKING_DIRECTORY ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}
                 DEPENDS testing_run coverage-preprocessing

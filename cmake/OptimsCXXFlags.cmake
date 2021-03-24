@@ -114,7 +114,7 @@ if (OPP_COMPILER_CLANG)
 		set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # To produce compilation commands to be used by clang-tidy
 
 		if (OPP_PLATFORM_WINDOWS)
-			set(CLANG_TIDY_EXECUTABLE "${CMAKE_HOME_DIRECTORY}/Tools/clang/clang-tidy.exe")
+			set(CLANG_TIDY_EXECUTABLE "clang-tidy")
 		else ()
 			set(CLANG_TIDY_EXECUTABLE "clang-tidy")
 		endif ()
