@@ -65,18 +65,21 @@ if (ENABLE_CODE_COVERAGE)
     set(OPP_GCOVR_EXCLUDES "--exclude-directories \"(.+)?Test(.+)?\" -e \"(.+)?main.cpp(.+)?\" --exclude-directories \"(.+)?gtest(.+)?\"")
     add_custom_target(
             test-and-coverage
-            COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}
+            COMMAND ${CMAKE_CURRENT_BINARY_DIR}/Test/UnitTests/optimpp_unit_test "--gtest_output=xml:test/UnitTest_Report.xml" "--gtest_filter=*:-:*LongTest*"
+            COMMAND ${CMAKE_CURRENT_BINARY_DIR}/Test/UnitTests/optimpp_unit_test "--gtest_output=xml:test/LongTest_Report.xml" "--gtest_filter=*LongTest*"
+            #COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}
             COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}
             COMMAND ${OPP_GCOVR_CMD} -v -r \"${CMAKE_SOURCE_DIR}\" -o index.html --html-details -bup
             ${OPP_GCOVR_ADD_OPTIONS} --exclude-throw-branches --gcov-ignore-parse-error --gcov-executable=\"${OPP_GCOV} ${OPP_COVERAGE_COMMAND_OPTION}\"
             ${OPP_GCOVR_EXCLUDES}
             WORKING_DIRECTORY ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}
-            DEPENDS testing_run
+            DEPENDS optimpp_unit_test
     )
 else()
     add_custom_target(
             test-and-coverage
-            COMMAND ;
-            DEPENDS testing_run
+            COMMAND ${CMAKE_CURRENT_BINARY_DIR}/Test/UnitTests/optimpp_unit_test "--gtest_output=xml:test/UnitTest_Report.xml" "--gtest_filter=*:-:*LongTest*"
+            COMMAND ${CMAKE_CURRENT_BINARY_DIR}/Test/UnitTests/optimpp_unit_test "--gtest_output=xml:test/LongTest_Report.xml" "--gtest_filter=*LongTest*"
+            DEPENDS optimpp_unit_test
     )
 endif()
