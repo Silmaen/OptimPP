@@ -664,12 +664,21 @@ def run_gcov_and_process_files(
         abs_filename, covdata, options, logger, error, toerase, chdir, tempdir):
     # If the first element of cmd - the executable name - has embedded spaces
     # (other than within quotes), it probably includes extra arguments.
+    import platform
     cmd = shlex.split(options.gcov_cmd) + [
         abs_filename,
-        "--branch-counts", "--branch-probabilities", "--preserve-paths",
         '--object-directory', os.path.dirname(abs_filename),
     ]
-
+    if "llvm" not in options.gcov_cmd:
+        # problem with preservce path on windows llvm-cov
+        cmd += [
+            "--branch-counts",
+            "--branch-probabilities",
+            "--preserve-paths"]
+    else:
+        if platform.system() != "Windows":
+            cmd += ["--preserve-paths"]
+        cmd += ["-b", "-c", "-a", "-f"]
     # NB: Currently, we will only parse English output
     env = dict(os.environ)
     env['LC_ALL'] = 'en_US'

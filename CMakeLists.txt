@@ -53,9 +53,9 @@ if (NOT OPP_COMPILER_MSVC)
 	endif ()
 endif ()
 
-message(">>> CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
-message(">>> The OS identification is ${CMAKE_SYSTEM} ${CMAKE_SYSTEM_NAME}")
-message(">>> The CXX compiler identification is ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
+message(STATUS "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
+message(STATUS "The OS identification is ${CMAKE_SYSTEM} ${CMAKE_SYSTEM_NAME}")
+message(STATUS "The CXX compiler identification is ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
 
 # Affectation of CXX flags for the different configurations
 foreach (cfg "DEBUG" "RELEASE" "MINSIZEREL" "RELWITHDEBINFO")

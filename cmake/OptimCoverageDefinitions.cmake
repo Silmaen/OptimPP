@@ -34,7 +34,7 @@ if (ENABLE_CODE_COVERAGE AND NOT CODE_COVERAGE_ADDED)
             add_link_options(--coverage)
             set(OPP_COVERAGE_COMMAND "${LLVM_COV_PATH}" CACHE FILEPATH "Path to coverage tool")
             set(OPP_COVERAGE_COMMAND_OPTION "gcov" CACHE STRING "coverage tool option")
-            set(OPP_GCOVR_ADD_OPTIONS "--exclude-unreachable-branches --html-title \"Clang Code Coverage Report\" --gcov-exclude \"(.+)?\\.h(.+)?\" --gcov-exclude \"(.+)?MSVC(.+)?\"" )
+            set(OPP_GCOVR_ADD_OPTIONS "--html-title \"Clang Code Coverage Report\"" )
             set(OPP_GCOV ${LLVM_COV_PATH})
         else()
             set(ENABLE_CODE_COVERAGE OFF)
@@ -61,7 +61,7 @@ if (ENABLE_CODE_COVERAGE AND NOT CODE_COVERAGE_ADDED)
     endif()
 
     if (ENABLE_CODE_COVERAGE)
-        set(OPP_GCOVR_EXCLUDES "-exclude \"(.+)?Test(.+)?\" -e \"(.+)?main.cpp(.+)?\" -exclude \"(.+)?gtest(.+)?\" --gcov-exclude \"(.+)?gtest(.+)?\"")
+        set(OPP_GCOVR_EXCLUDES "--exclude-directories \"(.+)?Test(.+)?\" -e \"(.+)?main.cpp(.+)?\" --exclude-directories \"(.+)?gtest(.+)?\"")
         add_custom_target(
                 coverage-clean
                 COMMAND ${CMAKE_COMMAND} -E remove_directory
