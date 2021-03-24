@@ -45,26 +45,25 @@ def do_action(action, compiler, debug):
         nbc = get_cpu_number()
         if nbc > 1:
             cmd += [" -j "+str(nbc)]
-        return runcommand(cmd)
+        return runcommand(" ".join(cmd))
     elif action == "doc":
         cmd = [cmake_path, "--build " + str(build_dir), "-t Documentation"]
         if nbc > 1:
             cmd += [" -j "+str(nbc)]
-        return runcommand(cmd)
+        return runcommand(" ".join(cmd))
     elif action == "StaticAnalysis":
         scb = find_program("scan-build")
-        cmd = scb + " " + str(build_dir) + " " + " ".join(gogo(cmake_path, build_dir, "clang", True, options))
-        ret = runcommand(cmd)
+        cmd = [scb, str(build_dir)] + gogo(cmake_path, build_dir, "clang", True, options)
+        ret = runcommand(" ".join(cmd))
         if ret != 0:
             return ret
-        cmd = find_program("scan-build")
-        cmd += " " + make_scan_build_param("clang", True) + " make -j" + str(nbc)
-        return runcommand(cmd)
+        cmd += [scb, make_scan_build_param("clang", True), "make", "-j " + str(nbc)]
+        return runcommand(" ".join(cmd))
     elif action == "package":
         cmd = [cmake_path, "--build " + str(build_dir), "-t Packaging"]
         if nbc > 1:
             cmd += [" -j "+str(nbc)]
-        return runcommand(cmd)
+        return runcommand(" ".join(cmd))
     else:
         return 1
     return 0
