@@ -11,3 +11,4 @@ include("OptimsCXXFlags")
 
 include("OptimDefinitions")
 include("OptimTools")
+include("OptimDocumentation")

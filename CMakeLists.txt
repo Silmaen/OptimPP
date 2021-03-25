@@ -77,8 +77,11 @@ add_subdirectory(Source)
 # subproject Test
 add_subdirectory(Test)
 
-# subproject Documentation
-add_subdirectory(doc)
+build_docs(
+		TARGET_NAME Documentation
+		OUTPUT_DIR ${CMAKE_SOURCE_DIR}
+		DOXYFILE_PATH doc/Doxyfile
+)
 
 include("OptimCustomTargets")
 

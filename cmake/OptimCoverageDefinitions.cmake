@@ -60,10 +60,7 @@ if (ENABLE_CODE_COVERAGE AND NOT CODE_COVERAGE_ADDED)
     endif()
 endif()
 
-
-
 if (ENABLE_CODE_COVERAGE)
-    set(OPP_GCOVR_EXCLUDES "")
     add_custom_target(
             test-and-coverage
             COMMAND $<TARGET_FILE:optimpp_unit_test> "--gtest_output=xml:test/UnitTest_Report.xml" "--gtest_filter=*:-:*LongTest*"
@@ -72,6 +69,7 @@ if (ENABLE_CODE_COVERAGE)
             COMMAND cd ${CMAKE_COVERAGE_OUTPUT_DIRECTORY} &&
             ${OPP_GCOVR_CMD} -v -r \"${CMAKE_SOURCE_DIR}\" -o index.html --html-details -bup ${OPP_GCOVR_ADD_OPTIONS} --exclude-throw-branches --gcov-ignore-parse-error --gcov-executable=\"${OPP_GCOV} ${OPP_COVERAGE_COMMAND_OPTION}\"
             --exclude-directories \"\(.+\)?Test\(.+\)?\" -e \"\(.+\)?main.cpp\(.+\)?\" --exclude-directories \"\(.+\)?gtest\(.+\)?\" --html-title \"${CMAKE_CODEBLOCKS_COMPILER_ID} Code Coverage Report\"
+            COMMAND cd ${CMAKE_COVERAGE_OUTPUT_DIRECTORY} &&  ${ZIP_BIN} -r ${CMAKE_BINARY_DIR}/coverage.zip *
             DEPENDS optimpp_unit_test
     )
 else()
