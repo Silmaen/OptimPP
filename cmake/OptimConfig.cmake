@@ -10,5 +10,6 @@ include("OptimsCXXFlags")
 
 
 include("OptimDefinitions")
+include("OptimFormatting")
 include("OptimTools")
 include("OptimDocumentation")

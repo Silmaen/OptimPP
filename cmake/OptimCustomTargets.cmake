@@ -12,7 +12,8 @@ endif()
 add_custom_command(TARGET Documentation
         # Run after all other rules within the target have been executed
         POST_BUILD
-        COMMAND cd ${CMAKE_SOURCE_DIR}/doc/build/html && ${ZIP_BIN} -r ../documentation.zip *
+        COMMAND ${ZIP_BIN} -r ../documentation.zip *
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/doc/build/html
         COMMENT "Post Doxygen generation: zip the result"
         VERBATIM
         )
@@ -21,10 +22,12 @@ if (ENABLE_CODE_COVERAGE)
     add_custom_command(TARGET test-and-coverage
             # Run after all other rules within the target have been executed
             POST_BUILD
-            COMMAND cd ${CMAKE_COVERAGE_OUTPUT_DIRECTORY} && ${ZIP_BIN} -r ${CMAKE_BINARY_DIR}/coverage.zip *
+            COMMAND ${ZIP_BIN} -r ${CMAKE_BINARY_DIR}/coverage.zip *
+            WORKING_DIRECTORY ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}
             COMMENT "Post coverage generation: zip the result"
             VERBATIM
             )
+
 endif()
 
 # packaging:
@@ -32,7 +35,8 @@ add_custom_target(
         Packaging
         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/documentation
         COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/doc/build/html ${CMAKE_BINARY_DIR}/documentation
-        COMMAND cd ${CMAKE_BINARY_DIR} &&  ${ZIP_BIN} -r optimpp.zip bin lib documentation
+        COMMAND ${ZIP_BIN} -r optimpp.zip bin lib documentation
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         COMMENT "Package Application"
         VERBATIM
         DEPENDS optimpp Documentation
