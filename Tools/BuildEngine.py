@@ -341,14 +341,16 @@ def do_action(action, compiler, debug):
             cmd += [" -j "+str(nbc)]
         return runcommand(" ".join(cmd))
     elif action == "StaticAnalysis":
-        scb = find_program("scan-build")
-        cmd = [scb, str(build_dir.absolute())] + gogo(cmake_path, "clang", True, options)
+        if system() == "Windows":
+            scb = 'perl -S "C:/Program Files/LLVM/bin/scan-build"'
+        else:
+            scb = find_program("scan-build")
+        cmd = gogo(cmake_path, "clang", True, options)
         ret = runcommand(" ".join(cmd))
         if ret != 0:
             return ret
-        cmd += [scb, make_scan_build_param("clang", True), "make", "-j " + str(nbc)]
-        return runcommand(gogo(cmake_path, "clang", True, options))
-        # return runcommand(" ".join(cmd))
+        cmd = [scb, make_scan_build_param("clang", True), cmake_path, " --build " + str(build_dir.absolute()), "-j" + str(nbc)]
+        return runcommand(" ".join(cmd))
     elif action == "package":
         cmd = [cmake_path, "--build " + str(build_dir.absolute()), "-t Packaging"]
         if nbc > 1:
