@@ -15,7 +15,6 @@ add_custom_command(TARGET Documentation
         COMMAND ${ZIP_BIN} -r ../documentation.zip *
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/doc/build/html
         COMMENT "Post Doxygen generation: zip the result"
-        VERBATIM
         )
 
 if (ENABLE_CODE_COVERAGE)
@@ -25,7 +24,6 @@ if (ENABLE_CODE_COVERAGE)
             COMMAND ${ZIP_BIN} -r ${CMAKE_BINARY_DIR}/coverage.zip *
             WORKING_DIRECTORY ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}
             COMMENT "Post coverage generation: zip the result"
-            VERBATIM
             )
 
 endif()
@@ -38,6 +36,5 @@ add_custom_target(
         COMMAND ${ZIP_BIN} -r optimpp.zip bin lib documentation
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         COMMENT "Package Application"
-        VERBATIM
         DEPENDS optimpp Documentation
 )
