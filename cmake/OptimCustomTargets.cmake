@@ -5,6 +5,10 @@ endif()
 
 find_program(ZIP_BIN zip PATHS ${OPP_COMPILER_PATH} ${OPP_ADDITIONAL_PATH})
 
+if (NOT ZIP_BIN)
+    message(FATAL_ERROR "zip executable not found! Aborting.")
+endif()
+
 add_custom_command(TARGET Documentation
         # Run after all other rules within the target have been executed
         POST_BUILD
@@ -12,6 +16,16 @@ add_custom_command(TARGET Documentation
         COMMENT "Post Doxygen generation: zip the result"
         VERBATIM
         )
+
+if (ENABLE_CODE_COVERAGE)
+    add_custom_command(TARGET test-and-coverage
+            # Run after all other rules within the target have been executed
+            POST_BUILD
+            COMMAND cd ${CMAKE_COVERAGE_OUTPUT_DIRECTORY} && ${ZIP_BIN} -r ${CMAKE_BINARY_DIR}/coverage.zip *
+            COMMENT "Post coverage generation: zip the result"
+            VERBATIM
+            )
+endif()
 
 # packaging:
 add_custom_target(
