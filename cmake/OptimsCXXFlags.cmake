@@ -74,15 +74,9 @@ elseif (OPP_COMPILER_CLANG)
 		-Wno-disabled-macro-expansion
 		)
 	endif()
-
-	# Handling warnings available since Clang 8
-	if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 8)
-		set(
-			OPP_CXX_FLAGS_COMMON
-
-			${OPP_CXX_FLAGS_COMMON}
-		)
-	endif ()
+	#if(OPP_ANALYSE)
+	#	add_compile_options(--analyze)
+	#endif()
 elseif (OPP_COMPILER_MSVC)
 	set(
 		OPP_CXX_FLAGS_COMMON

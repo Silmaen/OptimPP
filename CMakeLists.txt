@@ -7,7 +7,7 @@ project(Optim++)
 
 set(OPTIM_ROOT_DIR   "${PROJECT_SOURCE_DIR}")
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 if (${OPTIM_ROOT_DIR} STREQUAL ${PROJECT_BINARY_DIR})
     message(FATAL_ERROR "You cannot run CMake in the source directory, please create a dedicated build directory (take a look at the README).")

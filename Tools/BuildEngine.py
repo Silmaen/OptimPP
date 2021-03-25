@@ -273,7 +273,7 @@ def make_scan_build_param(compiler: str, debug: bool):
         print_log("Static analysis only works with clang")
         exit(1)
     opt = SupportedConfiguration[config_by_compiler(compiler)]
-    scan_build_param = "-v -k --status-bugs -o " + str(make_output_dir(compiler, debug))
+    scan_build_param = "-v -v -v -k --keep-empty -analyze-headers --status-bugs --show-description -o " + str(make_output_dir(compiler, debug))
     scan_build_param += " --use-analyzer=" + opt["C_Compiler"]
     scan_build_param += " --use-cc=" + opt["C_Compiler"]
     scan_build_param += " --use-c++=" + opt["CXX_Compiler"]
@@ -297,7 +297,7 @@ def runcommand(cmd: str):
     return ret
 
 
-def gogo(cmake_path, compiler, debug, options):
+def gogo(cmake_path, compiler, debug, options, analyse=False):
     build_dir = make_output_dir(compiler, debug)
     cmd = [cmake_path]
     cmd += [' -S "' + str(src_root.absolute()) + '"', ' -B "' + str(build_dir.absolute()) + '"']
@@ -311,6 +311,8 @@ def gogo(cmake_path, compiler, debug, options):
         cmd += [" -DCMAKE_" + key.upper() + '="' + options[key] + '"']
     if debug and compiler in ["gcc", "clang"]:
         cmd += [" -DENABLE_CODE_COVERAGE=ON"]
+    if analyse:
+        cmd += ["-DOPP_ANALYSE=ON"]
     return cmd
 
 
@@ -345,7 +347,14 @@ def do_action(action, compiler, debug):
             scb = 'perl -S "C:/Program Files/LLVM/bin/scan-build"'
         else:
             scb = find_program("scan-build")
-        cmd = gogo(cmake_path, "clang", True, options)
+        opt = SupportedConfiguration[config_by_compiler("clang")]
+        cmd = [scb,
+               "-v -v -v", "--keep-empty",
+               "--status-bugs -o " + str(make_output_dir("clang", True)),
+               " --use-analyzer=" + opt["C_Compiler"],
+               " --use-cc=" + opt["C_Compiler"],
+               " --use-c++=" + opt["CXX_Compiler"]] + gogo(cmake_path, "clang", True, options, True)
+
         ret = runcommand(" ".join(cmd))
         if ret != 0:
             return ret
