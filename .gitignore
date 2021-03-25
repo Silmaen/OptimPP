@@ -1,6 +1,5 @@
 /.vs
-/Tools/BuildEngine/__pycache__
-/out
+*__pycache__
 /cmake-*
 /doc/build
 *.gcov

@@ -15,7 +15,7 @@ message(STATUS "GCOVR_PATH: ${GCOVR_PATH}")
 
 
 # Variables
-set(CMAKE_COVERAGE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Coverage CACHE PATH "Path to coverage")
+set(CMAKE_COVERAGE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Coverage)
 
 if (ENABLE_CODE_COVERAGE AND NOT CODE_COVERAGE_ADDED)
     set(CODE_COVERAGE_ADDED ON)
@@ -34,7 +34,6 @@ if (ENABLE_CODE_COVERAGE AND NOT CODE_COVERAGE_ADDED)
             add_link_options(--coverage)
             set(OPP_COVERAGE_COMMAND "${LLVM_COV_PATH}" CACHE FILEPATH "Path to coverage tool")
             set(OPP_COVERAGE_COMMAND_OPTION "gcov" CACHE STRING "coverage tool option")
-            set(OPP_GCOVR_ADD_OPTIONS "--exclude-unreachable-branches --html-title \"Clang Code Coverage Report\" --gcov-exclude \"(.+)?\\.h(.+)?\" --gcov-exclude \"(.+)?MSVC(.+)?\"" )
             set(OPP_GCOV ${LLVM_COV_PATH})
         else()
             set(ENABLE_CODE_COVERAGE OFF)
@@ -59,25 +58,24 @@ if (ENABLE_CODE_COVERAGE AND NOT CODE_COVERAGE_ADDED)
     else()
         message(FATAL_ERROR "Code coverage requires Clang or GCC. Aborting.")
     endif()
+endif()
 
-    if (ENABLE_CODE_COVERAGE)
-        set(OPP_GCOVR_EXCLUDES "-exclude \"(.+)?Test(.+)?\" -e \"(.+)?main.cpp(.+)?\" -exclude \"(.+)?gtest(.+)?\" --gcov-exclude \"(.+)?gtest(.+)?\"")
-        add_custom_target(
-                coverage-clean
-                COMMAND ${CMAKE_COMMAND} -E remove_directory
-                ${CMAKE_COVERAGE_OUTPUT_DIRECTORY})
-        add_custom_target(
-                coverage-preprocessing
-                COMMAND ${CMAKE_COMMAND} -E make_directory
-                ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}
-                DEPENDS coverage-clean)
-        add_custom_target(
-                coverage-processing
-                COMMAND ${OPP_GCOVR_CMD} -v -r \"${CMAKE_SOURCE_DIR}\" -o index.html --html-details -bup
-                ${OPP_GCOVR_ADD_OPTIONS} --exclude-throw-branches --gcov-ignore-parse-error --gcov-executable=\"${OPP_GCOV} ${OPP_COVERAGE_COMMAND_OPTION}\"
-                ${OPP_GCOVR_EXCLUDES}
-                WORKING_DIRECTORY ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}
-                DEPENDS testing_run coverage-preprocessing
-        )
-    endif()
+if (ENABLE_CODE_COVERAGE)
+    add_custom_target(
+            test-and-coverage
+            COMMAND $<TARGET_FILE:optimpp_unit_test> "--gtest_output=xml:test/UnitTest_Report.xml" "--gtest_filter=*:-:*LongTest*"
+            COMMAND $<TARGET_FILE:optimpp_unit_test> "--gtest_output=xml:test/LongTest_Report.xml" "--gtest_filter=*LongTest*"
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}
+            COMMAND cd ${CMAKE_COVERAGE_OUTPUT_DIRECTORY} &&
+            ${OPP_GCOVR_CMD} -v -r \"${CMAKE_SOURCE_DIR}\" -o index.html --html-details -bup ${OPP_GCOVR_ADD_OPTIONS} --exclude-throw-branches --gcov-ignore-parse-error --gcov-executable=\"${OPP_GCOV} ${OPP_COVERAGE_COMMAND_OPTION}\"
+            --exclude-directories \"\(.+\)?Test\(.+\)?\" -e \"\(.+\)?main.cpp\(.+\)?\" --exclude-directories \"\(.+\)?gtest\(.+\)?\" --html-title \"${CMAKE_CODEBLOCKS_COMPILER_ID} Code Coverage Report\"
+            DEPENDS optimpp_unit_test
+    )
+else()
+    add_custom_target(
+            test-and-coverage
+            COMMAND $<TARGET_FILE:optimpp_unit_test> "--gtest_output=xml:test/UnitTest_Report.xml" "--gtest_filter=*:-:*LongTest*"
+            COMMAND $<TARGET_FILE:optimpp_unit_test> "--gtest_output=xml:test/LongTest_Report.xml" "--gtest_filter=*LongTest*"
+            DEPENDS optimpp_unit_test
+    )
 endif()

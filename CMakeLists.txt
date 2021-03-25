@@ -7,7 +7,7 @@ project(Optim++)
 
 set(OPTIM_ROOT_DIR   "${PROJECT_SOURCE_DIR}")
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 if (${OPTIM_ROOT_DIR} STREQUAL ${PROJECT_BINARY_DIR})
     message(FATAL_ERROR "You cannot run CMake in the source directory, please create a dedicated build directory (take a look at the README).")
@@ -53,9 +53,9 @@ if (NOT OPP_COMPILER_MSVC)
 	endif ()
 endif ()
 
-message(">>> CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
-message(">>> The OS identification is ${CMAKE_SYSTEM} ${CMAKE_SYSTEM_NAME}")
-message(">>> The CXX compiler identification is ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
+message(STATUS "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
+message(STATUS "The OS identification is ${CMAKE_SYSTEM} ${CMAKE_SYSTEM_NAME}")
+message(STATUS "The CXX compiler identification is ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
 
 # Affectation of CXX flags for the different configurations
 foreach (cfg "DEBUG" "RELEASE" "MINSIZEREL" "RELWITHDEBINFO")
@@ -77,10 +77,13 @@ add_subdirectory(Source)
 # subproject Test
 add_subdirectory(Test)
 
-# subproject Documentation
-add_subdirectory(doc)
+build_docs(
+		TARGET_NAME Documentation
+		OUTPUT_DIR ${CMAKE_SOURCE_DIR}
+		DOXYFILE_PATH doc/Doxyfile
+)
 
 include("OptimCustomTargets")
 
 ## CTEST SUPPORT ----------------------------------------------------
-include(CTest)
+#include(CTest)
