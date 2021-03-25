@@ -341,6 +341,7 @@ def do_action(action, compiler, debug):
             cmd += [" -j "+str(nbc)]
         return runcommand(" ".join(cmd))
     elif action == "StaticAnalysis":
+        build_dir.mkdir(parents=True, exist_ok=True)
         if system() == "Windows":
             scb = 'perl -S "C:/Program Files/LLVM/bin/scan-build"'
         else:

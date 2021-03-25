@@ -21,13 +21,16 @@ if (WIN32 OR CYGWIN)
 	message(STATUS "** Platform detected Windows")
 elseif (APPLE)
 	set(OPP_PLATFORM_MAC ON)
-elseif (CMAKE_SYSTEM_NAME MATCHES "Linux")
 	message(STATUS "** Platform detected Mac")
+elseif (CMAKE_SYSTEM_NAME MATCHES "Linux")
+	set(OPP_PLATFORM_LINUX ON)
+	message(STATUS "** Platform detected Linux")
 elseif (UNIX)
 	set(OPP_PLATFORM_LINUX ON)
+	message(STATUS "** Platform detected unix")
 elseif (CMAKE_SYSTEM_NAME MATCHES "OpenBSD")
 	set(OPP_PLATFORM_OBSD ON)
-	message(STATUS "** Platform detected Linux")
+	message(STATUS "** Platform detected OpenBSD")
 endif ()
 
 if (OPP_COMPILER_MSVC)
@@ -48,11 +51,9 @@ endif ()
 if (OPP_COMPILER_GCC)
 	set(
 		OPP_CXX_FLAGS_COMMON
-
 		-Wall
 		-Wextra
 		-Werror
-
 	)
 elseif (OPP_COMPILER_CLANG)
 	set(
@@ -74,9 +75,6 @@ elseif (OPP_COMPILER_CLANG)
 		-Wno-disabled-macro-expansion
 		)
 	endif()
-	#if(OPP_ANALYSE)
-	#	add_compile_options(--analyze)
-	#endif()
 elseif (OPP_COMPILER_MSVC)
 	set(
 		OPP_CXX_FLAGS_COMMON
