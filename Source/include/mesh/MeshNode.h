@@ -5,6 +5,8 @@
 #pragma once
 
 #include "base/vector3.h"
+#include <json.hpp>
+using json = nlohmann::json;
 
 /**
  * @namespace optim::mesh
@@ -103,6 +105,11 @@ public:
      * @return the ID of the node
      */
     [[nodiscard]] const u64& getID()const noexcept { return Id; }
+    /**
+     * @brief JSON conversion
+     * @return a JSON fragment describing the node
+     */
+    json toJSON(){return json{{"id", Id},{"coord", {getX(), getY(), getZ()}}};}
 private:
     MeshManager* meshManager; ///< pointer to the parent manager
     u64 Id { 0 }; ///< the Id of the node

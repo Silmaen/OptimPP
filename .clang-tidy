@@ -1,0 +1,9 @@
+Checks: '
+    clang-*,
+    clang-diagnostic-*,
+    clang-analyzer-*,
+    llvm-*,
+'
+WarningsAsErrors: ''
+HeaderFilterRegex: ''
+AnalyzeTemporaryDtors: false

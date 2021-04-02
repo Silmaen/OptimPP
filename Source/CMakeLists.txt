@@ -23,6 +23,8 @@ else ()
 endif ()
 
 target_include_directories(optimpplib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(optimpplib PUBLIC ${JSON_INCLUDE_DIR})
+message(STATUS "JSON --> ${JSON_INCLUDE_DIR}")
 
 set_target_properties(optimpplib
     PROPERTIES
