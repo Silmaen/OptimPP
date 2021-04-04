@@ -10,37 +10,35 @@
  * @namespace optim::ExitCode
  * @brief namespace gathering the ExitCodes management
  */
-namespace optim::ExitCode
-{
-    /**
+namespace optim::ExitCode {
+/**
      * @brief the definition of Exit codes
      */
-    enum struct Value
-    {
-        OK = 0,                ///< Code for a good execution
+enum struct Value {
+    OK = 0,///< Code for a good execution
 
-        // operations
-        OutOfBounds,       ///< Code for handling out of bounds exceptions
-        ArithmeticError,   ///< Code for handling Arithmetic error exceptions
-        NullPointerError,   ///< Code for handling Arithmetic error exceptions
+    // operations
+    OutOfBounds,     ///< Code for handling out of bounds exceptions
+    ArithmeticError, ///< Code for handling Arithmetic error exceptions
+    NullPointerError,///< Code for handling Arithmetic error exceptions
 
-        // elements invalidity
-        NoMeshManager,   ///< code for not existence of the MeshManager
-        WrongNodeNumber, ///< the element has the wrong number of points
-        WrongNodeId, ///< the element refers to an invalid node Id
+    // elements invalidity
+    NoMeshManager,  ///< code for not existence of the MeshManager
+    WrongNodeNumber,///< the element has the wrong number of points
+    WrongNodeId,    ///< the element refers to an invalid node Id
 
-        // file Io invalidity
-        EmptyFileName, ///< the given file name is empty
-        FileDoesNotExists, ///< the file does not exists for reading
-        OpenFileFailed, ///< the opening of the file failed
+    // file Io invalidity
+    EmptyFileName,    ///< the given file name is empty
+    FileDoesNotExists,///< the file does not exists for reading
+    OpenFileFailed,   ///< the opening of the file failed
 
-        GeneralError ///< Default Error Code (unknown error)
-    };
+    GeneralError///< Default Error Code (unknown error)
+};
 
-    /**
+/**
      * @brief the list of error codes
      */
-    static constexpr Value ExitCodes[] = {
+static constexpr Value ExitCodes[] = {
         Value::OK,
         Value::OutOfBounds,
         Value::ArithmeticError,
@@ -52,16 +50,15 @@ namespace optim::ExitCode
         Value::FileDoesNotExists,
         Value::OpenFileFailed,
         Value::GeneralError,
-    };
+};
 
-    /**
+/**
      * @brief convert Exit Code into string
      * @param[in] iErrorCode the ExitCode to convert
      * @return the string corresponding to the given ExitCode
      */
-    inline const char* ToString(Value iErrorCode)
-    {
-        switch (iErrorCode) {
+inline const char *ToString(Value iErrorCode) {
+    switch (iErrorCode) {
         case Value::OK:
             return "OK";
         // ------------------------------------------
@@ -72,9 +69,9 @@ namespace optim::ExitCode
             return "Arithmetic Error";
         case Value::NullPointerError:
             return "Null pointer Error";
-        // ------------------------------------------
-        // elements invalidity
-            case Value::NoMeshManager:
+            // ------------------------------------------
+            // elements invalidity
+        case Value::NoMeshManager:
             return "No Mesh Manager Defined";
         case Value::WrongNodeNumber:
             return "Wrong Node Number";
@@ -92,9 +89,8 @@ namespace optim::ExitCode
         // general
         case Value::GeneralError:
             return "General Error";
-        }
-        return "Unknown error";
     }
-
+    return "Unknown error";
 }
 
+}// namespace optim::ExitCode

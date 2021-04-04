@@ -1,17 +1,27 @@
-#include <gtest/gtest.h>
-#include <base/vector3.h>
+//---------------------------------------------------------------------------------------------
+// this file is the property of Damien Lachouette every copy is strictly forbidden
+//---------------------------------------------------------------------------------------------
+
 #include <base/Exception.h>
+#include <base/vector3.h>
+#include <gtest/gtest.h>
 
 using namespace optim::base;
 
-TEST(Vector3,baseFunctions){
+TEST(Vector3, baseFunctions) {
     // is NULL
     EXPECT_TRUE(Vector3(0, 0, 0).isNull());
     EXPECT_FALSE(Vector3(0, 0, 1).isNull());
     EXPECT_FALSE(Vector3(0, 1, 0).isNull());
     EXPECT_FALSE(Vector3(1, 0, 0).isNull());
     // equality
-    Vector3 a(1, 2, 3), b1(1,2,4), b2(1, 2, 2), c1(1, 3, 3), c2(1, 1, 3), d1(2), d2(0, 2, 3) ;
+    Vector3 a(1, 2, 3);
+    Vector3 b1(1, 2, 4);
+    Vector3 b2(1, 2, 2);
+    Vector3 c1(1, 3, 3);
+    Vector3 c2(1, 1, 3);
+    Vector3 d1(2);
+    Vector3 d2(0, 2, 3);
     EXPECT_TRUE(a == a);
     EXPECT_TRUE(a != b1);
     // comparison
@@ -44,8 +54,8 @@ TEST(Vector3,baseFunctions){
     EXPECT_FALSE(a > d1);
     EXPECT_TRUE(a > d2);
     // access
-    Vector3 V(-1,666,666666);
-    EXPECT_NEAR(V.at(0),-1,0.0001);
+    Vector3 V(-1, 666, 666666);
+    EXPECT_NEAR(V.at(0), -1, 0.0001);
     EXPECT_NEAR(V.at(1), 666, 0.0001);
     EXPECT_NEAR(V.at(2), 666666, 0.0001);
     EXPECT_NEAR(V[0], -1, 0.0001);
@@ -71,7 +81,7 @@ TEST(Vector3,baseFunctions){
     V.set(0, -666);
     V[1] *= 2;
     EXPECT_EQ(V, Vector3(-666, 1332, 666666));
-    EXPECT_THROW(V.set(3,8), optim::Exception);
+    EXPECT_THROW(V.set(3, 8), optim::Exception);
 }
 
 TEST(Vector3, baseOperations) {
@@ -80,45 +90,49 @@ TEST(Vector3, baseOperations) {
     Vector3 V2(V);
     V /= 2;
     EXPECT_EQ(V2 / 2, V);
-    EXPECT_THROW(V=V2/0, optim::Exception);
+    EXPECT_THROW(V = V2 / 0, optim::Exception);
     EXPECT_THROW(V2 /= 0, optim::Exception);
     EXPECT_EQ(V + V2, V2 + V);
     EXPECT_EQ(V2 - V, V2 / 2);
-    V[0] = 3; V[1] = 2; V[2] = 1;
-    V2[0] = 1; V2[1] = 2; V2[2] = 3;
+    V[0] = 3;
+    V[1] = 2;
+    V[2] = 1;
+    V2[0] = 1;
+    V2[1] = 2;
+    V2[2] = 3;
     EXPECT_DOUBLE_EQ(V.DotProduct(V2), V2.DotProduct(V));
     EXPECT_DOUBLE_EQ(V.DotProduct(V2), 10.0);
     EXPECT_EQ(V.CrossProduct(V2), -V2.CrossProduct(V));
-    EXPECT_EQ(V.CrossProduct(V2), Vector3(4,-8,4));
+    EXPECT_EQ(V.CrossProduct(V2), Vector3(4, -8, 4));
 }
 
 TEST(Vector3, AngleTest) {
     Vector3 V(-1, 666, 666666);
-    Vector3 V2(2*V);
+    Vector3 V2(2 * V);
     EXPECT_TRUE(V.isCollinear(V2));
     EXPECT_FALSE(V.isPerpendicular(V2));
 }
 
-Vector3 fe(const Vector3& a);
+Vector3 fe(const Vector3 &a);
 TEST(Vector3, LengthDistance) {
     Vector3 V(-1, 666, 666666);
     Vector3 V2(2 * V);
-    EXPECT_DOUBLE_EQ(V.LengthSQ(),V2.LengthSQ()/4.0);
+    EXPECT_DOUBLE_EQ(V.LengthSQ(), V2.LengthSQ() / 4.0);
     EXPECT_DOUBLE_EQ(V.Length(), V2.Length() / 2.0);
     EXPECT_DOUBLE_EQ(V.Distance(V2), V.Length());
     EXPECT_DOUBLE_EQ(V.DistanceSQ(V2), V.LengthSQ());
     EXPECT_DOUBLE_EQ(V.Normalized().Length(), 1.0);
-    EXPECT_THROW(fe(Vector3()),optim::Exception);
+    EXPECT_THROW(fe(Vector3()), optim::Exception);
 }
 
-Vector3 fe(const Vector3& a){
+Vector3 fe(const Vector3 &a) {
     return a.Normalized();
 }
 
 #include <sstream>
-TEST(Vector3,Streaming){
+TEST(Vector3, Streaming) {
     Vector3 V(1.0);
     std::stringstream oss;
     oss << V;
-    EXPECT_STREQ(oss.str().c_str(),"1 1 1");
+    EXPECT_STREQ(oss.str().c_str(), "1 1 1");
 }

@@ -1,6 +1,6 @@
-//
-// Created by damien.lachouette on 26/03/2021.
-//
+//---------------------------------------------------------------------------------------------
+// this file is the property of Damien Lachouette every copy is strictly forbidden
+//---------------------------------------------------------------------------------------------
 
 #pragma once
 
@@ -28,10 +28,6 @@ public:
             ): _mesh{std::move(mesh)}, _filename{std::move(filename)} {}
 
     /**
-     * @brief destructor
-     */
-    virtual ~baseMeshIO()= default;
-    /**
      * @brief read the file
      */
     virtual void readMeshFile()=0;
@@ -44,9 +40,21 @@ public:
      * @return true if the file is valid
      */
     virtual bool isFileValid();
-protected:
+
+    /**
+     * @brief acces to the mesh element
+     * @return the mesh component
+     */
+    shared_ptr<mesh::MeshManager> getMesh(){return _mesh;}
+
+    /**
+     * @brief access to the file name
+     * @return the filename
+     */
+    std::filesystem::path getFilename(){return _filename;}
+private:
     shared_ptr<mesh::MeshManager> _mesh; ///< pointer to the mesh
     std::filesystem::path _filename; ///< the file path
 };
 
-}
+} // namespace optim::IO

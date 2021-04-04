@@ -1,63 +1,47 @@
-//
-// Created by damien.lachouette on 26/03/2021.
-//
+//---------------------------------------------------------------------------------------------
+// this file is the property of Damien Lachouette every copy is strictly forbidden
+//---------------------------------------------------------------------------------------------
 
 #include "IO/FileOdfIo.h"
+#include "IO/json_conversion.h"
 #include "base/Exception.h"
 #include <fstream>
-#include "IO/json_conversion.h"
 
-using json = nlohmann::json;
 
 namespace optim::IO {
 
-    bool baseMeshIO::isFileValid(){
-        return !_filename.empty();
-    }
+bool baseMeshIO::isFileValid() {
+    return !_filename.empty();
+}
 
 
-    void FileOdfIo::readMeshFile() {
-        if (_filename.empty())
-            throw Exception(ExitCode::Value::EmptyFileName);
-        if (!std::filesystem::exists(_filename))
-            throw Exception(ExitCode::Value::FileDoesNotExists);
-        std::ofstream file_stream;
-        file_stream.open(_filename, std::ios::in);
-        if (!file_stream.is_open())
-            throw Exception(ExitCode::Value::OpenFileFailed);
-
-
-
-        // close the file
-        file_stream.close();
-    }
-
-    void FileOdfIo::writeMeshFile() {
-        if (_filename.empty())
-            throw Exception(ExitCode::Value::EmptyFileName);
-        std::ofstream file_stream;
-
-        // convert to json
-        json::json j_file;
-        j_file["general"]["nb_nodes"] = _mesh->getNbNodes();
-        j_file["general"]["nb_elements"] = _mesh->getNbElements();
-
-        for(auto node=_mesh->getNodeBegin(); node != _mesh->getNodeEnd(); ++node){
-            j_file["nodes"].emplace_back((*node));
-        }
-        for(auto element=_mesh->getElementBegin(); element!=_mesh->getElementEnd(); ++element){
-            j_file["elements"].emplace_back((*element)->toJSON());
-        }
-
-        file_stream.open(_filename, std::ios::out);
-        if (!file_stream.is_open())
-            throw Exception(ExitCode::Value::OpenFileFailed);
-
-        for(auto element=_mesh->getElementBegin(); element!=_mesh->getElementEnd(); ++element){
-            file_stream << element->get()->getID() << " " << element->get() << std::endl;
-        }
-        // close the file
-        file_stream.close();
-    }
+void FileOdfIo::readMeshFile() {
+    if (getFilename().empty())
+        throw Exception(ExitCode::Value::EmptyFileName);
+    if (!std::filesystem::exists(getFilename()))
+        throw Exception(ExitCode::Value::FileDoesNotExists);
+    std::ifstream file_stream(getFilename(), std::ios::binary);
+    if (!file_stream.is_open())
+        throw Exception(ExitCode::Value::OpenFileFailed);
+    vector<u8> v_bson;
+    u8 read_byte = 0;
+    while(file_stream.read(reinterpret_cast<char *>(&read_byte), 1))
+        v_bson.push_back(read_byte);
+    file_stream.close();
+    json::fromJSON(nlohmann::json::from_bson(v_bson), *getMesh());
 
 }
+
+void FileOdfIo::writeMeshFile() {
+    if (getFilename().empty())
+        throw Exception(ExitCode::Value::EmptyFileName);
+    std::ofstream file_stream(getFilename(), std::ios::out | std::ios::binary );
+    if (!file_stream.is_open())
+        throw Exception(ExitCode::Value::OpenFileFailed);
+    vector<u8> v_bson = nlohmann::json::to_bson(json::toJSON(getMesh()));
+    file_stream.write(reinterpret_cast<char*>(v_bson.data()), v_bson.size());
+    // close the file
+    file_stream.close();
+}
+
+}// namespace optim::IO
