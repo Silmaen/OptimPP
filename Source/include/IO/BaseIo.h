@@ -28,6 +28,29 @@ public:
             ): _mesh{std::move(mesh)}, _filename{std::move(filename)} {}
 
     /**
+     * @brief virtual dtor
+     */
+    virtual ~baseMeshIO() = default;
+    /**
+     * @brief copy ctor
+     */
+    baseMeshIO(const baseMeshIO&) = default;
+    /**
+     * @brief move ctor
+     */
+    baseMeshIO(baseMeshIO&&) = default;
+    /**
+     * @brief copy assignment
+     * @return this instance
+     */
+    baseMeshIO& operator=(const baseMeshIO&) = default;
+    /**
+     * @brief move assignment
+     * @return this instance
+     */
+    baseMeshIO& operator=(baseMeshIO&&) = default;
+
+    /**
      * @brief read the file
      */
     virtual void readMeshFile()=0;
@@ -42,17 +65,21 @@ public:
     virtual bool isFileValid();
 
     /**
-     * @brief acces to the mesh element
+     * @brief access to the mesh element
      * @return the mesh component
      */
-    shared_ptr<mesh::MeshManager> getMesh(){return _mesh;}
+    shared_ptr<mesh::MeshManager>& getMesh(){return _mesh;}
 
     /**
      * @brief access to the file name
      * @return the filename
      */
-    std::filesystem::path getFilename(){return _filename;}
+    std::filesystem::path& getFilename(){return _filename;}
 private:
+    /**
+     * @brief default constructor as private
+     */
+    baseMeshIO() = default;
     shared_ptr<mesh::MeshManager> _mesh; ///< pointer to the mesh
     std::filesystem::path _filename; ///< the file path
 };

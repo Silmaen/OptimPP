@@ -39,7 +39,7 @@ void FileOdfIo::writeMeshFile() {
     if (!file_stream.is_open())
         throw Exception(ExitCode::Value::OpenFileFailed);
     vector<u8> v_bson = nlohmann::json::to_bson(json::toJSON(getMesh()));
-    file_stream.write(reinterpret_cast<char*>(v_bson.data()), v_bson.size());
+    file_stream.write(reinterpret_cast<char*>(v_bson.data()), static_cast<std::streamsize>(v_bson.size()));
     // close the file
     file_stream.close();
 }

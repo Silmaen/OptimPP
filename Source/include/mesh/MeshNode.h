@@ -5,8 +5,6 @@
 #pragma once
 
 #include "base/vector3.h"
-#include <json.hpp>
-using json = nlohmann::json;
 
 /**
  * @namespace optim::mesh

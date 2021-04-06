@@ -88,7 +88,7 @@ public:
             if (eType == other.eType) {
                 if (eOrder == other.eOrder) {
                     if (nodes.size() == other.nodes.size()) {
-                        for (u64 i = 0; i < nodes.size(); ++i) {
+                        for (vector_index i = 0; i < nodes.size(); ++i) {
                             if (*(nodes[i]) != *(other.nodes[i]))
                                 return *(nodes[i]) < *(other.nodes[i]);
                         }

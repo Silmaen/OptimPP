@@ -5,7 +5,9 @@
 #pragma once
 #include "base/Exception.h"
 #include "mesh/MeshManager.h"
-#include <json.hpp>
+
+#include <json_safe_include.h>
+
 
 namespace optim::IO::json {
 
@@ -13,7 +15,7 @@ using json = nlohmann::ordered_json;
 
 /**
  * @brief generate the json for the given mesh
- * @param mesh the mesh to convert
+ * @param i_mesh the mesh to convert
  * @return a json file representing the MeshManager
  */
 json toJSON(const mesh::MeshManager &i_mesh);
@@ -46,7 +48,7 @@ void fromJSON(const json& j_str, mesh::MeshManager &i_mesh);
  *
  * Will throw an null pointer Exception if the given node is null
  * @param j_str the json entity
- * @param i_mesh the mesh to populate (any content will be erased)
+ * @param mesh the mesh to populate (any content will be erased)
  */
 inline void fromJSON(const json& j_str, shared_ptr<mesh::MeshManager> &mesh) {
     if (!mesh)

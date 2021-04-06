@@ -52,13 +52,13 @@ bool MeshManager::operator==(const MeshManager &other) const noexcept {
         return false;
     if (elements.size() != other.elements.size())
         return false;
-    for (u64 i = 0; i < nodes.size(); ++i) {
+    for (vector_index i = 0; i < nodes.size(); ++i) {
         if (*(nodes[i]) != *(other.nodes[i])) {
             if (*(nodes[i]) != *(other.getNodeByID(nodes[i]->getID())))
                 return false;
         }
     }
-    for (u64 i = 0; i < elements.size(); ++i) {
+    for (vector_index i = 0; i < elements.size(); ++i) {
         if (*(elements[i]) != *(other.elements[i])) {
             if (*(elements[i]) != *(other.getElementByID(elements[i]->getID())))
                 return false;
