@@ -14,6 +14,10 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES "(Apple)?[Cc]lang") # Clang
 elseif (CMAKE_CXX_COMPILER_ID MATCHES "GNU") # GCC
 	set(OPP_COMPILER_GCC ON)
 	message(STATUS "** Compiler detected GCC")
+	if (CMAKE_CXX_COMPILER_VERSION LESS 9.0)
+		message(STATUS "** Old GCC found")
+		link_libraries(stdc++fs)
+	endif()
 endif ()
 
 if (WIN32 OR CYGWIN)
