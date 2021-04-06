@@ -61,8 +61,15 @@ if (ENABLE_CODE_COVERAGE)
             COMMAND $<TARGET_FILE:optimpp_unit_test> "--gtest_output=xml:test/LongTest_Report.xml" "--gtest_filter=*LongTest*"
             COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}
             COMMAND cd ${CMAKE_COVERAGE_OUTPUT_DIRECTORY} &&
-            ${OPP_GCOVR_CMD} -v -r \"${CMAKE_SOURCE_DIR}\" -o index.html --html-details -bup ${OPP_GCOVR_ADD_OPTIONS} --exclude-throw-branches --gcov-ignore-parse-error --gcov-executable=\"${OPP_GCOV} ${OPP_COVERAGE_COMMAND_OPTION}\"
-            --exclude-directories \"\(.+\)?Test\(.+\)?\" -e \"\(.+\)?main.cpp\(.+\)?\" --exclude-directories \"\(.+\)?gtest\(.+\)?\" --html-title \"${CMAKE_CODEBLOCKS_COMPILER_ID} Code Coverage Report\"
+            ${OPP_GCOVR_CMD} -v -r \"${CMAKE_SOURCE_DIR}\" -o index.html --html-details --html-title \"${CMAKE_CODEBLOCKS_COMPILER_ID} Code Coverage Report\"
+            -bup ${OPP_GCOVR_ADD_OPTIONS} --exclude-throw-branches --gcov-ignore-parse-error
+            --gcov-executable=\"${OPP_GCOV} ${OPP_COVERAGE_COMMAND_OPTION}\"
+            --exclude-directories \"\(.+\)?Test\(.+\)?\"
+            --exclude-directories \"\(.+\)?3rdParty\(.+\)?\"
+            --exclude-directories \"\(.+\)?nlohmann\(.+\)?\"
+            --exclude-directories \"\(.+\)?gtest\(.+\)?\"
+            -e \"\(.+\)?main.cpp\(.+\)?\"
+            -e \"\(.+\)?json.hpp\(.+\)?\"
             DEPENDS optimpp_unit_test
     )
 else()

@@ -7,64 +7,35 @@
 #include "ExitCode.h"
 #include <exception>
 
-namespace optim
-{
+namespace optim {
 
- /**
+/**
   * @brief class for handling exceptions
   */
-class Exception
-{
+class Exception {
 public:
-    /**
-     * @brief default constructor
-     */
-    Exception() : m_ErrorCode{ ExitCode::Value::GeneralError } {}
-    /**
-     * @brief copy contructor
-     */
-    Exception(const Exception&) = default;
-    /**
-     * @brief affectation operator
-     * @return this object
-     */
-    Exception& operator=(const Exception&) = default;
-    /**
-     * @brief move constructor
-     */
-    Exception(Exception&&) = default;
-    /**
-     * @brief move affectation operator
-     * @return this object
-     */
-    Exception& operator=(Exception&&) = default;
     /**
      * @brief Constructor by ExitCode
      * @param[in] iErrCode the error code to initialize
      *
      * the message is deduce from the ExitCode
      */
-    inline explicit Exception(ExitCode::Value iErrCode) : m_ErrorCode{ iErrCode } {}
-
-    /**
-     * @brief base destructor
-     */
-    ~Exception() = default;
+    inline explicit Exception(ExitCode::Value iErrCode) : m_ErrorCode{iErrCode} {}
     /**
      * @brief retrieve the ExitCode
      * @return the ExitCode
      */
-    [[nodiscard]] inline ExitCode::Value GetCode()const noexcept { return m_ErrorCode; }
+    [[nodiscard]] inline ExitCode::Value GetCode() const noexcept { return m_ErrorCode; }
     /**
      * @brief retrieve the message
      * @return the message associated with Exception
      */
-    [[nodiscard]] inline const char* what()const noexcept {
-      return ExitCode::ToString(m_ErrorCode);
+    [[nodiscard]] inline const char *what() const noexcept {
+        return ExitCode::ToString(m_ErrorCode);
     }
+
 private:
-    ExitCode::Value m_ErrorCode; ///< the exit/error code 
+    ExitCode::Value m_ErrorCode{ExitCode::Value::GeneralError};///< the exit/error code
 };
 
-}
-
+}// namespace optim

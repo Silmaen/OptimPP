@@ -69,6 +69,8 @@ message(STATUS "Linking  flags   : CMAKE_EXE_LINKER_FLAGS = ${CMAKE_EXE_LINKER_F
 
 enable_testing()
 
+add_subdirectory(3rdParty)
+
 # subproject Source
 add_subdirectory(Source)
 
