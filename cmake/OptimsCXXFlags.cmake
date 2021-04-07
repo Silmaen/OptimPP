@@ -61,13 +61,6 @@ if (OPP_COMPILER_GCC)
 		-Wextra
 		-Werror
 	)
-	if (OPP_PLATFORM_WINDOWS)
-		set(
-				OPP_CXX_FLAGS_COMMON
-				${OPP_CXX_FLAGS_COMMON}
-				-fanalyzer
-		)
-	endif()
 elseif (OPP_COMPILER_CLANG)
 	set(
 		OPP_CXX_FLAGS_COMMON
