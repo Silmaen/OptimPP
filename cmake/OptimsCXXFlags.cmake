@@ -61,6 +61,13 @@ if (OPP_COMPILER_GCC)
 		-Wextra
 		-Werror
 	)
+	if (CMAKE_CXX_COMPILER_VERSION GREATER "9.0")
+		set(
+				OPP_CXX_FLAGS_COMMON
+				${OPP_CXX_FLAGS_COMMON}
+				-fanalyzer
+		)
+	endif()
 elseif (OPP_COMPILER_CLANG)
 	set(
 		OPP_CXX_FLAGS_COMMON

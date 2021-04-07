@@ -40,10 +40,11 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
             -Wno-unused-member-function
     )
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-  add_definitions(
-          -Wno-analyzer-null-dereference
-  )
+  if (CMAKE_CXX_COMPILER_VERSION GREATER "9.0")
+    add_definitions(
+            -Wno-analyzer-null-dereference
+    )
+  endif()
 endif ()
 
 add_subdirectory( googletest )
-
