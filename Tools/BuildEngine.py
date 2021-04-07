@@ -320,7 +320,12 @@ def do_action(action, compiler, debug):
     options = SupportedConfiguration[config_by_compiler(compiler)]
     nbc = get_cpu_number()
     if action == "clear":
-        shutil.rmtree(build_dir, ignore_errors=True)
+        for item in src_root.iterdir():
+            if not item.is_dir():
+                continue
+            if not item.name.startswith('cmake-build-'):
+                continue
+            shutil.rmtree(item, ignore_errors=True)
         build_dir.mkdir(parents=True, exist_ok=True)
     elif action == "generate":
         cmd = gogo(cmake_path, compiler, debug, options)
