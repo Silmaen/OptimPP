@@ -48,7 +48,10 @@ if (ENABLE_CODE_COVERAGE AND NOT CODE_COVERAGE_ADDED)
             message(WARNING "Code coverage results with an optimized (non-Debug) build may be misleading")
         endif()
 
-        add_compile_options(--coverage -O0 -fPIC -fanalyzer -fno-inline)
+        add_compile_options(--coverage -O0 -fPIC -fno-inline)
+        if (CMAKE_CXX_COMPILER_VERSION GREATER "9.0")
+            add_compile_options(-fanalyzer)
+        endif()
         add_link_options(--coverage -O0)
         #link_libraries(gcov)
 
