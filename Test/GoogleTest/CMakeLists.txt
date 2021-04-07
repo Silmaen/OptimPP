@@ -39,6 +39,10 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
             -Wno-zero-as-null-pointer-constant
             -Wno-unused-member-function
     )
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+  add_definitions(
+          -Wno-analyzer-null-dereference
+  )
 endif ()
 
 add_subdirectory( googletest )

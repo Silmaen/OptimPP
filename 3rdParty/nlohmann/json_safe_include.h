@@ -19,6 +19,7 @@
 #elif __GNUC__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+#pragma GCC diagnostic ignored "-Wanalyzer-null-dereference"
 #endif
 
 #include "json.hpp"
