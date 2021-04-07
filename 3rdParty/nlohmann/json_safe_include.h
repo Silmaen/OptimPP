@@ -18,6 +18,7 @@
 #pragma clang diagnostic ignored "-Wweak-vtables"
 #elif __GNUC__
 #pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpragmas"
 #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
 #pragma GCC diagnostic ignored "-Wanalyzer-null-dereference"
 #endif
