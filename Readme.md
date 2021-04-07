@@ -4,31 +4,35 @@ Open source Shape Computation Program and mathematics
 
 ## Prerequisits ##
 
-for build ding the solution on any platform, here are the needed components
+For build ding the solution on any platform, here are the needed components
 
-### supported Paltform ###
+### Supported Paltform ###
 
 The build has been tested on
 
  * Windows 10
- * OpenBSD 6.6
- * Linux Ubuntu 19.10
+ * OpenBSD 6.8
+ * Linux
 
-### packages ###
+### Packages ###
 
  * Python >= 3.7
  * cmake >= 3.10
- * GCC >= 8 or Clang >= 8 or (windows only) MSVC 2019
- * LLVM > 8 (for static analysis)
- * gcov (or llvm-cov) 
- * gcovr >= 4.2 (/!\ for windows users, see the modification to add bellow)
- * doxygen >= 1.8.10
+ * GCC >= 8 or Clang >= 10 or (windows only) MSVC 2019
+ * LLVM > 10 (for static analysis)
+ * gcov and llvm-cov
+ * doxygen >= 1.9.10
  * graphviz >= 2.36.0
 
 ### gcovr and Windows users ###
 
-A small bug exists while using llvm-cov throug gcovr: if using "--perserve-path" in llvm-cov gcov commang the include files are not well formed.
-you need to edit the file '<PythonLibDir>/site-packages/gcovr/gcov.py' to modify function 'run_gcov_and_process_files' (line 633 in v4.2):
+The optim++ comes with it embedded version of gcovr.
+
+If one want to use a release of gcovr, on Windows with gcovr version 4.2, a small bug exists 
+while using llvm-cov through gcovr: if using `--perserve-path` in `llvm-cov gcov` command, it 
+generates include files not well-formed.
+
+You need to edit the file '<PythonLibDir>/site-packages/gcovr/gcov.py' to amend function 'run_gcov_and_process_files' (line 633 in v4.2):
 
 ```python
 def run_gcov_and_process_files(
@@ -52,7 +56,7 @@ If all requirement are satisfied, just go into the sources root directory then u
 python Tools/BuildingEngine.py All
 ```
 
-to get the help about the BuildingEngine and all possible option just type:
+To get the help about the BuildingEngine and all possible option just type:
 
 ```
 python Tools/BuildingEngine.py -h

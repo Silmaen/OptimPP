@@ -57,7 +57,7 @@ message(STATUS "The OS identification is ${CMAKE_SYSTEM} ${CMAKE_SYSTEM_NAME}")
 
 # Affectation of CXX flags for the different configurations
 foreach (cfg "DEBUG" "RELEASE" "MINSIZEREL" "RELWITHDEBINFO")
-	set (CMAKE_CXX_FLAGS_${cfg} "${CMAKE_CXX_FLAGS_${cfg}} ${OPP_CXX_FLAGS_COMMON}")
+	set (CMAKE_CXX_FLAGS_${cfg} "${CMAKE_CXX_FLAGS_${cfg}} ${OPP_CXX_FLAGS_COMMON} ${OPP_CXX_FLAGS_${cfg}}")
 endforeach ()
 
 include("OptimCoverageDefinitions")
@@ -65,7 +65,7 @@ include("OptimSanitizersDefinitions")
 
 # Display the compilation flags
 message(STATUS "Compilation flags: CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE_UPPER} = ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}")
-message(STATUS "Linking  flags   : CMAKE_EXE_LINKER_FLAGS = ${CMAKE_EXE_LINKER_FLAGS}")
+message(STATUS "Linking  flags   : CMAKE_EXE_LINKER_FLAGS_${CMAKE_BUILD_TYPE_UPPER} = ${CMAKE_EXE_LINKER_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}")
 
 enable_testing()
 
