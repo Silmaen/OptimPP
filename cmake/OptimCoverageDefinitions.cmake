@@ -67,7 +67,7 @@ if (ENABLE_CODE_COVERAGE)
             ${OPP_GCOVR_CMD} ${GCOVR_VERBOSITY} -r \"${CMAKE_SOURCE_DIR}\" -o index.html
             --html-details --html-details-syntax-highlighting --html-title \"${CMAKE_CXX_COMPILER_ID} Code Coverage Report\"
             -bpd --gcov-ignore-parse-error
-            --gcov-executable=\"${OPP_COVERAGE_COMMAND}\"
+            --gcov-executable=${OPP_COVERAGE_COMMAND}
             --exclude-throw-branches
             -e \"\(.+/\)?Test\(.+/\)?\"
             -e \"\(.+/\)?3rdParty\(.+/\)?\"
