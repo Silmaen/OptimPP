@@ -82,24 +82,22 @@ public:
     /**
      * @brief Key function of comparison
      * @return Tuple object containing the id of the element
+     *
+     * first sort by Id, then dimension, then number of nodes, then nodes ID
      */
     [[nodiscard]] constexpr bool operator<(const MeshElement &other) const noexcept {
         if (Id == other.Id) {
-            if (eType == other.eType) {
-                if (eOrder == other.eOrder) {
-                    if (nodes.size() == other.nodes.size()) {
-                        for (vector_index i = 0; i < nodes.size(); ++i) {
-                            if (*(nodes[i]) != *(other.nodes[i]))
-                                return *(nodes[i]) < *(other.nodes[i]);
-                        }
-                    } else {
-                        return nodes.size() < other.nodes.size();
+            if (getDimension() == other.getDimension()) {
+                if (nodes.size() == other.nodes.size()) {
+                    for (vector_index i = 0; i < nodes.size(); ++i) {
+                        if (*(nodes[i]) != *(other.nodes[i]))
+                            return *(nodes[i]) < *(other.nodes[i]);
                     }
                 } else {
-                    return eOrder < other.eOrder;
+                    return nodes.size() < other.nodes.size();
                 }
             } else {
-                return eType < other.eType;
+                return getDimension() < other.getDimension();
             }
         } else {
             return Id < other.Id;
@@ -171,6 +169,29 @@ public:
      * @return the element order
      */
     [[nodiscard]] ElementOrder &getOrder() noexcept { return eOrder; }
+
+    /**
+     * @brief get the element dimension
+     * @return the element dimension
+     */
+    [[nodiscard]] u8 getDimension()const noexcept{
+        switch(eType){
+            case ElementForm::VOID:
+                return 0;
+            case ElementForm::BAR:
+                return 1;
+            case ElementForm::TRIANGLE:
+            case ElementForm::QUADRANGLE:
+            case ElementForm::HEXAGON:
+                return 2;
+            case ElementForm::TETRAHEDRON:
+            case ElementForm::PYRAMID:
+            case ElementForm::PRISM:
+            case ElementForm::HEXAHEDRON:
+                return 3;
+        }
+        return 0;
+    }
     /**
      * @brief get the beginning of the node's list
      * @return iterator to the beginning of the node's list

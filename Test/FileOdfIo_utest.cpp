@@ -7,6 +7,18 @@
 #include <base/Exception.h>
 #include <IO/json_conversion.h>
 
+using namespace optim::IO;
+using namespace optim::mesh;
+
+TEST(FileOdfIo, JSONGeneratorError) {
+    std::shared_ptr<optim::mesh::MeshManager> mesh = nullptr;
+    EXPECT_THROW(json::toJSON(mesh), optim::Exception);
+    std::shared_ptr<optim::mesh::MeshElement> element = nullptr;
+    EXPECT_THROW(json::toJSON(element), optim::Exception);
+    std::shared_ptr<optim::mesh::MeshNode> node = nullptr;
+    EXPECT_THROW(json::toJSON(node), optim::Exception);
+}
+
 TEST(FileOdfIo, ErrorChecks) {
     std::shared_ptr<optim::mesh::MeshManager> mesh = std::make_shared<optim::mesh::MeshManager>();
     optim::IO::FileOdfIo fileIo(mesh, std::filesystem::path());

@@ -38,6 +38,31 @@ TEST(MeshElement, TheoreticalNodeNumber) {
     EXPECT_EQ(getTheoreticalElementNodeNumber(ElementForm::HEXAHEDRON, ElementOrder::QUADRATIC), 20);// 3D quad hexahedron has 20 nodes
 }
 
+TEST(MeshElement, DimentsionCheck){
+
+    MeshElement el = MeshElement();
+    el.getType() = static_cast<ElementForm>(666);
+    EXPECT_TRUE(el.getDimension() == 0);
+    el.getType() = ElementForm::VOID;
+    EXPECT_TRUE(el.getDimension() == 0);
+    el.getType() = ElementForm::BAR;
+    EXPECT_TRUE(el.getDimension() == 1);
+    el.getType() = ElementForm::TRIANGLE;
+    EXPECT_TRUE(el.getDimension() == 2);
+    el.getType() = ElementForm::QUADRANGLE;
+    EXPECT_TRUE(el.getDimension() == 2);
+    el.getType() = ElementForm::HEXAGON;
+    EXPECT_TRUE(el.getDimension() == 2);
+    el.getType() = ElementForm::TETRAHEDRON;
+    EXPECT_TRUE(el.getDimension() == 3);
+    el.getType() = ElementForm::PYRAMID;
+    EXPECT_TRUE(el.getDimension() == 3);
+    el.getType() = ElementForm::PRISM;
+    EXPECT_TRUE(el.getDimension() == 3);
+    el.getType() = ElementForm::HEXAHEDRON;
+    EXPECT_TRUE(el.getDimension() == 3);
+}
+
 TEST(MeshElement, Nodescheck) {
     MeshElement el = MeshElement();
     el.getOrder() = ElementOrder::QUADRATIC;
@@ -61,6 +86,21 @@ TEST(MeshElement, Nodescheck) {
             EXPECT_TRUE((*itn)->isValid());
         }
     }
+}
+
+TEST(MeshElement,Comparisons){
+    MeshManager mm;
+    mm.createNode(1, 0., 0., 0.);
+    mm.createNode(3, 1., 0., 0.);
+    mm.createNode(2, 0., 1., 0.);
+    mm.createNode(4, 0., 0., 1.);
+    mm.createNode(5, 0., 1., 1.);
+    std::shared_ptr<MeshElement> elem1 = mm.createElement(1, ElementForm::TETRAHEDRON, ElementOrder::LINEAR, {1, 2, 3, 4});
+    std::shared_ptr<MeshElement> elem2 = mm.createElement(1, ElementForm::PYRAMID, ElementOrder::LINEAR, {1, 2, 3, 4, 5});
+    std::shared_ptr<MeshElement> elem3 = mm.createElement(1, ElementForm::QUADRANGLE, ElementOrder::LINEAR, {1, 2, 3, 4});
+
+    EXPECT_TRUE((*elem1) < (*elem2)); // elem2 has more nodes
+    EXPECT_TRUE((*elem3) < (*elem1)); // elem3's dimension is lower
 }
 
 TEST(MeshManager, MeshCreation) {
@@ -132,6 +172,10 @@ TEST(MeshManager, MeshComparison) {
     mesh2 = mesh1;
     EXPECT_TRUE(mesh1 == mesh2);
     EXPECT_FALSE(mesh1 != mesh2);
+    mesh2.createNode(66, 0., 0., 0.);
+    // test different node number
+    EXPECT_FALSE(mesh1 == mesh2);
+    EXPECT_TRUE(mesh1 != mesh2);
     mesh2.clear();
     mesh2.createNode(1, 0., 0., 0.);
     mesh2.createNode(3, 1., 0., 0.);
