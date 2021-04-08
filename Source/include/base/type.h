@@ -42,7 +42,7 @@ using string = std::string;
 using std::shared_ptr;
 using std::vector;
 
-// @brief index of vector: only MSVC use 32 bits index (limiting the mesh number of nodes/element to 4M
+/// @brief index of vector: only MSVC use 32 bits index (limiting the mesh number of nodes/element to 4M
 #ifdef _MSC_VER
 using vector_index = u32;
 #else

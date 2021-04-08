@@ -20,7 +20,9 @@ namespace optim::IO {
 class baseMeshIO {
 public:
     /**
-     * @brief constructor
+     * @brief Constructor
+     * @param mesh the reference mesh
+     * @param filename the file name
      */
     baseMeshIO(
             std::shared_ptr<mesh::MeshManager> mesh,
