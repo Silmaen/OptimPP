@@ -15,6 +15,8 @@ class FileOdfIo : public baseMeshIO {
 public:
     /**
      * @brief Constructor
+     * @param mesh the reference mesh
+     * @param filename the file name
      */
     FileOdfIo(const shared_ptr<mesh::MeshManager> &mesh,
               const std::filesystem::path &filename) : baseMeshIO(mesh, filename) {}

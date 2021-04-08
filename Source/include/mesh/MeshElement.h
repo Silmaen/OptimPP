@@ -81,6 +81,7 @@ public:
     // comparison
     /**
      * @brief Key function of comparison
+     * @param[in] other the other element to compare
      * @return Tuple object containing the id of the element
      *
      * first sort by Id, then dimension, then number of nodes, then nodes ID
