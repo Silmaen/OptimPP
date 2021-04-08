@@ -69,7 +69,7 @@ function(build_docs)
 
     add_custom_target(
             ${TARGET_NAME}
-            COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE_PATH}
+            COMMAND ${DOXYGEN_PATH} ${DOXYFILE_PATH}
             WORKING_DIRECTORY ${OUT_DIR}
             VERBATIM)
 endfunction()
