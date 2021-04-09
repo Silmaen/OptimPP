@@ -1,15 +1,24 @@
 #!/usr/bin/env groovy
 pipeline {
+    parameters {
+        choice(name: 'PLATFORM_FILTER', choices: ['all', 'linux', 'windows', 'openbsd'], description: 'Run on specific platform')
+    }
     agent none
     stages {
         stage('generate build test') {
             matrix {
-                agent any
+                agent {
+                    label "${PLATFORM}"
+                }
+                when { anyOf {
+                    expression { params.PLATFORM_FILTER == 'all' }
+                    expression { params.PLATFORM_FILTER == env.PLATFORM }
+                } }
                 // axis of the matrix
                 axes {
                     axis {
                         name 'PLATFORM'
-                        values 'OpenBSD', 'Linux', 'Windows'
+                        values 'openbsd', 'linux', 'windows'
                     }
                     axis {
                         name 'COMPILER'
@@ -35,20 +44,15 @@ pipeline {
                     }
                 }
                 stages {
-                    stage('generate') {
-                        steps {
-                            echo "Do generate for ${PLATFORM} - ${CONFIGURATION}"
-                        }
-                    }
                     stage('build') {
                         steps {
-                            echo "Do build ${PLATFORM} - ${CONFIGURATION}"
+                            echo "Do generate for ${PLATFORM} - ${COMPILER} - ${CONFIGURATION}"
+                            echo "Do build ${PLATFORM} - ${COMPILER}- ${CONFIGURATION}"
                         }
                     }
-
                     stage('test') {
                         steps {
-                            echo "Do test ${PLATFORM} - ${CONFIGURATION}"
+                            echo "Do test ${PLATFORM} - ${COMPILER} - ${CONFIGURATION}"
                         }
                     }
                 }
