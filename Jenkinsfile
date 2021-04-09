@@ -1,75 +1,59 @@
 #!/usr/bin/env groovy
 pipeline {
-    agent any
-
-
+    agent none
     stages {
-        parallel {
-            stage("linux gcc Debug") {
-                agent { node { label "Linux" } }
-                stage("clean"){
-                    steps {
-                        sh "python Tools/BuildEngine.py -c gcc -g clear"
+        stage('generate build test') {
+            matrix {
+                agent any
+                // axis of the matrix
+                axis {
+                    name 'PLATFORM'
+                    values 'OpenBSD', 'Linux', 'Windows'
+                }
+                axis {
+                    name 'COMPILER'
+                    values 'gcc', 'clang', 'clang-native', 'msvc'
+                }
+                axis {
+                    name 'CONFIGURATION'
+                    values 'Release', 'Debug'
+                }
+                // exclusions
+                exclude {
+                    // clang-cl and msvc only exists on windows!
+                    axis {
+                        name 'PLATFORM'
+                        notvalues 'Windows'
+                    }
+                    axis {
+                        name 'COMPILER'
+                        values 'clang-native', 'msvc'
                     }
                 }
-                stage("generate"){
-                    steps {
-                        sh "python Tools/BuildEngine.py -c gcc -g generate"
+                stages {
+                    stage('generate') {
+                        steps {
+                            echo "Do generate for ${PLATFORM} - ${CONFIGURATION}"
+                        }
                     }
-                }
-                stage("build"){
-                    steps {
-                        sh "python Tools/BuildEngine.py -c gcc -g build"
+                    stage('build') {
+                        steps {
+                            echo "Do build ${PLATFORM} - ${CONFIGURATION}"
+                        }
                     }
-                }
-                stage("test"){
-                    steps {
-                        sh "python Tools/BuildEngine.py -c gcc -g test"
-                    }
-                }
-                stage("documentation"){
-                    steps {
-                        sh "python Tools/BuildEngine.py -c gcc -g doc"
-                    }
-                }
-                stage("package"){
-                    steps {
-                        sh "python Tools/BuildEngine.py -c gcc -g package"
+
+                    stage('test') {
+                        steps {
+                            echo "Do test ${PLATFORM} - ${CONFIGURATION}"
+                        }
                     }
                 }
             }
-            stage("linux clang Debug") {
-                agent { node { label "Linux" } }
-                stage("clean"){
-                    steps {
-                        sh "python Tools/BuildEngine.py -c clang -g clear"
-                    }
-                }
-                stage("generate"){
-                    steps {
-                        sh "python Tools/BuildEngine.py -c clang -g generate"
-                    }
-                }
-                stage("build"){
-                    steps {
-                        sh "python Tools/BuildEngine.py -c clang -g build"
-                    }
-                }
-                stage("test"){
-                    steps {
-                        sh "python Tools/BuildEngine.py -c clang -g test"
-                    }
-                }
-                stage("documentation"){
-                    steps {
-                        sh "python Tools/BuildEngine.py -c clang -g doc"
-                    }
-                }
-                stage("package"){
-                    steps {
-                        sh "python Tools/BuildEngine.py -c clang -g package"
-                    }
-                }
+        }
+        stage('Documentation') {
+            agent any
+            steps {
+                echo "Documentation generation"
             }
         }
     }
