@@ -59,27 +59,39 @@ pipeline {
                     stage('build') {
                         steps {
                             script {
-                                if (${CONFIGURATION} == "debug")
-                                    arg = " -g"
-                                else
-                                    arg = ""
+                                echo "Do generate for ${PLATFORM} - ${COMPILER} - ${CONFIGURATION}"
+                                if (${CONFIGURATION} == "debug") {
+                                    sh 'python Tools/BuildEngine.py -c ${COMPILER} -g generate'
+                                    sh 'python Tools/BuildEngine.py -c ${COMPILER} -g build'
+                                } else  {
+                                    sh 'python Tools/BuildEngine.py -c ${COMPILER}  generate'
+                                    sh 'python Tools/BuildEngine.py -c ${COMPILER}  build'
+                                }
                             }
-                            echo "Do generate for ${PLATFORM} - ${COMPILER} - ${CONFIGURATION}"
-                            sh 'python Tools/BuildEngine.py -c ${COMPILER} ${arg} generate'
-                            echo "Do build ${PLATFORM} - ${COMPILER}- ${CONFIGURATION}"
-                            sh 'python Tools/BuildEngine.py -c ${COMPILER} ${arg} build'
                         }
                     }
                     stage('test') {
                         steps {
-                            echo "Do test ${PLATFORM} - ${COMPILER} - ${CONFIGURATION}"
-                            sh 'python Tools/BuildEngine.py -c ${COMPILER} ${arg} test'
+                            script {
+                                echo "Do test ${PLATFORM} - ${COMPILER} - ${CONFIGURATION}"
+                                if (${CONFIGURATION} == "debug") {
+                                    sh 'python Tools/BuildEngine.py -c ${COMPILER} -g test'
+                                } else  {
+                                    sh 'python Tools/BuildEngine.py -c ${COMPILER}  test'
+                                }
+                            }
                         }
                     }
                     stage('packing') {
                         steps {
-                            echo "Do packing ${PLATFORM} - ${COMPILER} - ${CONFIGURATION}"
-                            sh 'python Tools/BuildEngine.py -c ${COMPILER} ${arg} package'
+                            script {
+                                echo "Do packing ${PLATFORM} - ${COMPILER} - ${CONFIGURATION}"
+                                if (${CONFIGURATION} == "debug") {
+                                    sh 'python Tools/BuildEngine.py -c ${COMPILER} -g package'
+                                } else  {
+                                    sh 'python Tools/BuildEngine.py -c ${COMPILER}  package'
+                                }
+                            }
                         }
                     }
                 }
