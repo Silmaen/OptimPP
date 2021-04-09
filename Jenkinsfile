@@ -6,28 +6,32 @@ pipeline {
             matrix {
                 agent any
                 // axis of the matrix
-                axis {
-                    name 'PLATFORM'
-                    values 'OpenBSD', 'Linux', 'Windows'
-                }
-                axis {
-                    name 'COMPILER'
-                    values 'gcc', 'clang', 'clang-native', 'msvc'
-                }
-                axis {
-                    name 'CONFIGURATION'
-                    values 'Release', 'Debug'
-                }
-                // exclusions
-                exclude {
-                    // clang-cl and msvc only exists on windows!
+                axes {
                     axis {
                         name 'PLATFORM'
-                        notvalues 'Windows'
+                        values 'OpenBSD', 'Linux', 'Windows'
                     }
                     axis {
                         name 'COMPILER'
-                        values 'clang-native', 'msvc'
+                        values 'gcc', 'clang', 'clang-native', 'msvc'
+                    }
+                    axis {
+                        name 'CONFIGURATION'
+                        values 'Release', 'Debug'
+                    }
+                }
+                // exclusions
+                excludes {
+                    exclude {
+                        // clang-cl and msvc only exists on windows!
+                        axis {
+                            name 'PLATFORM'
+                            notValues 'Windows'
+                        }
+                        axis {
+                            name 'COMPILER'
+                            values 'clang-native', 'msvc'
+                        }
                     }
                 }
                 stages {
