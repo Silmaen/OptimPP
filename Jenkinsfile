@@ -60,7 +60,7 @@ pipeline {
                         steps {
                             script {
                                 echo "Do generate for ${PLATFORM} - ${COMPILER} - ${CONFIGURATION}"
-                                if (${CONFIGURATION} == "debug") {
+                                if (CONFIGURATION == "debug") {
                                     sh 'python Tools/BuildEngine.py -c ${COMPILER} -g generate'
                                     sh 'python Tools/BuildEngine.py -c ${COMPILER} -g build'
                                 } else  {
@@ -74,7 +74,7 @@ pipeline {
                         steps {
                             script {
                                 echo "Do test ${PLATFORM} - ${COMPILER} - ${CONFIGURATION}"
-                                if (${CONFIGURATION} == "debug") {
+                                if (CONFIGURATION == "debug") {
                                     sh 'python Tools/BuildEngine.py -c ${COMPILER} -g test'
                                 } else  {
                                     sh 'python Tools/BuildEngine.py -c ${COMPILER}  test'
@@ -86,7 +86,7 @@ pipeline {
                         steps {
                             script {
                                 echo "Do packing ${PLATFORM} - ${COMPILER} - ${CONFIGURATION}"
-                                if (${CONFIGURATION} == "debug") {
+                                if (CONFIGURATION == "debug") {
                                     sh 'python Tools/BuildEngine.py -c ${COMPILER} -g package'
                                 } else  {
                                     sh 'python Tools/BuildEngine.py -c ${COMPILER}  package'
