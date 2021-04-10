@@ -97,7 +97,7 @@ pipeline {
                 post {
                     always {
                         archiveArtifacts artifacts: 'cmake-build-*-*/*.zip', fingerprint: true
-                        xunit([GoogleTest(pattern: 'cmake-build-*-*/Test/*.xml', stopProcessingIfError: true)])
+                        xunit([GoogleTest(pattern: 'cmake-build-*-*/*.xml', stopProcessingIfError: true)])
                     }
                 }
             }
