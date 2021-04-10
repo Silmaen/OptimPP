@@ -398,6 +398,12 @@ def main():
         default=compilers[0],
         help="The compiler to be used")
     parser.add_argument(
+        "-f", "--configuration",
+        type=str,
+        choices=["release", "debug"],
+        default="release",
+        help="The Type of build")
+    parser.add_argument(
         "-g", "--debug",
         action="store_true",
         help="If we should compile in Debug mode"
@@ -417,8 +423,9 @@ def main():
             if a in args.action:
                 todo.append(a)
         # Execute the list of action
+    is_debug = args.debug or args.configration == "debug"
     for action in todo:
-        ret = do_action(action, args.compiler, args.debug)
+        ret = do_action(action, args.compiler, is_debug)
         if ret != 0:
             exit(ret)
 

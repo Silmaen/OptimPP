@@ -60,12 +60,10 @@ pipeline {
                         steps {
                             script {
                                 echo "Do generate for ${PLATFORM} - ${COMPILER} - ${CONFIGURATION}"
-                                if (CONFIGURATION == "debug") {
-                                    sh 'python Tools/BuildEngine.py -c ${COMPILER} -g generate'
-                                    sh 'python Tools/BuildEngine.py -c ${COMPILER} -g build'
-                                } else  {
-                                    sh 'python Tools/BuildEngine.py -c ${COMPILER}  generate'
-                                    sh 'python Tools/BuildEngine.py -c ${COMPILER}  build'
+                                if (isUnix()) {
+                                    sh 'python Tools/BuildEngine.py -c ${COMPILER} -f ${CONFIGURATION} generate build'
+                                } else {
+                                    bat 'python Tools/BuildEngine.py -c ${COMPILER} -f ${CONFIGURATION} generate build'
                                 }
                             }
                         }
@@ -74,10 +72,10 @@ pipeline {
                         steps {
                             script {
                                 echo "Do test ${PLATFORM} - ${COMPILER} - ${CONFIGURATION}"
-                                if (CONFIGURATION == "debug") {
-                                    sh 'python Tools/BuildEngine.py -c ${COMPILER} -g test'
+                                if (isUnix()) {
+                                    sh 'python Tools/BuildEngine.py -c ${COMPILER} -f ${CONFIGURATION} test'
                                 } else  {
-                                    sh 'python Tools/BuildEngine.py -c ${COMPILER}  test'
+                                    bat 'python Tools/BuildEngine.py -c ${COMPILER} -f ${CONFIGURATION}  test'
                                 }
                             }
                         }
@@ -86,10 +84,10 @@ pipeline {
                         steps {
                             script {
                                 echo "Do packing ${PLATFORM} - ${COMPILER} - ${CONFIGURATION}"
-                                if (CONFIGURATION == "debug") {
-                                    sh 'python Tools/BuildEngine.py -c ${COMPILER} -g package'
+                                if (isUnix()) {
+                                    sh 'python Tools/BuildEngine.py -c ${COMPILER} -f ${CONFIGURATION} package'
                                 } else  {
-                                    sh 'python Tools/BuildEngine.py -c ${COMPILER}  package'
+                                    bat 'python Tools/BuildEngine.py -c ${COMPILER} -f ${CONFIGURATION} package'
                                 }
                             }
                         }
@@ -98,8 +96,8 @@ pipeline {
 
                 post {
                     always {
-                        archiveArtifacts artifacts: 'cmake-build-${CONFIGURATION}-${COMPILER}/*.zip', fingerprint: true
-                        junit 'cmake-build-${CONFIGURATION}-${COMPILER}/Test/*.xml'
+                        archiveArtifacts artifacts: 'cmake-build-*-*/*.zip', fingerprint: true
+                        xunit([GoogleTest(pattern: 'cmake-build-*-*/Test/*.xml', stopProcessingIfError: true)])
                     }
                 }
             }
