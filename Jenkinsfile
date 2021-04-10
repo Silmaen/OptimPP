@@ -63,7 +63,7 @@ pipeline {
                                 if (isUnix()) {
                                     sh 'python Tools/BuildEngine.py -c ${COMPILER} -f ${CONFIGURATION} generate build'
                                 } else {
-                                    bat 'python Tools/BuildEngine.py -c ${COMPILER} -f ${CONFIGURATION} generate build'
+                                    bat 'python Tools/BuildEngine.py -c %COMPILER% -f %CONFIGURATION% generate build'
                                 }
                             }
                         }
@@ -75,7 +75,7 @@ pipeline {
                                 if (isUnix()) {
                                     sh 'python Tools/BuildEngine.py -c ${COMPILER} -f ${CONFIGURATION} test'
                                 } else  {
-                                    bat 'python Tools/BuildEngine.py -c ${COMPILER} -f ${CONFIGURATION}  test'
+                                    bat 'python Tools/BuildEngine.py -c %COMPILER% -f %CONFIGURATION%  test'
                                 }
                             }
                         }
@@ -87,7 +87,7 @@ pipeline {
                                 if (isUnix()) {
                                     sh 'python Tools/BuildEngine.py -c ${COMPILER} -f ${CONFIGURATION} package'
                                 } else  {
-                                    bat 'python Tools/BuildEngine.py -c ${COMPILER} -f ${CONFIGURATION} package'
+                                    bat 'python Tools/BuildEngine.py -c %COMPILER% -f %CONFIGURATION% package'
                                 }
                             }
                         }
