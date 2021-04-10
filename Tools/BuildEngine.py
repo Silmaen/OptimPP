@@ -423,7 +423,7 @@ def main():
             if a in args.action:
                 todo.append(a)
         # Execute the list of action
-    is_debug = args.debug or args.configration == "debug"
+    is_debug = args.debug or args.configuration == "debug"
     for action in todo:
         ret = do_action(action, args.compiler, is_debug)
         if ret != 0:
