@@ -34,7 +34,7 @@ pipeline {
                     }
                     axis {
                         name 'COMPILER'
-                        values 'gcc', 'clang', 'clang-native', 'msvc'
+                        values 'gcc', 'clang', 'clang-native', 'visual-studio'
                     }
                     axis {
                         name 'CONFIGURATION'
@@ -51,7 +51,7 @@ pipeline {
                         }
                         axis {
                             name 'COMPILER'
-                            values 'clang-native', 'msvc'
+                            values 'clang-native', 'visual-studio'
                         }
                     }
                 }
